@@ -18,6 +18,9 @@ jobs:
     if: '! github.event.pull_request.draft'
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [ 8.2, 8.3, 8.4 ]
     env:
       APP_URL: http://localhost:8000
       APP_ENV: testing
