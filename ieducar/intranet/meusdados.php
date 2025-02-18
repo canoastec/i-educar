@@ -311,7 +311,7 @@ return new class extends clsCadastro
         }
     }
 
-    //envia foto e salva caminha no banco
+    // envia foto e salva caminha no banco
     public function savePhoto($id)
     {
         $caminhoFoto = Asset::get('intranet/imagens/user-perfil.png');

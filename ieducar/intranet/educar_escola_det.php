@@ -236,7 +236,7 @@ return new class extends clsDetalhe
                     $incluir = '<td width=\'130\'>&nbsp;</td>';
                 }
 
-                //verifica se o ano nao possui matricula em andamento para permitir finalizar o ano
+                // verifica se o ano nao possui matricula em andamento para permitir finalizar o ano
                 $obj_matricula_ano = new clsPmieducarMatricula;
                 $matricula_em_andamento = $obj_matricula_ano->lista(int_ref_ref_cod_escola: $this->cod_escola, int_aprovado: 3, int_ativo: 1, int_ultima_matricula: 1, int_ano: $ano['ano'], bool_curso_sem_avaliacao: false);
 

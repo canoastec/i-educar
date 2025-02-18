@@ -242,4 +242,9 @@ class LegacyStudentBuilder extends LegacyBuilder
         return $this->join('cadastro.fisica', 'aluno.ref_idpes', '=', 'fisica.idpes')
             ->where('sexo', 'F');
     }
+
+    public function joinIndividual()
+    {
+        return $this->join('cadastro.fisica', 'aluno.ref_idpes', '=', 'fisica.idpes');
+    }
 }

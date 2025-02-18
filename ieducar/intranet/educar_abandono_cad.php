@@ -170,7 +170,7 @@ return new class extends clsCadastro
                         ->updateSituation(notaAlunoId: $notaAluno->get('id'), situacao: App_Model_MatriculaSituacao::ABANDONO);
                 }
 
-                //Marca a busca ativa como abandono
+                // Marca a busca ativa como abandono
                 LegacyActiveLooking::query()
                     ->where('ref_cod_matricula', $this->ref_cod_matricula)
                     ->where('resultado_busca_ativa', ActiveLooking::ACTIVE_LOOKING_IN_PROGRESS_RESULT)

@@ -9,7 +9,7 @@ class ParecerDescritivoAbstractTest extends UnitBaseTest
         $this->_entity = new Avaliacao_Model_ParecerDescritivoAbstractStub;
     }
 
-    public function testEntityValidators()
+    public function test_entity_validators()
     {
         $validators = $this->_entity->getValidatorCollection();
         $this->assertInstanceOf('CoreExt_Validate_Choice', $validators['etapa']);

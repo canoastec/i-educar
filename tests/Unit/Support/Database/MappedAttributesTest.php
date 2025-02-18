@@ -40,7 +40,7 @@ class MappedAttributesTest extends TestCase
     /**
      * @return void
      */
-    public function testGetMappedAttribute()
+    public function test_get_mapped_attribute()
     {
         $model = new $this->abstract([
             'cod' => 1,
@@ -54,7 +54,7 @@ class MappedAttributesTest extends TestCase
     /**
      * @return void
      */
-    public function testSetMappedAttribute()
+    public function test_set_mapped_attribute()
     {
         $model = new $this->abstract([
             'cod' => 1,
@@ -71,7 +71,7 @@ class MappedAttributesTest extends TestCase
     /**
      * @return void
      */
-    public function testGetTranslateMappedAttributeMethod()
+    public function test_get_translate_mapped_attribute_method()
     {
         $model = new $this->abstract;
 

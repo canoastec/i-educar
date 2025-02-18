@@ -32,7 +32,7 @@ class FileExportServiceTest extends TestCase
 
     private array $args = [];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->export = FileExportFactory::new()->create();
@@ -106,7 +106,7 @@ class FileExportServiceTest extends TestCase
         ];
     }
 
-    public function testExportService(): void
+    public function test_export_service(): void
     {
         Queue::fake();
         Queue::assertNothingPushed();

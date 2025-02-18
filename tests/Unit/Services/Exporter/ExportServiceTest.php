@@ -29,7 +29,7 @@ class ExportServiceTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->export = ExportFactory::new()->create();
@@ -95,7 +95,7 @@ class ExportServiceTest extends TestCase
         ]);
     }
 
-    public function testExportService(): void
+    public function test_export_service(): void
     {
         Queue::fake();
         Queue::assertNothingPushed();

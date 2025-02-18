@@ -16,14 +16,14 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->_db = $this->getDbMock();
     }
 
-    public function testDbAdapterLancaExcecaoQuandoNaoEDoTipoEsperado()
+    public function test_db_adapter_lanca_excecao_quando_nao_e_do_tipo_esperado()
     {
         $this->expectException(\TypeError::class);
         $db = new stdClass;
         $mapper = new CoreExt_EntityDataMapperStub($db);
     }
 
-    public function testRetornaInstanciaEntity()
+    public function test_retorna_instancia_entity()
     {
         $mapper = new CoreExt_EntityDataMapperStub($this->_db);
         $instance = $mapper->createNewEntityInstance();
@@ -31,7 +31,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertInstanceOf('CoreExt_Entity', $instance);
     }
 
-    public function testCarregaTodosOsRegistros()
+    public function test_carrega_todos_os_registros()
     {
         $options1 = $options2 = ['estadoCivil' => null];
         $options1['nome'] = 'Cícero Pompeu de Toledo';
@@ -62,7 +62,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertEquals($expected[1], $found[1]);
     }
 
-    public function testCarregaTodosOsRegistrosSelecionandoColunas()
+    public function test_carrega_todos_os_registros_selecionando_colunas()
     {
         $options1 = $options2 = [];
         $options1['nome'] = 'Cícero Pompeu de Toledo';
@@ -93,7 +93,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertEquals($expected[1], $found[1]);
     }
 
-    public function testMapeiaAtributoAtravesDoMapaQuandoNaoExisteAtributoCorrespondente()
+    public function test_mapeia_atributo_atraves_do_mapa_quando_nao_existe_atributo_correspondente()
     {
         $common = ['nome' => 'Adolf Lutz'];
         $options = $returnedOptions = $common;
@@ -117,7 +117,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertEquals($expected, $found[0]);
     }
 
-    public function testRecuperaRegistroUnico()
+    public function test_recupera_registro_unico()
     {
         $expectedOptions = [
             'id' => 1,
@@ -142,7 +142,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertEquals($expected, $found);
     }
 
-    public function testRecuperaRegistroUnicoComChaveComposta()
+    public function test_recupera_registro_unico_com_chave_composta()
     {
         $expectedOptions = [
             'pessoa' => 1,
@@ -167,7 +167,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertEquals($expected, $found);
     }
 
-    public function testRecuperaRegistroUnicoComChaveCompostaIdentificandoApenasUmaDasChaves()
+    public function test_recupera_registro_unico_com_chave_composta_identificando_apenas_uma_das_chaves()
     {
         $expectedOptions = [
             'pessoa' => 1,
@@ -192,7 +192,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertEquals($expected, $found);
     }
 
-    public function testRecuperaRegistroRetornaFloat()
+    public function test_recupera_registro_retorna_float()
     {
         $expectedOptions = [
             'id' => 1,
@@ -219,7 +219,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertEquals(12.300, $expected->peso);
     }
 
-    public function testRegistroNaoExistenteLancaExcecao()
+    public function test_registro_nao_existente_lanca_excecao()
     {
         $this->expectException(\Exception::class);
         $this->_db->expects($this->once())
@@ -232,7 +232,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertEquals($expected, $found);
     }
 
-    public function testInsereNovoRegistro()
+    public function test_insere_novo_registro()
     {
         $this->_db->expects($this->any())
             ->method('Consulta')
@@ -254,7 +254,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertTrue($mapper->save($entity));
     }
 
-    public function testInsereNovoRegistroComChaveComposta()
+    public function test_insere_novo_registro_com_chave_composta()
     {
         $this->_db->expects($this->any())
             ->method('Consulta')
@@ -275,7 +275,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertTrue($mapper->save($entity));
     }
 
-    public function testInsereNovoRegistroComChaveCompostaComUmaNulaLancaExcecao()
+    public function test_insere_novo_registro_com_chave_composta_com_uma_nula_lanca_excecao()
     {
         $entity = new CoreExt_EntityCompoundStub;
         $entity->pessoa = 1;
@@ -295,7 +295,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertTrue($mapper->save($entity));
     }
 
-    public function testAtualizaRegistro()
+    public function test_atualiza_registro()
     {
         $this->_db->expects($this->any())
             ->method('Consulta')
@@ -316,7 +316,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertTrue($mapper->save($entity));
     }
 
-    public function testAtualizaRegistroComChaveComposta()
+    public function test_atualiza_registro_com_chave_composta()
     {
         $this->_db->expects($this->any())
             ->method('Consulta')
@@ -337,7 +337,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertTrue($mapper->save($entity));
     }
 
-    public function testApagaRegistroPassandoInstanciaDeEntity()
+    public function test_apaga_registro_passando_instancia_de_entity()
     {
         $this->_db->expects($this->any())
             ->method('Consulta')
@@ -353,7 +353,7 @@ class CoreExt_DataMapperTest extends UnitBaseTest
         $this->assertTrue($mapper->delete($entity));
     }
 
-    public function testApagaRegistroPassandoValorInteiro()
+    public function test_apaga_registro_passando_valor_inteiro()
     {
         $this->_db->expects($this->any())
             ->method('Consulta')

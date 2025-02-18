@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class LegacyAttributeTest extends TestCase
 {
-    public function testeBuilderCustom(): void
+    public function teste_builder_custom(): void
     {
         $class = new class extends Model
         {
@@ -22,7 +22,7 @@ class LegacyAttributeTest extends TestCase
         $this->assertEquals(LegacySchoolBuilder::class, get_class($class->newQuery()));
     }
 
-    public function testeBuilderDefault(): void
+    public function teste_builder_default(): void
     {
         $class = new class extends Model
         {

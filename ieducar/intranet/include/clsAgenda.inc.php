@@ -105,11 +105,11 @@ class clsAgenda
     {
         $db = new clsBanco;
         $this->compromissos = [];
-        //echo "SELECT data_inicio, cod_agenda_compromisso, versao, data_fim, titulo, descricao, importante, publico FROM agenda_compromisso WHERE ref_cod_agenda = '{$this->agenda}' AND ativo = 1 AND data_fim IS NOT NULL AND data_inicio >= '{$data_inicio}' AND data_inicio <= '{$data_fim}' ORDER BY data_inicio ASC<br>";
+        // echo "SELECT data_inicio, cod_agenda_compromisso, versao, data_fim, titulo, descricao, importante, publico FROM agenda_compromisso WHERE ref_cod_agenda = '{$this->agenda}' AND ativo = 1 AND data_fim IS NOT NULL AND data_inicio >= '{$data_inicio}' AND data_inicio <= '{$data_fim}' ORDER BY data_inicio ASC<br>";
         $db->Consulta("SELECT data_inicio, cod_agenda_compromisso, versao, data_fim, titulo, descricao, importante, publico FROM portal.agenda_compromisso WHERE ref_cod_agenda = '{$this->agenda}' AND ativo = 1 AND data_fim IS NOT NULL AND data_inicio >= '{$data_inicio}' AND data_inicio <= '{$data_fim}' ORDER BY data_inicio ASC");
         while ($db->ProximoRegistro()) {
             $temp_arr_compromisso = [];
-            //list( $cod_agenda_compromisso, $versao, $data_inicio, $data_fim, $titulo, $descricao, $importante, $publico) = $db->Tupla();
+            // list( $cod_agenda_compromisso, $versao, $data_inicio, $data_fim, $titulo, $descricao, $importante, $publico) = $db->Tupla();
             [$temp_arr_compromisso['data_inicio'], $temp_arr_compromisso['cod_agenda_compromisso'], $temp_arr_compromisso['versao'], $temp_arr_compromisso['data_fim'], $temp_arr_compromisso['titulo'], $temp_arr_compromisso['descricao'], $temp_arr_compromisso['importante'], $temp_arr_compromisso['publico']] = $db->Tupla();
 
             $temp_arr_compromisso2['data_inicio'] = $temp_arr_compromisso['data_inicio'];
@@ -414,7 +414,7 @@ class clsAgenda
     {
 
         // seleciona os dados
-        //$db->Consulta();
+        // $db->Consulta();
         if ($this->time_atual) {
             $objEncaminha = new clsEncaminha;
             $listaEncaminha = $objEncaminha->lista(false, false, false, false, false, $this->cod_pessoa_dono, false, false, false, false, false, false, date('Y-m-d', $this->time_atual), date('Y-m-d', $this->time_atual).' 23:59:59', false, false);
@@ -458,7 +458,7 @@ class clsAgenda
         }
     }
 
-    //Busca Compromissos marcados para o futuro e devem ser mostrados em dias anteriores
+    // Busca Compromissos marcados para o futuro e devem ser mostrados em dias anteriores
 
     public function add_compromisso_externo_2()
     {
@@ -512,7 +512,7 @@ class clsAgenda
         $db = new clsBanco;
 
         // seleciona os dados
-        //$db->Consulta();
+        // $db->Consulta();
         while ($db->ProximoRegistro()) {
             [$temp_arr_compromisso['data_inicio'], $temp_arr_compromisso['cod_agenda_compromisso'], $temp_arr_compromisso['versao'], $temp_arr_compromisso['data_fim'], $temp_arr_compromisso['titulo'], $temp_arr_compromisso['descricao'], $temp_arr_compromisso['importante'], $temp_arr_compromisso['publico']] = $db->Tupla();
             // usa os dados recebidos para montar um segundo array temporario

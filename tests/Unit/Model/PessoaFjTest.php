@@ -6,7 +6,7 @@ use Tests\TestCase;
 
 class PessoaFjTest extends TestCase
 {
-    public function testGetById()
+    public function test_get_by_id()
     {
         $pdo = $this->getConnection()->getPdo();
         $pdo->exec(

@@ -2,7 +2,7 @@
 
 class ClsCalendarioTest extends PHPUnit\Framework\TestCase
 {
-    public function testGenerateFormValues()
+    public function test_generate_form_values()
     {
         $formValues = [
             'formFieldKey' => 'formFieldValue',

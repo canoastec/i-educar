@@ -15,7 +15,7 @@ class Avaliacao_Service_PromocaoAlunoTest extends Avaliacao_Service_TestCommon
         return $mock;
     }
 
-    public function testPromoverAlunoLancaExcecaoCasoSituacaoEstejaEmAndamento()
+    public function test_promover_aluno_lanca_excecao_caso_situacao_esteja_em_andamento()
     {
         $situacao = new stdClass;
         $situacao->aprovado = true;
@@ -54,7 +54,7 @@ class Avaliacao_Service_PromocaoAlunoTest extends Avaliacao_Service_TestCommon
         $service->promover();
     }
 
-    public function testPromoverAlunoAutomaticamenteProgressaoContinuada()
+    public function test_promover_aluno_automaticamente_progressao_continuada()
     {
         $situacao = new stdClass;
         $situacao->aprovado = true;
@@ -93,7 +93,7 @@ class Avaliacao_Service_PromocaoAlunoTest extends Avaliacao_Service_TestCommon
         self::assertTrue($service->promover());
     }
 
-    public function testPromoverAlunoAutomaticamenteProgressaoNaoContinuadaAutoMediaPresenca()
+    public function test_promover_aluno_automaticamente_progressao_nao_continuada_auto_media_presenca()
     {
         $situacao = new stdClass;
         $situacao->aprovado = true;
@@ -135,7 +135,7 @@ class Avaliacao_Service_PromocaoAlunoTest extends Avaliacao_Service_TestCommon
         self::assertTrue($service->promover());
     }
 
-    public function testReprovarAlunoAutomaticamenteProgressaoNaoContinuadaAutoMediaPresenca()
+    public function test_reprovar_aluno_automaticamente_progressao_nao_continuada_auto_media_presenca()
     {
         $situacao = new stdClass;
         $situacao->aprovado = true;
@@ -174,7 +174,7 @@ class Avaliacao_Service_PromocaoAlunoTest extends Avaliacao_Service_TestCommon
         self::assertTrue($service->promover());
     }
 
-    public function testPromoverAlunoAutomaticamenteProgressaoNaoContinuadaAutoMedia()
+    public function test_promover_aluno_automaticamente_progressao_nao_continuada_auto_media()
     {
         $situacao = new stdClass;
         $situacao->aprovado = true;
@@ -217,7 +217,7 @@ class Avaliacao_Service_PromocaoAlunoTest extends Avaliacao_Service_TestCommon
         self::assertTrue($service->promover());
     }
 
-    public function testPromoverAlunoManualmenteProgressaoNaoContinuada()
+    public function test_promover_aluno_manualmente_progressao_nao_continuada()
     {
         $situacao = new stdClass;
         $situacao->aprovado = false; // Reprovado por nota
@@ -258,7 +258,7 @@ class Avaliacao_Service_PromocaoAlunoTest extends Avaliacao_Service_TestCommon
         self::assertTrue($service->promover(true));
     }
 
-    public function testReprovarAlunoManualmenteProgressaoNaoContinuada()
+    public function test_reprovar_aluno_manualmente_progressao_nao_continuada()
     {
         $situacao = new stdClass;
         $situacao->aprovado = false; // Reprovado por nota
@@ -299,7 +299,7 @@ class Avaliacao_Service_PromocaoAlunoTest extends Avaliacao_Service_TestCommon
         self::assertTrue($service->promover());
     }
 
-    public function testSaveBoletim()
+    public function test_save_boletim()
     {
         $situacao = new stdClass;
         $situacao->aprovado = true;
@@ -341,7 +341,7 @@ class Avaliacao_Service_PromocaoAlunoTest extends Avaliacao_Service_TestCommon
         self::assertTrue(true, 'O método "->save()" foi executado com sucesso');
     }
 
-    public function testIntegracaoMatriculaPromoverAluno()
+    public function test_integracao_matricula_promover_aluno()
     {
         $situacao = new stdClass;
         $situacao->aprovado = true;

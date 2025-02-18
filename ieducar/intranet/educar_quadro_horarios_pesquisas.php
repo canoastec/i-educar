@@ -134,7 +134,7 @@ if ($get_escola) {
                              </td>';
         $retorno .= '<td valign="top" class="formmdtd"><span class="form">';
 
-        $disabled = !$this->ref_cod_escola && $nivel_usuario == 1 /*&& !$this->ref_cod_curso */ ? 'disabled=\'true\' ' : '';
+        $disabled = !$this->ref_cod_escola && $nivel_usuario == 1 /* && !$this->ref_cod_curso */ ? 'disabled=\'true\' ' : '';
         $retorno .= " <select onchange=\"getCurso();getAnoLetivo();\" class='geral' name='ref_cod_escola' {$disabled} id='ref_cod_escola'>";
 
         reset($opcoes_escola);
@@ -212,7 +212,7 @@ if ($get_curso) {
                          </td>';
     $retorno .= '<td valign="top" class="formlttd"><span class="form">';
 
-    $disabled = !$this->ref_cod_curso && $nivel_usuario == 1 /*&& !$this->ref_cod_curso*/ ? 'disabled=\'true\' ' : '';
+    $disabled = !$this->ref_cod_curso && $nivel_usuario == 1 /* && !$this->ref_cod_curso */ ? 'disabled=\'true\' ' : '';
     $retorno .= " <select onchange=\"getSerie();\" class='geral' name='ref_cod_curso' {$disabled} id='ref_cod_curso'>";
 
     reset($opcoes_curso);
@@ -252,7 +252,7 @@ if ($get_serie) {
                          </td>';
     $retorno .= '<td valign="top" class="formmdtd"><span class="form">';
 
-    $disabled = !$this->ref_cod_serie && $nivel_usuario == 1 /*&& !$this->ref_cod_curso*/ ? 'disabled=\'true\' ' : '';
+    $disabled = !$this->ref_cod_serie && $nivel_usuario == 1 /* && !$this->ref_cod_curso */ ? 'disabled=\'true\' ' : '';
     $retorno .= " <select onchange=\"getTurma();\" class='geral' name='ref_cod_serie' {$disabled} id='ref_cod_serie'>";
 
     reset($opcoes_serie);
@@ -272,7 +272,7 @@ if ($get_serie) {
 if ($get_turma) {
     $opcoes_turma = ['' => 'Selecione'];
     // EDITAR
-    if ($this->ref_cod_serie /*|| $this->ref_cod_curso*/) {
+    if ($this->ref_cod_serie /* || $this->ref_cod_curso */) {
         $obj_turma = new clsPmieducarTurma;
         $obj_turma->setOrderby('nm_turma ASC');
         $lst_turma = $obj_turma->lista(int_ref_ref_cod_serie: $this->ref_cod_serie, int_ref_ref_cod_escola: $this->ref_cod_escola, int_ref_cod_curso: $this->ref_cod_curso, ano: $this->ano);

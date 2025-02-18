@@ -2,7 +2,7 @@
 
 class Avaliacao_Service_UtilityTest extends Avaliacao_Service_TestCommon
 {
-    public function testArredondaNotaLancaExcecaoSeParametroNaoForNumerico()
+    public function test_arredonda_nota_lanca_excecao_se_parametro_nao_for_numerico()
     {
         $service = $this->_getServiceInstance();
 
@@ -11,7 +11,7 @@ class Avaliacao_Service_UtilityTest extends Avaliacao_Service_TestCommon
         $service->arredondaNota(new Avaliacao_Model_NotaComponente);
     }
 
-    public function testArredondaNotaNumerica()
+    public function test_arredonda_nota_numerica()
     {
         $service = $this->_getServiceInstance();
 
@@ -21,7 +21,7 @@ class Avaliacao_Service_UtilityTest extends Avaliacao_Service_TestCommon
         $this->assertEquals(5.8, $service->arredondaNota($nota));
     }
 
-    public function testArredondaNotaConceitual()
+    public function test_arredonda_nota_conceitual()
     {
         // Valores padrão dos atributos de TabelaArredondamento_Model_TabelaValor
         $data = [
@@ -95,7 +95,7 @@ class Avaliacao_Service_UtilityTest extends Avaliacao_Service_TestCommon
         $this->assertEquals('O', $service->arredondaNota($nota));
     }
 
-    public function testPreverNotaParaRecuperacao()
+    public function test_prever_nota_para_recuperacao()
     {
         $this->markTestSkipped();
 
@@ -141,7 +141,7 @@ class Avaliacao_Service_UtilityTest extends Avaliacao_Service_TestCommon
         $this->assertEquals(4.0, $ret);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         Portabilis_Utils_Database::$_db = null;
     }

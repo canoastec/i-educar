@@ -120,24 +120,24 @@ return new class extends clsListagem
                         'cod_servidor_alocacao' => $registro['cod_servidor_alocacao'],
                     ]];
 
-                //Escola
+                // Escola
                 $escola = new clsPmieducarEscola($registro['ref_cod_escola']);
                 $escola = $escola->detalhe();
 
-                //Periodo
+                // Periodo
                 $periodo = [
                     1 => 'Matutino',
                     2 => 'Vespertino',
                     3 => 'Noturno',
                 ];
 
-                //Função
+                // Função
                 $funcaoServidor = new clsPmieducarServidorFuncao(null, null, null, null, $registro['ref_cod_servidor_funcao']);
                 $funcaoServidor = $funcaoServidor->detalhe();
 
                 $funcao = LegacyRole::find($funcaoServidor['ref_cod_funcao'])?->getAttributes();
 
-                //Vinculo
+                // Vinculo
                 $funcionarioVinculo = new clsPortalFuncionario;
                 $funcionarioVinculo = $funcionarioVinculo->getNomeVinculo($registro['ref_cod_funcionario_vinculo']);
 

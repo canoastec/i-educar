@@ -565,7 +565,7 @@ class MatriculaController extends ApiCoreController
             $promocaoApi->setRequest($fakeRequest);
             $promocaoApi->Gerar();
 
-            //Desfaz a busca ativa como abandono
+            // Desfaz a busca ativa como abandono
             LegacyActiveLooking::query()
                 ->where('ref_cod_matricula', $matriculaId)
                 ->where('resultado_busca_ativa', ActiveLooking::ACTIVE_LOOKING_ABANDONMENT_RESULT)

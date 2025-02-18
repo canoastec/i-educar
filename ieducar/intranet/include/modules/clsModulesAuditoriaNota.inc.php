@@ -30,7 +30,7 @@ class clsModulesAuditoriaNota
 
     public function __construct($notaAntiga, $notaNova, $turmaId)
     {
-        //Foi necessário enviar turma pois não á possí­vel saber a turma atual somente através da matrí­cula
+        // Foi necessário enviar turma pois não á possí­vel saber a turma atual somente através da matrí­cula
         $this->turma = $turmaId;
 
         $this->usuario = $this->getUsuarioAtual();
@@ -123,7 +123,7 @@ class clsModulesAuditoriaNota
             $stringDados .= $separadorDados;
         }
 
-        //remove o último valor, qual seria uma vírgula
+        // remove o último valor, qual seria uma vírgula
         $stringDados = substr($stringDados, 0, -1);
 
         return $stringDados . $fimString;

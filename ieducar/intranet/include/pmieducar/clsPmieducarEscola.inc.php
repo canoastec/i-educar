@@ -294,6 +294,8 @@ class clsPmieducarEscola extends Model
 
     public $qtd_edu_eja_ensino_med;
 
+    public $caracteristica_escolar;
+
     public function __construct(
         $cod_escola = null,
         $ref_usuario_cad = null,
@@ -324,7 +326,7 @@ class clsPmieducarEscola extends Model
             e.quantidade_computadores_alunos_mesa, e.quantidade_computadores_alunos_portateis, e.quantidade_computadores_alunos_tablets,
             e.lousas_digitais, e.projetores_digitais, e.faxs, e.maquinas_fotograficas, e.computadores, e.computadores_administrativo, e.computadores_alunos, e.impressoras_multifuncionais, e.acesso_internet, e.ato_criacao,
             e.ato_autorizativo, e.ref_idpes_secretario_escolar, e.utiliza_regra_diferenciada, e.categoria_escola_privada, e.conveniada_com_poder_publico, e.mantenedora_escola_privada, e.cnpj_mantenedora_principal,
-            e.email_gestor, e.orgao_vinculado_escola, e.esfera_administrativa, e.unidade_vinculada_outra_instituicao, e.inep_escola_sede, e.codigo_ies,
+            e.email_gestor, e.orgao_vinculado_escola, e.esfera_administrativa, e.unidade_vinculada_outra_instituicao, e.inep_escola_sede, e.codigo_ies, e.caracteristica_escolar,
             e.qtd_secretario_escolar,
             e.qtd_auxiliar_administrativo,
             e.qtd_apoio_pedagogico,
@@ -448,6 +450,12 @@ class clsPmieducarEscola extends Model
             if (is_numeric($this->zona_localizacao)) {
                 $campos .= "{$gruda}zona_localizacao";
                 $valores .= "{$gruda}{$this->zona_localizacao}";
+                $gruda = ', ';
+            }
+
+            if (is_numeric($this->caracteristica_escolar)) {
+                $campos .= "{$gruda}caracteristica_escolar";
+                $valores .= "{$gruda}{$this->caracteristica_escolar}";
                 $gruda = ', ';
             }
 
@@ -1168,6 +1176,7 @@ class clsPmieducarEscola extends Model
                 $gruda = ', ';
             }
 
+
             $campos .= "{$gruda}data_cadastro";
             $valores .= "{$gruda}NOW()";
             $gruda = ', ';
@@ -1325,6 +1334,14 @@ class clsPmieducarEscola extends Model
 
             if (is_numeric($this->zona_localizacao)) {
                 $set .= "{$gruda}zona_localizacao = '{$this->zona_localizacao}'";
+                $gruda = ', ';
+            }
+
+            if (is_numeric($this->caracteristica_escolar)) {
+                $set .= "{$gruda}caracteristica_escolar = '{$this->caracteristica_escolar}'";
+                $gruda = ', ';
+            }  else {
+                $set .= "{$gruda}caracteristica_escolar = null";
                 $gruda = ', ';
             }
 

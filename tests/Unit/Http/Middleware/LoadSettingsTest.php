@@ -17,7 +17,7 @@ class LoadSettingsTest extends TestCase
     /**
      * @return void
      */
-    public function testMiddleware()
+    public function test_middleware()
     {
         SettingFactory::new()->create([
             'key' => 'load.settings.test',

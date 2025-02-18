@@ -488,7 +488,7 @@ return new class extends clsCadastro
             str_pagina_redirecionar: 'educar_escola_lst.php'
         );
 
-        //Salvar com query raw, pois o model não tem primary key única e gera erro modificando todas as escolas em vez de uma
+        // Salvar com query raw, pois o model não tem primary key única e gera erro modificando todas as escolas em vez de uma
         LegacySchoolAcademicYear::query()->where(
             column: [
                 'ref_cod_escola' => $this->ref_ref_cod_escola,

@@ -401,7 +401,7 @@ return new class extends clsCadastro
             str_pagina_redirecionar: 'educar_aluno_det.php?cod_aluno=' . $this->ref_cod_aluno
         );
 
-        //novas regras matricula aluno
+        // novas regras matricula aluno
         $this->ano = $_POST['ano'];
         $anoLetivoEmAndamentoEscola = LegacySchoolAcademicYear::query()->whereSchool($this->ref_cod_escola)->whereYearEq($this->ano)->inProgress()->active()->exists();
 
@@ -531,7 +531,7 @@ return new class extends clsCadastro
                         }
                     </script>';
 
-                    //Permite que o usuário possa salvar a matrícula na próxima tentativa
+                    // Permite que o usuário possa salvar a matrícula na próxima tentativa
                     $reload = 1;
 
                     Session::put(key: 'reload_faixa_etaria', value: $reload);

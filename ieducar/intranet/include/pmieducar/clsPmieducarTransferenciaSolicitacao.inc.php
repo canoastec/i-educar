@@ -278,7 +278,7 @@ class clsPmieducarTransferenciaSolicitacao extends Model
         if ($entrada_aluno == true) {
             $filtros .= "{$whereAnd}ts.ref_cod_matricula_entrada = m.cod_matricula";
             $whereAnd = ' AND ';
-        } else { //if ($entrada_aluno == false)
+        } else { // if ($entrada_aluno == false)
             $filtros .= "{$whereAnd}ts.ref_cod_matricula_saida = m.cod_matricula";
             $whereAnd = ' AND ';
         }

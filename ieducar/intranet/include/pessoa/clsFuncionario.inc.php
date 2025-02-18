@@ -180,7 +180,7 @@ class clsFuncionario extends clsPessoaFisica
             }
         } else {
             while ($db->ProximoRegistro()) {
-                $resultado = $db->Tupla(); //$tupla;
+                $resultado = $db->Tupla(); // $tupla;
             }
         }
 

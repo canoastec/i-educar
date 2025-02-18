@@ -235,7 +235,7 @@ return new class extends clsDetalhe
                                              FROM pmieducar.historico_escolar
                                             WHERE ref_cod_aluno = $this->ref_cod_aluno
                                               AND sequencial = $this->sequencial");
-            //Verifica se a escola foi digitada manualmente no histórico
+            // Verifica se a escola foi digitada manualmente no histórico
             $escola_usuario = '';
             if ($ref_cod_escola == '') {
                 $escolasUsuario = new clsPmieducarEscolaUsuario;

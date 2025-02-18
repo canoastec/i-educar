@@ -638,10 +638,10 @@ class AlunoController extends ApiCoreController
         $pessoaId = $this->getRequest()->pessoa_id;
         $this->savePhoto($pessoaId);
 
-        //documentos
+        // documentos
         $aluno->url_documento = $this->getRequest()->url_documento;
 
-        //laudo medico
+        // laudo medico
         $aluno->url_laudo_medico = $this->getRequest()->url_laudo_medico;
 
         $aluno->tipo_transporte = (new TransportationProvider)->from($this->getRequest()->tipo_transporte);
@@ -1792,15 +1792,15 @@ class AlunoController extends ApiCoreController
         return Portabilis_Utils_Database::selectField($sql, $alunoId);
     }
 
-    //envia foto e salva caminha no banco
+    // envia foto e salva caminha no banco
     protected function savePhoto($id)
     {
         if ($this->objPhoto != null) {
-            //salva foto com data, para evitar problemas com o cache do navegador
+            // salva foto com data, para evitar problemas com o cache do navegador
             $caminhoFoto = $this->objPhoto->sendPicture();
 
             if ($caminhoFoto != '') {
-                //new clsCadastroFisicaFoto($id)->exclui();
+                // new clsCadastroFisicaFoto($id)->exclui();
                 $obj = new clsCadastroFisicaFoto($id, $caminhoFoto);
                 $detalheFoto = $obj->detalhe();
 

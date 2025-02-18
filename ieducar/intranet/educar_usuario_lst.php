@@ -70,7 +70,7 @@ return new class extends clsListagem
         ];
 
         $this->inputsHelper()->select(attrName: 'int_ativo', inputOptions: $options);
-        //gambiarra pois o inputsHelper está bugado
+        // gambiarra pois o inputsHelper está bugado
         switch ($this->int_ativo) {
             case 0:
                 $this->int_ativo = null;

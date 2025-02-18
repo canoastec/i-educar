@@ -310,7 +310,7 @@ class clsPortalFuncionario extends Model
 
             $db->Consulta("INSERT INTO {$this->_tabela} ( $campos ) VALUES( $valores )");
 
-            return true; //$db->InsertId( "{$this->_tabela}_ref_cod_pessoa_fj_seq");
+            return true; // $db->InsertId( "{$this->_tabela}_ref_cod_pessoa_fj_seq");
         }
 
         return false;

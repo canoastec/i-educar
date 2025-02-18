@@ -891,7 +891,7 @@ class DiarioApiController extends ApiCoreController
             // suas tabelas de arredondamento (numérica e conceitual), valores
             // de arredondamento para as duas tabelas e regras de recuperação.
 
-            //no multisseriado deve-se escolher/obter a série filtrada na tela, pois a turma possui mais de uma regra de avaliação em cada série
+            // no multisseriado deve-se escolher/obter a série filtrada na tela, pois a turma possui mais de uma regra de avaliação em cada série
             $evaluationRule = $schoolClass->getEvaluationRule($this->getRequest()->ref_cod_serie);
 
             $evaluationRule->load('roundingTable.roundingValues');
@@ -1213,15 +1213,15 @@ class DiarioApiController extends ApiCoreController
                 $this->deleteNotaExame($matriculaId, $componente['id']);
             }
 
-            //buscando pela área do conhecimento
+            // buscando pela área do conhecimento
             $area = $this->getAreaConhecimento($componente['id']);
             $nomeArea = (($area->secao != '') ? $area->secao . ' - ' : '') . $area->nome;
             $componente['ordenamento_ac'] = $area->ordenamento_ac;
             $componente['area_id'] = $area->id;
             $componente['area_nome'] = mb_strtoupper($nomeArea, 'UTF-8');
 
-            //criando chave para ordenamento temporário
-            //área de conhecimento + componente curricular
+            // criando chave para ordenamento temporário
+            // área de conhecimento + componente curricular
 
             $componente['ordem_nome_area_conhecimento'] = Str::slug($nomeArea);
             $componente['ordem_componente_curricular'] = Str::slug($_componente->get('nome'));
@@ -1255,7 +1255,7 @@ class DiarioApiController extends ApiCoreController
             $componentesCurriculares
         );
 
-        //removendo chave temporária
+        // removendo chave temporária
         $len = count($componentesCurriculares);
         for ($i = 0; $i < $len; $i++) {
             unset($componentesCurriculares[$i]['my_order']);
@@ -1519,7 +1519,7 @@ class DiarioApiController extends ApiCoreController
         $nota = urldecode($this->serviceBoletim()->getNotaComponente($componenteCurricularId, $etapa)->notaOriginal);
         $nota = str_replace(',', '.', $nota);
 
-        //validação para evitar a soma de valores da notaOriginal para string vazia
+        // validação para evitar a soma de valores da notaOriginal para string vazia
         if ($nota === '') {
             return null;
         }

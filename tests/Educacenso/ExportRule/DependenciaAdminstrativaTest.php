@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class DependenciaAdminstrativaTest extends TestCase
 {
-    public function testCamposNullWithDependenciaAdministrativaDiferenteDePrivada()
+    public function test_campos_null_with_dependencia_administrativa_diferente_de_privada()
     {
         $registro = $this->getFakeRegistro();
 
@@ -21,7 +21,7 @@ class DependenciaAdminstrativaTest extends TestCase
         $this->assertNull($registro->cnpjEscolaPrivada);
     }
 
-    public function testCamposNotNullDependenciaAdministrativaDiferentePrivada()
+    public function test_campos_not_null_dependencia_administrativa_diferente_privada()
     {
         $registro = $this->getFakeRegistro();
 

@@ -179,7 +179,7 @@ return new class extends clsCadastro
         $obj_permissoes = new clsPermissoes;
         $obj_permissoes->permissao_cadastra(int_processo_ap: 586, int_idpes_usuario: $this->pessoa_logada, int_soma_nivel_acesso: 7, str_pagina_redirecionar: 'educar_turma_lst.php');
 
-        //Define que esta tela executa suas ações atraves de requisições ajax
+        // Define que esta tela executa suas ações atraves de requisições ajax
         $this->acao_executa_submit_ajax = true;
 
         if (is_numeric(value: $this->cod_turma)) {
@@ -224,6 +224,7 @@ return new class extends clsCadastro
                 $this->hasStudentsPartials = $service->hasStudentsPartials($this->cod_turma);
 
                 if ($this->hasStudentsPartials) {
+                    $this->codigo_inep_educacenso = $obj_turma->getInepTurno(Period::FULLTIME);
                     $this->codigo_inep_matutino = $obj_turma->getInepTurno(Period::MORNING);
                     $this->codigo_inep_vespertino = $obj_turma->getInepTurno(Period::AFTERNOON);
                 }

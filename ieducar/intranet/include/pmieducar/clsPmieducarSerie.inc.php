@@ -783,7 +783,7 @@ class clsPmieducarSerie extends Model
         $detInstituicao = $objInstituicao->detalhe();
         $dataBaseMatricula = $detInstituicao['data_base_matricula'];
 
-        //Caso não tenha data base na matricula, não verifica se está dentro do periodo
+        // Caso não tenha data base na matricula, não verifica se está dentro do periodo
         if (!is_string($dataBaseMatricula)) {
             return true;
         }

@@ -39,9 +39,9 @@ return new class extends clsCadastro
 
                 $this->ano = $this->ref_ano;
 
-                //** verificao de permissao para exclusao
+                // ** verificao de permissao para exclusao
                 $this->fexcluir = $obj_permissoes->permissao_excluir(int_processo_ap: 21251, int_idpes_usuario: $this->pessoa_logada, int_soma_nivel_acesso: 3);
-                //**
+                // **
 
                 $retorno = 'Editar';
             }

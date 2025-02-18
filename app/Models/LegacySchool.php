@@ -82,6 +82,11 @@ class LegacySchool extends LegacyModel
         'formas_contratacao_parceria_escola_secretaria_estadual',
         'poder_publico_parceria_convenio',
         'qtd_tradutor_interprete_libras_outro_ambiente',
+        'qtd_agronomos_horticultores',
+        'qtd_revisor_braile',
+        'acao_area_ambiental',
+        'acoes_area_ambiental',
+        'caracteristica_escolar'
     ];
 
     protected function id(): Attribute

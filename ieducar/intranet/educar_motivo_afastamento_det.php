@@ -29,7 +29,7 @@ return new class extends clsDetalhe
 
     public $ativo;
 
-    //var $ref_cod_escola;
+    // var $ref_cod_escola;
     public $ref_cod_instituicao;
 
     public function Gerar()

@@ -79,4 +79,6 @@ class Process
     public const ANNOUNCEMENT = 9999114;
 
     public const BLOCK_ENROLLMENT = 9999115;
+
+    public const SCHOOLCLASS_PERIOD = 9999116;
 }

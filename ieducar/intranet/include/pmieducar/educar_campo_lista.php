@@ -42,7 +42,7 @@ if ($desabilitado) {
 $obj_permissoes = new clsPermissoes;
 $nivel_usuario = $obj_permissoes->nivel_acesso($pessoa_logada);
 
-//Se administrador
+// Se administrador
 if ($nivel_usuario == 1 || $cad_usuario) {
     $opcoes = Cache::remember('select_instituicao', now()->addMinutes(180), function () use ($get_select_name_full) {
         return LegacyInstitution::query()
@@ -73,13 +73,13 @@ if ($nivel_usuario == 1 || $cad_usuario) {
     } else {
         $this->campoLista('ref_cod_instituicao', 'Instituição', $opcoes, $this->ref_cod_instituicao, '', null, null, null, $instituicao_desabilitado, $instituicao_obrigatorio);
     }
-} //se nao eh administrador
+} // se nao eh administrador
 elseif ($nivel_usuario != 1) {
     $obj_usuario = new clsPmieducarUsuario($pessoa_logada);
     $det_usuario = $obj_usuario->detalhe();
     $this->ref_cod_instituicao = $det_usuario['ref_cod_instituicao'];
     $this->campoOculto('ref_cod_instituicao', $this->ref_cod_instituicao);
-    //se eh institucional - admin
+    // se eh institucional - admin
     if ($nivel_usuario == 4 || $nivel_usuario == 8) {
         $obj_usuario = new clsPmieducarUsuario($pessoa_logada);
         $det_usuario = $obj_usuario->detalhe();
@@ -395,7 +395,7 @@ function getDuploEscolaCurso() {
 }
 <?php
 }
-//if ( $get_escola_curso )
+// if ( $get_escola_curso )
 if ($get_curso) {
     ?>
 function getEscolaCurso() {

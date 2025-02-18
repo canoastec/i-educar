@@ -20,7 +20,7 @@ return new class extends clsDetalhe
             $this->simpleRedirect(url: 'educar_bloqueio_lancamento_faltas_notas_lst.php');
         }
 
-        //Nome da etapa
+        // Nome da etapa
         $etapas = [
             1 => '1ª Etapa',
             2 => '2ª Etapa',

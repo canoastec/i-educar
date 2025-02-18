@@ -100,13 +100,13 @@ return new class extends clsListagem
 
         $this->addPaginador2('educar_tipo_regime_lst.php', $total, $_GET, $this->nome, $this->limite);
 
-        //** Verificacao de permissao para cadastro
+        // ** Verificacao de permissao para cadastro
 
         if ($obj_permissao->permissao_cadastra(568, $this->pessoa_logada, 3)) {
             $this->acao = 'go("educar_tipo_regime_cad.php")';
             $this->nome_acao = 'Novo';
         }
-        //**
+        // **
         $this->largura = '100%';
 
         $this->breadcrumb('Listagem de tipos de regime', [

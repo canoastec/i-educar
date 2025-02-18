@@ -128,7 +128,7 @@ return new class extends clsCadastro
         if ($this->id) {
             $detProfessorTurma = LegacySchoolClassTeacher::find($this->id);
             $ano = $detProfessorTurma['ano'];
-            $this->ano = $ano; //o inputsHelper necessita do valor para poder filtrar as turmas deste ano
+            $this->ano = $ano; // o inputsHelper necessita do valor para poder filtrar as turmas deste ano
         }
 
         if (isset($_GET['copia'])) {

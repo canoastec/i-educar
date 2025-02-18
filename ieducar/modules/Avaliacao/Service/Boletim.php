@@ -306,7 +306,7 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
             $notasComponentes[$nota->get('componenteCurricular')][] = $nota;
         }
 
-        //Carrega as notas indexadas pela etapa
+        // Carrega as notas indexadas pela etapa
         $notasGerais = [];
         $notas = $this->getNotaGeralDataMapper()->findAll(
             [],
@@ -771,7 +771,7 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
             if ($this->hasRegraAvaliacaoMediaRecuperacao()) {
                 if ($this->getRegraAvaliacaoTipoNota() != RegraAvaliacao_Model_Nota_TipoValor::NENHUM) {
 
-                    //Mesmo se reprovado por falta, só da a situação final após o lançamento de todas as notas
+                    // Mesmo se reprovado por falta, só da a situação final após o lançamento de todas as notas
                     $situacoesFinais = App_Model_MatriculaSituacao::getSituacoesFinais();
 
                     $andamento = in_array($flagSituacaoNota, $situacoesFinais, true) === false;
@@ -1049,6 +1049,7 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
         $media = 0;
         $turmaId = $this->getOption('ref_cod_turma');
         $codigosAglutinados = $this->codigoDisciplinasAglutinadas();
+        $componentesEmExame = 0;
 
         foreach ($mediasComponentes as $id => $mediaComponente) {
             $mediaComponente = $mediaComponente[0];
@@ -1092,6 +1093,7 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
             if ($etapa == $lastStage && $media < $this->getRegraAvaliacaoMedia() && $this->hasRegraAvaliacaoFormulaRecuperacao() && $permiteSituacaoEmExame) {
                 // lets make some changes here >:)
                 $situacao->componentesCurriculares[$id]->situacao = App_Model_MatriculaSituacao::EM_EXAME;
+                $componentesEmExame++;
 
                 if ($this->hasRegraAvaliacaoReprovacaoAutomatica()) {
                     $previsaoRecuperacao = $this->preverNotaRecuperacao($id);
@@ -1145,6 +1147,13 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
             && $this->hasRegraAvaliacaoAprovaMediaDisciplina()
             && ($somaMedias / $qtdComponentes) >= $this->getRegraAvaliacaoMediaRecuperacao()) {
             $situacaoGeral = App_Model_MatriculaSituacao::APROVADO;
+        }
+
+        if (
+            $this->hasReprovarAutomaticamenteAposDependencias() &&
+            $componentesEmExame >= $this->getQtdeReprovarAutomaticamenteAposDependencias()
+        ) {
+            $situacaoGeral = App_Model_MatriculaSituacao::REPROVADO;
         }
 
         // Situação geral
@@ -2339,7 +2348,7 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
             return $this->getRegraAvaliacaoTabelaArredondamentoConceitual()->round($media, 2);
         }
 
-        //Reduz a média sem arredondar para quantidade de casas decimais permitidas
+        // Reduz a média sem arredondar para quantidade de casas decimais permitidas
         $media = bcdiv($media, 1, $this->getRegraAvaliacaoQtdCasasDecimais());
 
         return $this->getRegraAvaliacaoTabelaArredondamento()->round($media, 2, $this->getRegraAvaliacaoQtdCasasDecimais());
@@ -2848,7 +2857,7 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
             // não seja alterada.
         }
 
-        //Atualiza a situação de acordo com o que foi inserido na média anteriormente
+        // Atualiza a situação de acordo com o que foi inserido na média anteriormente
         $notaComponenteCurricularMedia->markOld();
         $this->getNotaComponenteMediaDataMapper()->save($notaComponenteCurricularMedia);
     }
@@ -2914,7 +2923,7 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
                 }
             }
 
-            //Calcula a média geral
+            // Calcula a média geral
             $mediaGeral = $this->_calculaMedia($notasGerais);
 
             // Cria uma nova instância de média, já com a nota arredondada e a etapa
@@ -2947,8 +2956,8 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
             $notaAlunoId = $this->_getNotaAluno()->id;
 
             foreach ($this->getNotasComponentes() as $id => $notasComponentes) {
-                //busca última nota lançada e somente atualiza a média e situação da nota do mesmo componente curricular
-                //pois atualizar todas as médias de todos os componentes pode deixar o sistema com perda de performance e excesso de processamento
+                // busca última nota lançada e somente atualiza a média e situação da nota do mesmo componente curricular
+                // pois atualizar todas as médias de todos os componentes pode deixar o sistema com perda de performance e excesso de processamento
 
                 $currentComponenteCurricular = $this->getCurrentComponenteCurricular();
 
@@ -3048,7 +3057,7 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
                         }
                     }
 
-                    //Atualiza a situação de acordo com o que foi inserido na média anteriormente
+                    // Atualiza a situação de acordo com o que foi inserido na média anteriormente
                     $notaComponenteCurricularMedia->markOld();
                     $notaComponenteCurricularMedia->situacao = $this->getSituacaoComponentesCurriculares()->componentesCurriculares[$id]->situacao;
 

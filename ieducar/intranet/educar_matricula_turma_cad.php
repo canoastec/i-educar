@@ -50,7 +50,7 @@ return new class extends clsCadastro
             url(path: 'intranet/educar_index.php') => 'Escola',
         ]);
 
-        //nova lógica
+        // nova lógica
         $retorno = false;
         if (is_numeric(value: $this->ref_cod_matricula)) {
             if ($this->ref_cod_turma_origem == 'remover-enturmacao-destino') {

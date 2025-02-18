@@ -44,22 +44,22 @@ return new class extends clsDetalhe
         $this->ref_cod_funcionario_vinculo = $registro['ref_cod_funcionario_vinculo'];
         $this->ano = $registro['ano'];
 
-        //Nome do servidor
+        // Nome do servidor
         $fisica = new clsPessoaFisica($this->ref_cod_servidor);
         $fisica = $fisica->detalhe();
 
         $this->addDetalhe(['Servidor', "{$fisica['nome']}"]);
 
-        //Escola
+        // Escola
         $escola = new clsPmieducarEscola($registro['ref_cod_escola']);
         $escola = $escola->detalhe();
 
         $this->addDetalhe(['Escola', "{$escola['nome']}"]);
 
-        //Ano
+        // Ano
         $this->addDetalhe(['Ano', "{$registro['ano']}"]);
 
-        //Periodo
+        // Periodo
         $periodo = [
             1 => 'Matutino',
             2 => 'Vespertino',
@@ -68,16 +68,16 @@ return new class extends clsDetalhe
 
         $this->addDetalhe(['Periodo', "{$periodo[$registro['periodo']]}"]);
 
-        //Carga horária
+        // Carga horária
         $this->addDetalhe(['Carga horária', substr($registro['carga_horaria'], 0, -3)]);
 
-        //Função
+        // Função
         if ($this->ref_cod_servidor_funcao) {
             $employeeRole = LegacyEmployeeRole::find($this->ref_cod_servidor_funcao);
             $this->addDetalhe(['Função', $employeeRole->role->name]);
         }
 
-        //Vinculo
+        // Vinculo
         if ($this->ref_cod_funcionario_vinculo) {
             $funcionarioVinculo = new clsPortalFuncionario;
             $funcionarioVinculo = $funcionarioVinculo->getNomeVinculo($registro['ref_cod_funcionario_vinculo']);

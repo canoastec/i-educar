@@ -2,6 +2,7 @@
 
 use App\Models\City;
 use App\Models\EmployeeInep;
+use App\Models\Enums\SchoolCharacteristic;
 use App\Models\LegacyPerson;
 use App\Models\SchoolManager;
 use App\Models\SchoolSpace;
@@ -350,6 +351,8 @@ return new class extends clsCadastro
 
     public $espaco_escolar_tamanho;
 
+    public $caracteristica_escolar;
+
     public $inputsRecursos = [
         'qtd_secretario_escolar' => 'Secretário(a) escolar',
         'qtd_auxiliar_administrativo' => 'Auxiliares de secretaria ou auxiliares administrativos, atendentes',
@@ -681,6 +684,14 @@ return new class extends clsCadastro
             $this->campoOculto(nome: 'cod_escola', valor: $this->cod_escola);
             $this->campoTexto(nome: 'fantasia', campo: 'Escola', valor: $this->fantasia, tamanhovisivel: 30, tamanhomaximo: 255, obrigatorio: true);
             $this->campoTexto(nome: 'sigla', campo: 'Sigla', valor: $this->sigla, tamanhovisivel: 30, tamanhomaximo: 255, obrigatorio: true);
+            $options = [
+                'label' => 'Característica Escolar',
+                'value' => $this->caracteristica_escolar,
+                'resources' => SchoolCharacteristic::getDescriptiveValues()->prepend('Selecione', ''),
+                'required' => false,
+            ];
+
+            $this->inputsHelper()->select(attrName: 'caracteristica_escolar', inputOptions: $options);
             $nivel = $obj_permissoes->nivel_acesso($this->pessoa_logada);
 
             if ($nivel === 1) {
@@ -1913,6 +1924,7 @@ return new class extends clsCadastro
         $obj->poder_publico_parceria_convenio = $this->poder_publico_parceria_convenio;
         $obj->formas_contratacao_parceria_escola_secretaria_estadual = $this->formas_contratacao_parceria_escola_secretaria_estadual;
         $obj->formas_contratacao_parceria_escola_secretaria_municipal = $this->formas_contratacao_parceria_escola_secretaria_municipal;
+        $obj->caracteristica_escolar = $this->caracteristica_escolar;
 
         foreach ($this->inputsRecursos as $key => $value) {
             $obj->{$key} = $this->{$key};

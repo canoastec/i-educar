@@ -219,7 +219,7 @@ return new class extends clsCadastro
         if ($this->cod_servidor) {
             $servidor = new clsFuncionario($this->cod_servidor);
             $servidor->detalhe();
-            //$detalhe = $detalhe['idpes']->detalhe();
+            // $detalhe = $detalhe['idpes']->detalhe();
 
             $this->campoRotulo('nm_servidor', 'Pessoa', $servidor->nome);
             $this->campoOculto('cod_servidor', $this->cod_servidor);

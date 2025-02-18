@@ -9,7 +9,7 @@ class NotaAlunoTest extends UnitBaseTest
         $this->_entity = new Avaliacao_Model_NotaAluno;
     }
 
-    public function testEntityValidators()
+    public function test_entity_validators()
     {
         $validators = $this->_entity->getDefaultValidatorCollection();
         $this->assertInstanceOf('CoreExt_Validate_Numeric', $validators['matricula']);

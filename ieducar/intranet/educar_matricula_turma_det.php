@@ -141,7 +141,7 @@ return new class extends clsDetalhe
             $this->addDetalhe(detalhe: ['Série', $registro['ref_ref_cod_serie']]);
         }
 
-        //(enturmações) turma atual
+        // (enturmações) turma atual
         $objEnturmacoes = new clsPmieducarMatriculaTurma;
         $enturmacoes = $objEnturmacoes->lista(int_ref_cod_matricula: $this->ref_cod_matricula, int_ativo: 1);
 
@@ -166,7 +166,7 @@ return new class extends clsDetalhe
         }
 
         if ($this->possuiEnturmacao) {
-            //se possui uma enturmacao mostra o nome, se mais de uma mostra select para selecionar
+            // se possui uma enturmacao mostra o nome, se mais de uma mostra select para selecionar
             if (count(value: $enturmacoes) > 1) {
                 $selectEnturmacoes = '<select id=\'ref_cod_turma_origem\' class=\'obrigatorio\'>';
                 $selectEnturmacoes .= '<option value=\'\'>Selecione</option>';
@@ -300,14 +300,14 @@ return new class extends clsDetalhe
         }
 
         if (!$this->turmaOrigemMesmaDestino && $canCreate) {
-            //mover enturmação
+            // mover enturmação
             if ($this->possuiEnturmacao) {
                 $this->array_botao[] = 'Transferir para turma selecionada';
                 $this->array_botao_url_script[] = "enturmar({$this->ref_cod_matricula}, {$this->ref_cod_turma}, \"transferir\")";
             }
 
             if ($habilita_enturmar || !$this->possuiEnturmacao) {
-                //nova enturmação
+                // nova enturmação
                 if (!$this->possuiEnturmacaoTurmaDestino && $canCreate) {
                     $this->array_botao[] = 'Enturmar na turma selecionada';
                     $this->array_botao_url_script[] = "enturmar({$this->ref_cod_matricula}, {$this->ref_cod_turma}, \"nova\")";

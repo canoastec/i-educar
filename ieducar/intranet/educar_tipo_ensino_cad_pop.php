@@ -26,11 +26,11 @@ return new class extends clsCadastro
     {
         $retorno = 'Novo';
 
-        //** Verificacao de permissao para exclusao
+        // ** Verificacao de permissao para exclusao
         $obj_permissao = new clsPermissoes;
 
         $obj_permissao->permissao_cadastra(558, $this->pessoa_logada, 7, 'educar_tipo_ensino_lst.php');
-        //**
+        // **
 
         $this->cod_tipo_ensino = $_GET['cod_tipo_ensino'];
 

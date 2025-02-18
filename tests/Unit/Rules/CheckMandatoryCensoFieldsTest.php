@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class CheckMandatoryCensoFieldsTest extends TestCase
 {
-    public function testCampoEstruturaCurricularValidaPreenchimentoTipodeAtendimento()
+    public function test_campo_estrutura_curricular_valida_preenchimento_tipode_atendimento()
     {
         $mandatoryFields = new CheckMandatoryCensoFields;
 

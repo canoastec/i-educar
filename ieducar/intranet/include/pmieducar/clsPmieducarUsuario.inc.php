@@ -108,7 +108,7 @@ class clsPmieducarUsuario extends Model
 
             $db->Consulta("INSERT INTO {$this->_tabela} ( $campos ) VALUES( $valores )");
 
-            //return $db->InsertId( "{$this->_tabela}_cod_usuario_seq");
+            // return $db->InsertId( "{$this->_tabela}_cod_usuario_seq");
             return $db->CampoUnico("SELECT 1 FROM {$this->_tabela} WHERE cod_usuario={$this->cod_usuario}");
         }
 

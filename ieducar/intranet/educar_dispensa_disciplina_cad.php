@@ -311,32 +311,32 @@ return new class extends clsCadastro
 
     public function montaEtapas()
     {
-        //Pega matricula para pegar curso, escola e ano
+        // Pega matricula para pegar curso, escola e ano
         $objMatricula = new clsPmieducarMatricula;
         $dadosMatricula = $objMatricula->lista($this->ref_cod_matricula);
-        //Pega curso para pegar padrao ano escolar
+        // Pega curso para pegar padrao ano escolar
         $objCurso = new clsPmieducarCurso;
         $dadosCurso = $objCurso->lista($dadosMatricula[0]['ref_cod_curso']);
         $padraoAnoEscolar = $dadosCurso[0]['padrao_ano_escolar'];
-        //Pega escola e ano para pegar as etapas em ano letivo modulo
+        // Pega escola e ano para pegar as etapas em ano letivo modulo
         $escolaId = $dadosMatricula[0]['ref_ref_cod_escola'];
         $ano = $dadosMatricula[0]['ano'];
-        //Pega dados da enturmação atual
+        // Pega dados da enturmação atual
         $objMatriculaTurma = new clsPmieducarMatriculaTurma;
         $seqMatriculaTurma = $objMatriculaTurma->getUltimaEnturmacao($this->ref_cod_matricula);
         $dadosMatriculaTurma = $objMatriculaTurma->lista(int_ref_cod_matricula: $this->ref_cod_matricula, int_sequencial: $seqMatriculaTurma);
-        //Pega etapas definidas na escola
+        // Pega etapas definidas na escola
         $dadosAnoLetivoMod = LegacyAcademicYearStage::query()->whereSchool($escolaId)->whereYearEq($ano)->get();
-        //Pega etapas definida na turma
+        // Pega etapas definida na turma
         $objTurmaModulo = new clsPmieducarTurmaModulo;
         $dadosTurmaModulo = $objTurmaModulo->lista($dadosMatriculaTurma[0]['ref_cod_turma']);
-        //Define de onde as etapas serão pegas
+        // Define de onde as etapas serão pegas
         if ($padraoAnoEscolar == 1) {
             $dadosEtapa = $dadosAnoLetivoMod;
         } else {
             $dadosEtapa = $dadosTurmaModulo;
         }
-        //Pega nome do modulo
+        // Pega nome do modulo
         $nomeModulo = LegacyStageType::find($dadosEtapa[0]['ref_cod_modulo'])->nm_tipo;
         $conteudoHtml = '';
 

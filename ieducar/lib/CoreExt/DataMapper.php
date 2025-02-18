@@ -351,7 +351,7 @@ abstract class CoreExt_DataMapper
     {
         $sql = 'INSERT INTO %s (%s) VALUES (%s)';
 
-        //Remove campos null
+        // Remove campos null
         $data = $this->_cleanNullValuesToSave($instance);
 
         // Pega apenas os valores do array

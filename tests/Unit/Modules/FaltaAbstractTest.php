@@ -9,7 +9,7 @@ class FaltaAbstractTest extends UnitBaseTest
         $this->_entity = new Avaliacao_Model_FaltaAbstractStub;
     }
 
-    public function testEntityValidators()
+    public function test_entity_validators()
     {
         $validators = $this->_entity->getValidatorCollection();
         $this->assertInstanceOf('CoreExt_Validate_Numeric', $validators['quantidade']);

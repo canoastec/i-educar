@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class ClsCamposTest extends TestCase
 {
-    public function testShowFileField()
+    public function test_show_file_field()
     {
         $clsCampos = new clsCampos;
 

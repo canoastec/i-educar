@@ -447,7 +447,7 @@ class clsPmieducarQuadroHorarioHorarios extends Model
             $whereAnd = ' AND ';
         }
 
-        //Só trás horários do ultimo quadro de horários
+        // Só trás horários do ultimo quadro de horários
         if ($bool_filtrar_ano) {
             $filtros .= "{$whereAnd} EXISTS (SELECT qh.ano
                                          FROM pmieducar.quadro_horario qh

@@ -197,15 +197,15 @@ return new class extends clsCadastro
 
     protected function getAlunosSemInep($escolaId, $cursoId, $serieId, $turmaId, $ano)
     {
-        //Pega todas as matriculas
+        // Pega todas as matriculas
         $objMatricula = new clsPmieducarMatriculaTurma;
         $objMatricula->setOrderby(strNomeCampo: 'nome');
         $lstMatricula = $objMatricula->lista4(escolaId: $escolaId, cursoId: $cursoId, serieId: $serieId, turmaId: $turmaId, ano: $ano);
-        //Verifica o parametro na série pra exigir inep
+        // Verifica o parametro na série pra exigir inep
         $objSerie = new clsPmieducarSerie(cod_serie: $serieId);
         $serieDet = $objSerie->detalhe();
         $exigeInep = $serieDet['exigir_inep'];
-        //Retorna alunos sem inep
+        // Retorna alunos sem inep
         $alunosSemInep = [];
         $objAluno = new clsPmieducarAluno;
 

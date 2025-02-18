@@ -683,7 +683,7 @@ return new class extends clsCadastro
             'resources' => $tiposNacionalidade,
             'required' => $obrigarCamposCenso,
             'inline' => true,
-            'value' => $this->retorno === 'Novo' ? Nacionalidade::BRASILEIRA : $this->tipo_nacionalidade, //Quando for novo registro, preenche com o valor default brasileiro
+            'value' => $this->retorno === 'Novo' ? Nacionalidade::BRASILEIRA : $this->tipo_nacionalidade, // Quando for novo registro, preenche com o valor default brasileiro
         ];
 
         $this->inputsHelper()->select(attrName: 'tipo_nacionalidade', inputOptions: $options);
@@ -707,7 +707,7 @@ return new class extends clsCadastro
 
         $this->inputsHelper()->simpleSearchPaisSemBrasil(attrName: 'nome', inputOptions: $options, helperOptions: $helperOptions);
 
-        //Falecido
+        // Falecido
         $options = [
             'label' => 'Falecido?',
             'required' => false,
@@ -952,7 +952,7 @@ return new class extends clsCadastro
         $parentId = $this->{$parentType . '_id'};
 
         // mostra uma dica nos casos em que foi informado apenas o nome dos pais,
-        //pela antiga interface do cadastro de alunos.
+        // pela antiga interface do cadastro de alunos.
 
         if (!$parentId && $this->_aluno['nm_' . $parentType]) {
             $nome = $this->_aluno['nm_' . $parentType];
@@ -1165,7 +1165,7 @@ return new class extends clsCadastro
         return true;
     }
 
-    //envia foto e salva caminha no banco
+    // envia foto e salva caminha no banco
     protected function savePhoto($id)
     {
         $caminhoFoto = Asset::get('intranet/imagens/user-perfil.png');
@@ -1404,7 +1404,7 @@ return new class extends clsCadastro
 
         if ($corRaca == 0) {
             return false;
-        } //Quando não tiver cor/raça selecionado não faz update
+        } // Quando não tiver cor/raça selecionado não faz update
 
         $raca = new clsCadastroFisicaRaca(ref_idpes: $pessoaId, ref_cod_raca: $corRaca);
 

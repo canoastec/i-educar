@@ -211,6 +211,8 @@ class LegacyCreateTestsCommand extends Command
             'index.php',
             'copia_vinculos_servidores_cad.php',
             'educar_configuracoes_gerais.php',
+            'educar_comunicados_escolares_det.php',
+            'educar_comunicados_escolares_lst.php',
         ];
     }
 

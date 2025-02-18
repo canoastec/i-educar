@@ -14,7 +14,7 @@ class AvaliacaoServiceSituacaoTest extends Avaliacao_Service_TestCommon
 {
     use DatabaseTransactions;
 
-    public function testSituacaoAluno()
+    public function test_situacao_aluno()
     {
         $nota = new \stdClass;
         $falta = new \stdClass;
@@ -67,7 +67,7 @@ class AvaliacaoServiceSituacaoTest extends Avaliacao_Service_TestCommon
 
         // Possibilidades do retorno do objeto
         $expected = [
-            1 => [  //Aprova Andame Retido Recupe
+            1 => [  // Aprova Andame Retido Recupe
                 1 => [false, true, false, false],
                 2 => [true, false, false, false],
                 3 => [true, false, true, false],

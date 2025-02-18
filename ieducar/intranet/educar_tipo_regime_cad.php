@@ -39,9 +39,9 @@ return new class extends clsCadastro
                     $this->$campo = $val;
                 }
 
-                //** verificao de permissao para exclusao
+                // ** verificao de permissao para exclusao
                 $this->fexcluir = $obj_permissoes->permissao_excluir(568, $this->pessoa_logada, 3);
-                //**
+                // **
                 $retorno = 'Editar';
             }
         }

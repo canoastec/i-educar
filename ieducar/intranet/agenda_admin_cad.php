@@ -102,20 +102,20 @@ return new class extends clsCadastro
                 [$nome] = $objPessoa->queryRapida($idpes, 'nome');
                 $this->campoTextoInv(nome: "editor{$i}", campo: 'Editores', valor: $nome, tamanhovisivel: 50, tamanhomaximo: 255, obrigatorio: false, expressao: false, duplo: false, descricao: false, descricao2: "<a href=\"agenda_admin_cad.php?cod_agenda={$this->cod_agenda}&edit_rem=$idpes\">remover</a>");
             }
-            //$this->campoListaPesq( "novo_editor", "Novo Editor", $lista, 0, "pesquisa_funcionario.php", false, false, false, "&nbsp; &nbsp; &nbsp; <a href=\"javascript:var idpes = document.getElementById('novo_editor').value; if( idpes != 0 ) { document.location.href='agenda_admin_cad.php?cod_agenda={$this->cod_agenda}&edit_add=' + idpes; } else { alert( 'Selecione a pessoa clicando na imagem da Lupa' ); }\">Adicionar</a>" );
+            // $this->campoListaPesq( "novo_editor", "Novo Editor", $lista, 0, "pesquisa_funcionario.php", false, false, false, "&nbsp; &nbsp; &nbsp; <a href=\"javascript:var idpes = document.getElementById('novo_editor').value; if( idpes != 0 ) { document.location.href='agenda_admin_cad.php?cod_agenda={$this->cod_agenda}&edit_add=' + idpes; } else { alert( 'Selecione a pessoa clicando na imagem da Lupa' ); }\">Adicionar</a>" );
             $parametros = new clsParametrosPesquisas;
             $parametros->setSubmit(submit: 1);
             $parametros->adicionaCampoSelect(campo_nome: 'novo_editor', campo_indice: 'ref_cod_pessoa_fj', campo_valor: 'nome');
             $this->campoListaPesq(nome: 'novo_editor', campo: 'Novo Editor', valor: $lista, default: 0, caminho: 'pesquisa_funcionario_lst.php', acao: '', duplo: false, descricao: '', descricao2: '', flag: null, pag_cadastro: null, disabled: '', div: false, serializedcampos: $parametros->serializaCampos());
-            //$this->campoLista( "edit_add", "Editores", $lista, "", "", false, "", "<img id='lupa' src=\"imagens/lupa.png\" border=\"0\" onclick=\"showExpansivel( 500,500, '<iframe name=\'miolo\' id=\'miolo\' frameborder=\'0\' height=\'100%\' width=\'500\' marginheight=\'0\' marginwidth=\'0\' src=\'pesquisa_funcionario_lst.php?campos=$serializedcampos\'></iframe>' );\">", false, true );
+            // $this->campoLista( "edit_add", "Editores", $lista, "", "", false, "", "<img id='lupa' src=\"imagens/lupa.png\" border=\"0\" onclick=\"showExpansivel( 500,500, '<iframe name=\'miolo\' id=\'miolo\' frameborder=\'0\' height=\'100%\' width=\'500\' marginheight=\'0\' marginwidth=\'0\' src=\'pesquisa_funcionario_lst.php?campos=$serializedcampos\'></iframe>' );\">", false, true );
             unset($campos);
         } else {
-            //$this->campoListaPesq( "dono", "Dono da agenda", $lista, 0, "pesquisa_funcionario.php" );
+            // $this->campoListaPesq( "dono", "Dono da agenda", $lista, 0, "pesquisa_funcionario.php" );
             $parametros = new clsParametrosPesquisas;
             $parametros->setSubmit(submit: 0);
             $parametros->adicionaCampoSelect(campo_nome: 'dono', campo_indice: 'ref_cod_pessoa_fj', campo_valor: 'nome');
             $this->campoListaPesq(nome: 'dono', campo: 'Dono da agenda', valor: $lista, default: 0, caminho: 'pesquisa_funcionario_lst.php', acao: '', duplo: false, descricao: '', descricao2: '', flag: null, pag_cadastro: null, disabled: '', div: false, serializedcampos: $parametros->serializaCampos());
-            //$this->campoLista( "dono", "Dono da agenda", $lista, "", "", false, "", "<img id='lupa' src=\"imagens/lupa.png\" border=\"0\" onclick=\"showExpansivel( 500,500, '<iframe name=\'miolo\' id=\'miolo\' frameborder=\'0\' height=\'100%\' width=\'500\' marginheight=\'0\' marginwidth=\'0\' src=\'pesquisa_funcionario_lst.php?campos=$serializedcampos\'></iframe>' );\">", false, true );
+            // $this->campoLista( "dono", "Dono da agenda", $lista, "", "", false, "", "<img id='lupa' src=\"imagens/lupa.png\" border=\"0\" onclick=\"showExpansivel( 500,500, '<iframe name=\'miolo\' id=\'miolo\' frameborder=\'0\' height=\'100%\' width=\'500\' marginheight=\'0\' marginwidth=\'0\' src=\'pesquisa_funcionario_lst.php?campos=$serializedcampos\'></iframe>' );\">", false, true );
         }
     }
 

@@ -106,6 +106,10 @@ class EditController extends Core_Controller_Page_EditController
             'label' => 'Aprovar alunos pela frequencia após exame',
             'help' => 'Alunos que não atingirem a média mínima no exame final, ainda serão aprovados caso tenha frequência mínima',
         ],
+        'reprovarAutomaticamenteAposDependencias' => [
+            'label' => 'Quantidade de disciplinas "Em exame" para reprovação automática',
+            'help' => 'Alunos serão reprovados automaticamente ao atingirem o número de disciplinas "Em exame" informado. Preencha com 0 caso não utilize.',
+        ],
         'regraDiferenciada' => [
             'label' => 'Regra inclusiva',
             'help' => 'Regra de avaliação inclusiva para alunos com deficiência',
@@ -731,6 +735,16 @@ class EditController extends Core_Controller_Page_EditController
             $this->_getHelp('aprovarPelaFrequenciaAposExame')
         );
 
+        $this->campoNumero(
+            'reprovarAutomaticamenteAposDependencias',
+            $this->_getLabel('reprovarAutomaticamenteAposDependencias'),
+            $this->getEntity()->reprovarAutomaticamenteAposDependencias,
+            3,
+            3,
+            true,
+            $this->_getHelp('reprovarAutomaticamenteAposDependencias')
+        );
+
         $regras = $this->getDataMapper()->findAll(
             ['id', 'nome'],
             [],
@@ -952,37 +966,37 @@ class EditController extends Core_Controller_Page_EditController
             $entity = $this->getEntity();
         }
 
-        //fixup for checkbox nota geral
+        // fixup for checkbox nota geral
         if (!isset($data['notaGeralPorEtapa'])) {
             $data['notaGeralPorEtapa'] = '0';
         }
 
-        //fixup for checkbox
+        // fixup for checkbox
         if (!isset($data['definirComponentePorEtapa'])) {
             $data['definirComponentePorEtapa'] = '0';
         }
 
-        //fixup for checkbox
+        // fixup for checkbox
         if (!isset($data['desconsiderarLancamentoFrequencia'])) {
             $data['desconsiderarLancamentoFrequencia'] = '0';
         }
 
-        //fixup for checkbox
+        // fixup for checkbox
         if (!isset($data['reprovacaoAutomatica'])) {
             $data['reprovacaoAutomatica'] = '0';
         }
 
-        //fixup for checkbox
+        // fixup for checkbox
         if (!isset($data['aprovaMediaDisciplina'])) {
             $data['aprovaMediaDisciplina'] = '0';
         }
 
-        //fixup for checkbox
+        // fixup for checkbox
         if (!isset($data['calculaMediaRecParalela'])) {
             $data['calculaMediaRecParalela'] = '0';
         }
 
-        //fixup for checkbox
+        // fixup for checkbox
         if (!isset($data['aprovarPelaFrequenciaAposExame'])) {
             $data['aprovarPelaFrequenciaAposExame'] = '0';
         }

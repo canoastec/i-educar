@@ -285,7 +285,7 @@ return new class extends clsCadastro
                     DB::rollback();
                 }
             }
-            //Marca a busca ativa como transferência
+            // Marca a busca ativa como transferência
             LegacyActiveLooking::query()
                 ->where('ref_cod_matricula', $this->ref_cod_matricula)
                 ->where('resultado_busca_ativa', ActiveLooking::ACTIVE_LOOKING_IN_PROGRESS_RESULT)
@@ -323,7 +323,7 @@ return new class extends clsCadastro
                 $this->cod_transferencia_solicitacao = $det_transferencia['cod_transferencia_solicitacao'];
                 $obj = new clsPmieducarTransferenciaSolicitacao(cod_transferencia_solicitacao: $this->cod_transferencia_solicitacao, ref_cod_transferencia_tipo: null, ref_usuario_exc: $this->pessoa_logada, ref_usuario_cad: null, ref_cod_matricula_entrada: null, ref_cod_matricula_saida: null, observacao: null, data_cadastro: null, data_exclusao: null, ativo: 0);
                 $excluiu = $obj->excluir();
-                //Desfaz a busca ativa com transferencia
+                // Desfaz a busca ativa com transferencia
                 LegacyActiveLooking::query()
                     ->where('ref_cod_matricula', $this->ref_cod_matricula)
                     ->where('resultado_busca_ativa', ActiveLooking::ACTIVE_LOOKING_TRANSFER_RESULT)
