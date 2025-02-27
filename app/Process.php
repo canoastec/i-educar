@@ -77,4 +77,10 @@ class Process
     public const ACTIVE_LOOKING = 9998921;
 
     public const ON_BOARDING = 1050;
+
+    public const ANNOUNCEMENT = 9999114;
+
+    public const BLOCK_ENROLLMENT = 9999115;
+
+    public const SCHOOLCLASS_PERIOD = 9999116;
 }

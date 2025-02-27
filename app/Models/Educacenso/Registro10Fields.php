@@ -157,6 +157,11 @@ class Registro10Fields implements RegistroEducacenso
     /**
      * @var string
      */
+    public $dependenciaAreaHorta;
+
+    /**
+     * @var string
+     */
     public $dependenciaLaboratorioInformatica;
 
     /**
@@ -759,6 +764,8 @@ class Registro10Fields implements RegistroEducacenso
 
     public $recursoSinalizacaoSonora;
 
+    public $recursoSinalizacaoLuminosa;
+
     public $recursoSinalizacaoTatil;
 
     public $recursoSinalizacaoVisual;
@@ -811,6 +818,8 @@ class Registro10Fields implements RegistroEducacenso
 
     public $instrumentosPedagogicosEquipamentosSom;
 
+    public $instrumentosPedagogicosAreaHorta;
+
     public $instrumentosPedagogicosInstrumentos;
 
     public $instrumentosPedagogicosJogos;
@@ -828,6 +837,10 @@ class Registro10Fields implements RegistroEducacenso
     public $instrumentosPedagogicosEducacaoEtnicoRacial;
 
     public $instrumentosPedagogicosEducacaoCampo;
+
+    public $instrumentosPedagogicosEducacaoQuilombola;
+
+    public $instrumentosPedagogicosEducacaoEspecial;
 
     public $instrumentosPedagogicosNenhum;
 

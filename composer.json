@@ -3,7 +3,7 @@
     "description": "Software livre de gestão escolar",
     "type": "project",
     "license": "GPL-2.0-or-later",
-    "version": "2.8.0",
+    "version": "2.9.0",
     "keywords": [
         "Portábilis",
         "i-Educar"
@@ -17,7 +17,7 @@
     ],
     "homepage": "https://github.com/portabilis/i-educar",
     "require": {
-        "php": "^8.2",
+        "php": ">=8.3",
         "ext-gd": "*",
         "ext-json": "*",
         "ext-pdo": "*",
@@ -27,14 +27,15 @@
         "aws/aws-sdk-php-laravel": "^3.7",
         "composer/semver": "^3.2",
         "dex/composer-plug-and-play": "^0.20",
-        "dex/frontier": "^0.9.0",
+        "dex/frontier": "^0.15.0",
         "google/recaptcha": "^1.2",
         "guzzlehttp/guzzle": "^7.3",
         "honeybadger-io/honeybadger-laravel": "^4.0",
         "intervention/image": "^2.6",
-        "laravel/framework": "^11.0",
+        "laravel/framework": "^11.15",
         "laravel/horizon": "^5.15",
         "laravel/sanctum": "^4.0",
+        "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.6",
         "laravel/ui": "^4.2",
         "league/csv": "^9.7",
@@ -45,6 +46,7 @@
         "phpoffice/phpspreadsheet": "^1.8",
         "predis/predis": "^1.1",
         "psr/simple-cache": "^2.0",
+        "socialiteproviders/laravelpassport": "^4.3",
         "staudenmeir/laravel-adjacency-list": "^1.0",
         "symfony/http-client": "^6.0",
         "symfony/mailgun-mailer": "^6.0"

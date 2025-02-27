@@ -22,9 +22,9 @@ class SchoolClassController extends Controller
     public function store(Request $request)
     {
         $response = ['msg' => 'Edição efetuada com sucesso.'];
-        $schoolClassService = new SchoolClassService();
-        $schoolClassInepService = new SchoolClassInepService();
-        $schoolClassStageService = new SchoolClassStageService();
+        $schoolClassService = new SchoolClassService;
+        $schoolClassInepService = new SchoolClassInepService;
+        $schoolClassStageService = new SchoolClassStageService;
 
         $codModulo = $request->get('ref_cod_modulo');
         $diasLetivos = $request->get('dias_letivos');
@@ -72,7 +72,7 @@ class SchoolClassController extends Controller
                         'boletim_diferenciado_id' => $multBoletimDiferenciadoId[$key],
                     ];
                 }
-                $multiGradesService = new MultiGradesService();
+                $multiGradesService = new MultiGradesService;
                 $multiGradesService->storeSchoolClassGrade($schoolClass, $schoolClassGrades);
                 $this->deleteDisciplineSchoolClass($codTurma);
             } else {
@@ -87,12 +87,26 @@ class SchoolClassController extends Controller
                     $etapasUtilizadas,
                     $etapasEspecificas
                 );
-                $multiGradesService = new MultiGradesService();
+                $multiGradesService = new MultiGradesService;
                 $multiGradesService->deleteAllGradesOfSchoolClass($schoolClass);
             }
 
             if ($codigoInepEducacenso) {
-                $schoolClassInepService->store($codTurma, $codigoInepEducacenso);
+                $turnoId = null;
+                if ($request->integer('turma_turno_id') === Period::FULLTIME) {
+                    $turnoId = Period::FULLTIME;
+                } else {
+                    if ($schoolClassService->hasStudentsPartials($codTurma)) {
+                        DB::rollBack();
+
+                        return response()->json([
+                            'msg' => 'Esta turma possui turno integral e contém os códigos INEP dos turnos parciais
+                            informados. Para atender as regras de importação do censo, não é possível
+                            alterar o turno da turma.',
+                        ], 422);
+                    }
+                }
+                $schoolClassInepService->store($codTurma, $codigoInepEducacenso, $turnoId);
             } else {
                 $schoolClassInepService->delete($codTurma);
             }
@@ -149,7 +163,7 @@ class SchoolClassController extends Controller
     public function delete(Request $request)
     {
         $response = ['msg' => 'Exclusão efetuada com sucesso.'];
-        $schoolClassService = new SchoolClassService();
+        $schoolClassService = new SchoolClassService;
 
         try {
             DB::beginTransaction();
@@ -174,7 +188,7 @@ class SchoolClassController extends Controller
     private function prepareSchoolClassDataToStore(Request $request)
     {
         $params = $request->all();
-        $legacySchoolClass = new LegacySchoolClass();
+        $legacySchoolClass = new LegacySchoolClass;
 
         if (!empty($params['cod_turma'])) {
             $legacySchoolClass = LegacySchoolClass::find($params['cod_turma']);
@@ -269,7 +283,7 @@ class SchoolClassController extends Controller
         $this->deleteDisciplineSchoolClass($codTurma);
 
         if ($componentes) {
-            $mapper = new ComponenteCurricular_Model_TurmaDataMapper();
+            $mapper = new ComponenteCurricular_Model_TurmaDataMapper;
 
             $componentesTurma = [];
 

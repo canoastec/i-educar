@@ -2,7 +2,6 @@
 
 namespace App\Services\SchoolClass;
 
-use App\Models\LegacyEnrollment;
 use App\Models\LegacyGrade;
 use App\Models\LegacySchoolClass;
 use App\Models\LegacySchoolClassStage;
@@ -12,7 +11,9 @@ use App\Rules\CanDeleteTurma;
 use App\Rules\CheckAlternativeReportCardExists;
 use App\Rules\CheckMandatoryCensoFields;
 use App\Rules\CheckSchoolClassExistsByName;
+use Carbon\Carbon;
 use iEducar\Modules\SchoolClass\Period;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -88,8 +89,8 @@ class SchoolClassService
     {
         return LegacySchoolClassStage::query()
             ->select([
-                DB::raw('(SELECT min(data_inicio) FROM turma_modulo tm WHERE tm.ref_cod_turma = turma_modulo.ref_cod_turma) as start_date'),
-                DB::raw('(SELECT max(data_fim) FROM turma_modulo tm WHERE tm.ref_cod_turma = turma_modulo.ref_cod_turma) as end_date'),
+                DB::raw('(SELECT min(data_inicio) FROM pmieducar.turma_modulo tm WHERE tm.ref_cod_turma = turma_modulo.ref_cod_turma) as start_date'),
+                DB::raw('(SELECT max(data_fim) FROM pmieducar.turma_modulo tm WHERE tm.ref_cod_turma = turma_modulo.ref_cod_turma) as end_date'),
             ])
             ->distinct()
             ->whereIn('ref_cod_turma', $schoolClassId)
@@ -116,7 +117,7 @@ class SchoolClassService
             ['schoolClass' => $schoolClass],
             [
                 'schoolClass' => [
-                    new CanDeleteTurma(),
+                    new CanDeleteTurma,
                 ],
             ]
         )->validate();
@@ -136,11 +137,11 @@ class SchoolClassService
             ['schoolClass' => $schoolClass],
             [
                 'schoolClass' => [
-                    new CanCreateSchoolClass(),
-                    new CanAlterSchoolClassGrade(),
-                    new CheckMandatoryCensoFields(),
-                    new CheckSchoolClassExistsByName(),
-                    new CheckAlternativeReportCardExists(),
+                    new CanCreateSchoolClass,
+                    new CanAlterSchoolClassGrade,
+                    new CheckMandatoryCensoFields,
+                    new CheckSchoolClassExistsByName,
+                    new CheckAlternativeReportCardExists,
                 ],
             ]
         )->validate();
@@ -148,9 +149,11 @@ class SchoolClassService
 
     public function hasStudentsPartials(int $schoolClassId)
     {
-        $studentPeriods = $this->getStudentsPeriods($schoolClassId);
+        return Cache::remember('hasStudentsPartials_' . $schoolClassId, Carbon::now()->addMinutes(5), function () use ($schoolClassId) {
+            $studentPeriods = $this->getStudentsPeriods($schoolClassId);
 
-        return $studentPeriods->isNotEmpty() && ($studentPeriods->count() > 1 || !$studentPeriods->contains(Period::FULLTIME));
+            return $studentPeriods->isNotEmpty() && ($studentPeriods->count() > 1 || !$studentPeriods->contains(Period::FULLTIME));
+        });
     }
 
     /**
@@ -160,13 +163,10 @@ class SchoolClassService
      */
     public function getStudentsPeriods(int $schoolClassId)
     {
-        return LegacyEnrollment::query()
-            ->active()
-            ->whereHas('registration', function ($q) {
-                $q->active();
-            })
-            ->whereSchoolClass($schoolClassId)
-            ->pluck('turno_id')
+        return DB::table('public.educacenso_record60')
+            ->where('codigoTurma', $schoolClassId)
+            ->get()
+            ->pluck('turnoId')
             ->map(fn ($periodId) => $periodId ?? Period::FULLTIME)
             ->unique()
             ->sortBy(function ($periodId) {

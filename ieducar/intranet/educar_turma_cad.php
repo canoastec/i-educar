@@ -176,10 +176,10 @@ return new class extends clsCadastro
 
         $this->cod_turma = $_GET['cod_turma'];
 
-        $obj_permissoes = new clsPermissoes();
+        $obj_permissoes = new clsPermissoes;
         $obj_permissoes->permissao_cadastra(int_processo_ap: 586, int_idpes_usuario: $this->pessoa_logada, int_soma_nivel_acesso: 7, str_pagina_redirecionar: 'educar_turma_lst.php');
 
-        //Define que esta tela executa suas ações atraves de requisições ajax
+        // Define que esta tela executa suas ações atraves de requisições ajax
         $this->acao_executa_submit_ajax = true;
 
         if (is_numeric(value: $this->cod_turma)) {
@@ -191,10 +191,11 @@ return new class extends clsCadastro
             $det_ser = $obj_ser->detalhe();
 
             $this->visivel = (int) $registro['visivel'];
+            $this->turma_turno_id = $registro['turma_turno_id'];
 
             $regra_avaliacao_id = $det_ser['regra_avaliacao_id'];
             if ($regra_avaliacao_id) {
-                $regra_avaliacao_mapper = new RegraAvaliacao_Model_RegraDataMapper();
+                $regra_avaliacao_mapper = new RegraAvaliacao_Model_RegraDataMapper;
                 $regra_avaliacao = $regra_avaliacao_mapper->find(pkey: $regra_avaliacao_id);
 
                 $this->definirComponentePorEtapa = ($regra_avaliacao->definirComponentePorEtapa == 1);
@@ -217,12 +218,16 @@ return new class extends clsCadastro
                 $this->codigo_inep_educacenso = $inep;
             }
 
-            $service = new SchoolClassService();
-            $this->hasStudentsPartials = $service->hasStudentsPartials($this->cod_turma);
+            if ($this->turma_turno_id === Period::FULLTIME) {
 
-            if ($this->hasStudentsPartials) {
-                $this->codigo_inep_matutino = $obj_turma->getInepTurno(Period::MORNING);
-                $this->codigo_inep_vespertino = $obj_turma->getInepTurno(Period::AFTERNOON);
+                $service = new SchoolClassService;
+                $this->hasStudentsPartials = $service->hasStudentsPartials($this->cod_turma);
+
+                if ($this->hasStudentsPartials) {
+                    $this->codigo_inep_educacenso = $obj_turma->getInepTurno(Period::FULLTIME);
+                    $this->codigo_inep_matutino = $obj_turma->getInepTurno(Period::MORNING);
+                    $this->codigo_inep_vespertino = $obj_turma->getInepTurno(Period::AFTERNOON);
+                }
             }
 
             if ($registro) {
@@ -316,7 +321,7 @@ return new class extends clsCadastro
         if (!isset($this->cod_turma)) {
             $bloqueia = false;
         } elseif (is_numeric(value: $this->cod_turma)) {
-            $obj_matriculas_turma = new clsPmieducarMatriculaTurma();
+            $obj_matriculas_turma = new clsPmieducarMatriculaTurma;
             $obj_matriculas_turma->setOrderby(strNomeCampo: 'nome_aluno');
             $lst_matriculas_turma = $obj_matriculas_turma->lista(
                 int_ref_cod_turma: $this->cod_turma,
@@ -411,7 +416,7 @@ return new class extends clsCadastro
 
         unset($opcoes);
         if (!is_null(value: $this->ref_cod_serie)) {
-            $anoEscolar = new ComponenteCurricular_Model_AnoEscolarDataMapper();
+            $anoEscolar = new ComponenteCurricular_Model_AnoEscolarDataMapper;
             $opcaoPadrao = [null => 'Selecione'];
             $listaComponentes = $anoEscolar->findComponentePorSerie(serieId: $this->ref_cod_serie);
             if (!empty($listaComponentes)) {
@@ -500,7 +505,7 @@ return new class extends clsCadastro
         $registros = [];
 
         if (is_numeric(value: $this->cod_turma)) {
-            $objTurma = new clsPmieducarTurmaModulo();
+            $objTurma = new clsPmieducarTurmaModulo;
             $objTurma->setOrderBy(strNomeCampo: 'sequencial ASC');
 
             $registros = $objTurma->lista(int_ref_cod_turma: $this->cod_turma);
@@ -815,7 +820,7 @@ return new class extends clsCadastro
             }
 
             // Instancia o mapper de turma
-            $componenteTurmaMapper = new ComponenteCurricular_Model_TurmaDataMapper();
+            $componenteTurmaMapper = new ComponenteCurricular_Model_TurmaDataMapper;
             $componentesTurma = [];
 
             if (isset($this->cod_turma) && is_numeric(value: $this->cod_turma)) {
@@ -944,7 +949,7 @@ return new class extends clsCadastro
 
     protected function getEscolaSerie($escolaId, $serieId)
     {
-        $escolaSerie = new clsPmieducarEscolaSerie();
+        $escolaSerie = new clsPmieducarEscolaSerie;
         $escolaSerie->ref_cod_escola = $escolaId;
         $escolaSerie->ref_cod_serie = $serieId;
 

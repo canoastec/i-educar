@@ -4,13 +4,13 @@ use App\Models\City;
 use App\Models\State;
 use Illuminate\Database\Migrations\Migration;
 
-return new class() extends Migration
+return new class extends Migration
 {
     public function up()
     {
-        //Comparação realizada com o seeder original
+        // Comparação realizada com o seeder original
 
-        //Atualização. Não possuem ibge_code e os nomes estão diferentes.
+        // Atualização. Não possuem ibge_code e os nomes estão diferentes.
         $this->createOrUpdate('MA', 'Pindaré-Mirim', '2108504', 'Pindare Mirim');
         $this->createOrUpdate('PI', 'Aroeiras do Itaim', '2200954', 'Aroeira do Itaim');
         $this->createOrUpdate('PE', 'Belém do São Francisco', '2601607', 'Belem de Sao Francisco');
@@ -24,7 +24,7 @@ return new class() extends Migration
         $this->createOrUpdate('PR', 'Bela Vista da Caroba', '4102752', 'Bela Vista do Caroba');
         $this->createOrUpdate('MS', 'Batayporã', '5002001', 'Bataipora');
 
-        //Novos
+        // Novos
         $this->createOrUpdate('AM', 'Itacoatiara', '1301902');
         $this->createOrUpdate('BA', 'Barro Preto', '2903300');
         $this->createOrUpdate('CE', 'Itapajé', '2306306');
@@ -49,13 +49,13 @@ return new class() extends Migration
 
     public function createOrUpdate($state_abbreviation, $name, $ibge_code, $old_name = null)
     {
-        //verifica se o codigo ibge já existe
-        if (City::where('ibge_code', $ibge_code)->exists()) {
+        // verifica se o codigo ibge já existe
+        if (City::query()->where('ibge_code', $ibge_code)->exists()) {
             return;
         }
 
-        //atualiza ibge_code e nome, se a cidade estiver cadastrada sem o ibge_code
-        $city = City::whereRaw('unaccent(name) ILIKE unaccent(?)', $old_name ?? $name)->whereHas('state', fn ($q) => $q->where('abbreviation', $state_abbreviation))->whereNull('ibge_code')->first();
+        // atualiza ibge_code e nome, se a cidade estiver cadastrada sem o ibge_code
+        $city = City::query()->whereRaw('unaccent(name) ILIKE unaccent(?)', $old_name ?? $name)->whereHas('state', fn ($q) => $q->where('abbreviation', $state_abbreviation))->whereNull('ibge_code')->first();
 
         if ($city) {
             $city->update(['ibge_code' => $ibge_code, 'name' => $name]);
@@ -63,13 +63,11 @@ return new class() extends Migration
             return;
         }
 
-        //cria a cidade
-        if ($state_id = State::where('abbreviation', $state_abbreviation)->value('id')) {
+        // cria a cidade
+        if ($state_id = State::query()->where('abbreviation', $state_abbreviation)->value('id')) {
             City::create(compact('state_id', 'name', 'ibge_code'));
         }
     }
 
-    public function down()
-    {
-    }
+    public function down() {}
 };
