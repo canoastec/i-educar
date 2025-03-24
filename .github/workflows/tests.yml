@@ -18,9 +18,6 @@ jobs:
     if: '! github.event.pull_request.draft'
 
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php-version: [ 8.3, 8.4 ]
     env:
       APP_URL: http://localhost:8000
       APP_ENV: testing
@@ -57,7 +54,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           extensions: bcmath, gd, pdo, pcntl, pdo_pgsql, pgsql, zip
         env:
           update: true
