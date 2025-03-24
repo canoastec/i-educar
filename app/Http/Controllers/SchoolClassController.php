@@ -92,7 +92,21 @@ class SchoolClassController extends Controller
             }
 
             if ($codigoInepEducacenso) {
-                $schoolClassInepService->store($codTurma, $codigoInepEducacenso);
+                $turnoId = null;
+                if ($request->integer('turma_turno_id') === Period::FULLTIME) {
+                    $turnoId = Period::FULLTIME;
+                } else {
+                    if ($schoolClassService->hasStudentsPartials($codTurma)) {
+                        DB::rollBack();
+
+                        return response()->json([
+                            'msg' => 'Esta turma possui turno integral e contém os códigos INEP dos turnos parciais
+                            informados. Para atender as regras de importação do censo, não é possível
+                            alterar o turno da turma.',
+                        ], 422);
+                    }
+                }
+                $schoolClassInepService->store($codTurma, $codigoInepEducacenso, $turnoId);
             } else {
                 $schoolClassInepService->delete($codTurma);
             }

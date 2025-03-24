@@ -1,5 +1,7 @@
 <?php
 
+use iEducar\Modules\Enrollments\Model\EnrollmentStatusFilter;
+
 return new class extends clsDetalhe
 {
     public $titulo;
@@ -139,27 +141,11 @@ return new class extends clsDetalhe
         if ($registro['observacao']) {
             $this->addDetalhe(['Observação', "{$registro['observacao']}"]);
         }
-        if ($registro['aprovado']) {
-            if ($registro['aprovado'] == 1) {
-                $registro['aprovado'] = 'Aprovado';
-            } elseif ($registro['aprovado'] == 2) {
-                $registro['aprovado'] = 'Reprovado';
-            } elseif ($registro['aprovado'] == 3) {
-                $registro['aprovado'] = 'Cursando';
-            } elseif ($registro['aprovado'] == 4) {
-                $registro['aprovado'] = 'Transferido';
-            } elseif ($registro['aprovado'] == 5) {
-                $registro['aprovado'] = 'Reclassificado';
-            } elseif ($registro['aprovado'] == 6) {
-                $registro['aprovado'] = 'Abandono';
-            } elseif ($registro['aprovado'] == 12) {
-                $registro['aprovado'] = 'Aprovado com dependência';
-            } elseif ($registro['aprovado'] == 13) {
-                $registro['aprovado'] = 'Aprovado pelo conselho';
-            } elseif ($registro['aprovado'] == 14) {
-                $registro['aprovado'] = 'Reprovado por faltas';
-            }
 
+        $situacoes = EnrollmentStatusFilter::getDescriptiveValues();
+
+        if (isset($registro['aprovado']) && array_key_exists($registro['aprovado'], $situacoes)) {
+            $registro['aprovado'] = $situacoes[$registro['aprovado']];
             $this->addDetalhe(['Situação', "{$registro['aprovado']}"]);
         }
 

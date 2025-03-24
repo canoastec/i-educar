@@ -945,7 +945,7 @@ class DiarioApiController extends ApiCoreController
                 } elseif ($enrollment->transferido) {
                     $matricula['situacao_deslocamento'] = 'Transferido';
                 } elseif ($enrollment->abandono) {
-                    $matricula['situacao_deslocamento'] = 'Abandono';
+                    $matricula['situacao_deslocamento'] = 'Deixou de Frequentar';
                 } elseif ($enrollment->reclassificado) {
                     $matricula['situacao_deslocamento'] = 'Reclassificado';
                 } elseif ($enrollment->falecido) {

@@ -35,6 +35,7 @@
         "laravel/framework": "^11.15",
         "laravel/horizon": "^5.15",
         "laravel/sanctum": "^4.0",
+        "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.6",
         "laravel/ui": "^4.2",
         "league/csv": "^9.7",
@@ -45,6 +46,7 @@
         "phpoffice/phpspreadsheet": "^1.8",
         "predis/predis": "^1.1",
         "psr/simple-cache": "^2.0",
+        "socialiteproviders/laravelpassport": "^4.3",
         "staudenmeir/laravel-adjacency-list": "^1.0",
         "symfony/http-client": "^6.0",
         "symfony/mailgun-mailer": "^6.0"

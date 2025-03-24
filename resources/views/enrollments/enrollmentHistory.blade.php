@@ -55,7 +55,7 @@
                     <th scope="col" class="formdktd" style="font-weight:bold;">Transferido</th>
                     <th scope="col" class="formdktd" style="font-weight:bold;">Remanejado</th>
                     <th scope="col" class="formdktd" style="font-weight:bold;">Reclassificado</th>
-                    <th scope="col" class="formdktd" style="font-weight:bold;">Abandono</th>
+                    <th scope="col" class="formdktd" style="font-weight:bold;">Deixou de Frequentar</th>
                     <th scope="col" class="formdktd" style="font-weight:bold;">Falecido</th>
                     <th scope="col" class="formdktd" style="font-weight:bold;">Usuário criou</th>
                     <th scope="col" class="formdktd" style="font-weight:bold;">Usuário editou</th>

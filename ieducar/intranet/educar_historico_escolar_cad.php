@@ -2,7 +2,9 @@
 
 use App\Models\Country;
 use App\Models\LegacyInstitution;
+use App\Models\RegistrationStatus;
 use App\Models\State;
+use iEducar\Modules\Enrollments\Model\EnrollmentStatusFilter;
 
 return new class extends clsCadastro
 {
@@ -237,18 +239,13 @@ return new class extends clsCadastro
         ];
         $this->inputsHelper()->textArea(attrName: 'observacao', inputOptions: $obs_options);
 
-        $opcoes = [
-            '' => 'Selecione',
-            1 => 'Aprovado',
-            2 => 'Reprovado',
-            3 => 'Cursando',
-            4 => 'Transferido',
-            5 => 'Reclassificado',
-            6 => 'Abandono',
-            12 => 'Aprovado com dependência',
-            13 => 'Aprovado pelo conselho',
-            14 => 'Reprovado por faltas',
-        ];
+        $opcoes = collect(EnrollmentStatusFilter::getDescriptiveValues())
+            ->prepend('Selecione', '')
+            ->except([
+                EnrollmentStatusFilter::EXCEPT_TRANSFERRED_OR_ABANDONMENT,  //Exceto Transferidos/Deixou de Frequentar'
+                EnrollmentStatusFilter::ALL, //Todas
+                RegistrationStatus::DECEASED  // Falecido
+            ]);
 
         $this->campoLista(nome: 'aprovado', campo: 'Situação', valor: $opcoes, default: $this->aprovado);
         $this->campoTexto(nome: 'registro', campo: 'Registro (arquivo)', valor: $this->registro, tamanhovisivel: 30, tamanhomaximo: 50);

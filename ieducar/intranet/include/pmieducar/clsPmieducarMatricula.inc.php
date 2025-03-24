@@ -119,7 +119,7 @@ class clsPmieducarMatricula extends Model
         $this->_schema = 'pmieducar.';
         $this->_tabela = $this->_schema . 'matricula';
 
-        $this->_campos_lista = $this->_todos_campos = 'm.cod_matricula, m.ref_cod_reserva_vaga, m.ref_ref_cod_escola, m.ref_ref_cod_serie, m.ref_usuario_exc, m.ref_usuario_cad, m.ref_cod_aluno, m.aprovado, m.data_cadastro, m.data_exclusao, m.ativo, m.ano, m.ultima_matricula, m.modulo,formando,descricao_reclassificacao,matricula_reclassificacao, m.ref_cod_curso,m.matricula_transferencia,m.semestre, m.data_matricula, m.data_cancel, m.ref_cod_abandono_tipo, m.turno_pre_matricula, m.dependencia, data_saida_escola, m.modalidade_ensino';
+        $this->_campos_lista = $this->_todos_campos = 'm.cod_matricula, m.ref_ref_cod_escola, m.ref_ref_cod_serie, m.ref_usuario_exc, m.ref_usuario_cad, m.ref_cod_aluno, m.aprovado, m.data_cadastro, m.data_exclusao, m.ativo, m.ano, m.ultima_matricula, m.modulo,formando,descricao_reclassificacao,matricula_reclassificacao, m.ref_cod_curso,m.matricula_transferencia,m.semestre, m.data_matricula, m.data_cancel, m.ref_cod_abandono_tipo, m.turno_pre_matricula, m.dependencia, data_saida_escola, m.modalidade_ensino';
 
         if (is_numeric($ref_usuario_exc)) {
             $this->ref_usuario_exc = $ref_usuario_exc;
@@ -127,10 +127,6 @@ class clsPmieducarMatricula extends Model
 
         if (is_numeric($ref_usuario_cad)) {
             $this->ref_usuario_cad = $ref_usuario_cad;
-        }
-
-        if (is_numeric($ref_cod_reserva_vaga)) {
-            $this->ref_cod_reserva_vaga = $ref_cod_reserva_vaga;
         }
 
         if (is_numeric($ref_cod_aluno)) {
@@ -229,12 +225,6 @@ class clsPmieducarMatricula extends Model
             $campos = '';
             $valores = '';
             $gruda = '';
-
-            if (is_numeric($this->ref_cod_reserva_vaga)) {
-                $campos .= "{$gruda}ref_cod_reserva_vaga";
-                $valores .= "{$gruda}'{$this->ref_cod_reserva_vaga}'";
-                $gruda = ', ';
-            }
 
             if (is_numeric($this->ref_ref_cod_escola)) {
                 $campos .= "{$gruda}ref_ref_cod_escola";
@@ -405,11 +395,6 @@ class clsPmieducarMatricula extends Model
             $db = new clsBanco;
             $gruda = '';
             $set = '';
-
-            if (is_numeric($this->ref_cod_reserva_vaga)) {
-                $set .= "{$gruda}ref_cod_reserva_vaga = '{$this->ref_cod_reserva_vaga}'";
-                $gruda = ', ';
-            }
 
             if (is_numeric($this->ref_ref_cod_escola)) {
                 $set .= "{$gruda}ref_ref_cod_escola = '{$this->ref_ref_cod_escola}'";
@@ -606,11 +591,6 @@ class clsPmieducarMatricula extends Model
 
         if (is_numeric($int_cod_matricula)) {
             $filtros .= "{$whereAnd} m.cod_matricula = '{$int_cod_matricula}'";
-            $whereAnd = ' AND ';
-        }
-
-        if (is_numeric($int_ref_cod_reserva_vaga)) {
-            $filtros .= "{$whereAnd} m.ref_cod_reserva_vaga = '{$int_ref_cod_reserva_vaga}'";
             $whereAnd = ' AND ';
         }
 
@@ -866,11 +846,6 @@ class clsPmieducarMatricula extends Model
 
         if (is_numeric($int_cod_matricula)) {
             $filtros .= "{$whereAnd} m.cod_matricula = '{$int_cod_matricula}'";
-            $whereAnd = ' AND ';
-        }
-
-        if (is_numeric($int_ref_cod_reserva_vaga)) {
-            $filtros .= "{$whereAnd} m.ref_cod_reserva_vaga = '{$int_ref_cod_reserva_vaga}'";
             $whereAnd = ' AND ';
         }
 
@@ -1251,7 +1226,7 @@ class clsPmieducarMatricula extends Model
      *
      * @author lucassch
      */
-    public function cadastraObs($obs, $tipoAbandono)
+    public function cadastraObs($obs, $tipoAbandono, $deixouDeFrequentarIdadeObrigatoria)
     {
         if (is_numeric($this->cod_matricula)) {
             if (trim($obs) == '') {
@@ -1264,7 +1239,8 @@ class clsPmieducarMatricula extends Model
             $consulta = "UPDATE {$this->_tabela}
                             SET aprovado = 6,
                                 observacao = '$obs',
-                                ref_cod_abandono_tipo = '$tipoAbandono'
+                                ref_cod_abandono_tipo = '$tipoAbandono',
+                                deixou_de_frequentar_idade_obrigatoria = '$deixouDeFrequentarIdadeObrigatoria'
                           WHERE cod_matricula = $this->cod_matricula";
 
             $db->Consulta($consulta);

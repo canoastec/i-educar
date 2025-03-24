@@ -35,6 +35,8 @@ class RegistrationStatus implements Enum
     public const DECEASED = 15;
 
     /**
+     * Situações das enturmações
+     *
      * @return array<int, string>
      */
     public function getDescriptiveValues(): array
@@ -45,7 +47,7 @@ class RegistrationStatus implements Enum
             self::ONGOING => 'Cursando',
             self::TRANSFERRED => 'Transferido',
             self::RECLASSIFIED => 'Reclassificado',
-            self::ABANDONED => 'Abandono',
+            self::ABANDONED => 'Deixou de Frequentar',
             self::IN_EXAM => 'Em exame',
             self::APPROVED_PAST_EXAM => 'Aprovado após exame',
             self::APPROVED_WITHOUT_EXAM => 'Aprovado sem exame',
@@ -66,6 +68,41 @@ class RegistrationStatus implements Enum
             self::ABANDONED,
             self::TRANSFERRED,
             self::DECEASED,
+        ];
+    }
+
+    /**
+     * Situações da matrícula com as situações da enturmação
+     *
+     * @return string[]
+     */
+    public static function getRegistrationAndEnrollmentStatus(): array
+    {
+        $values = (new self())->getDescriptiveValues();
+
+        $values[self::REPROVED] = 'Reprovado'; // Situação "Reprovado" da matrícula
+
+        return $values;
+    }
+
+    /**
+     * Situações da matrícula
+     *
+     * @return string[]
+     */
+    public static function getRegistrationStatus(): array
+    {
+        return [
+            self::APPROVED => 'Aprovado',
+            self::REPROVED => 'Reprovado',
+            self::ONGOING => 'Cursando',
+            self::TRANSFERRED => 'Transferido',
+            self::RECLASSIFIED => 'Reclassificado',
+            self::ABANDONED => 'Deixou de Frequentar',
+            self::APPROVED_WITH_DEPENDENCY => 'Aprovado com dependência',
+            self::APPROVED_BY_BOARD => 'Aprovado pelo conselho',
+            self::REPROVED_BY_ABSENCE => 'Reprovado por faltas',
+            self::DECEASED => 'Falecido',
         ];
     }
 }

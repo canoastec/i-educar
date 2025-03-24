@@ -353,6 +353,8 @@ return new class extends clsCadastro
 
     public $caracteristica_escolar;
 
+    public $lei_conclusao_ensino_medio;
+
     public $inputsRecursos = [
         'qtd_secretario_escolar' => 'Secretário(a) escolar',
         'qtd_auxiliar_administrativo' => 'Auxiliares de secretaria ou auxiliares administrativos, atendentes',
@@ -986,6 +988,9 @@ return new class extends clsCadastro
                 'required' => false,
             ];
             $this->inputsHelper()->simpleSearchPessoa(attrName: 'nome', inputOptions: $options, helperOptions: $helperOptions);
+
+            $options = ['label' => 'Lei de conclusão do ensino médio', 'value' => $this->lei_conclusao_ensino_medio, 'size' => 200, 'required' => false];
+            $this->inputsHelper()->text(attrNames: 'lei_conclusao_ensino_medio', inputOptions: $options);
 
             $resources = SelectOptions::esferasAdministrativasEscola();
             $options = [
@@ -1925,6 +1930,7 @@ return new class extends clsCadastro
         $obj->formas_contratacao_parceria_escola_secretaria_estadual = $this->formas_contratacao_parceria_escola_secretaria_estadual;
         $obj->formas_contratacao_parceria_escola_secretaria_municipal = $this->formas_contratacao_parceria_escola_secretaria_municipal;
         $obj->caracteristica_escolar = $this->caracteristica_escolar;
+        $obj->lei_conclusao_ensino_medio = $this->lei_conclusao_ensino_medio;
 
         foreach ($this->inputsRecursos as $key => $value) {
             $obj->{$key} = $this->{$key};

@@ -69,7 +69,15 @@ return new class extends clsCadastro
             return false;
         }
 
-        $obj_matricula = new clsPmieducarMatricula(cod_matricula: $this->ref_cod_matricula, ref_cod_reserva_vaga: null, ref_ref_cod_escola: null, ref_ref_cod_serie: null, ref_usuario_exc: $this->pessoa_logada, ref_usuario_cad: null, ref_cod_aluno: null, aprovado: 6);
+        $obj_matricula = new clsPmieducarMatricula(
+            cod_matricula: $this->ref_cod_matricula,
+            ref_ref_cod_escola: null,
+            ref_ref_cod_serie: null,
+            ref_usuario_exc: $this->pessoa_logada,
+            ref_usuario_cad: null,
+            ref_cod_aluno: null,
+            aprovado: 6
+        );
         $obj_matricula->data_cancel = Portabilis_Date_Utils::brToPgSQL($this->data_cancel);
 
         $det_matricula = $obj_matricula->detalhe();

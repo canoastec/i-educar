@@ -52,7 +52,7 @@ return new class extends clsCadastro
 
         $nomeMenu = $retorno == 'Editar' ? $retorno : 'Cadastrar';
 
-        $this->breadcrumb(currentPage: $nomeMenu . ' tipo de abandono', breadcrumbs: [
+        $this->breadcrumb(currentPage: $nomeMenu . ' tipo da situação deixou de frequentar', breadcrumbs: [
             url('intranet/educar_index.php') => 'Escola',
         ]);
 
@@ -68,7 +68,7 @@ return new class extends clsCadastro
         include 'include/pmieducar/educar_campo_lista.php';
 
         // text
-        $this->campoTexto(nome: 'nome', campo: 'Motivo Abandono', valor: $this->nome, tamanhovisivel: 30, tamanhomaximo: 255, obrigatorio: true);
+        $this->campoTexto(nome: 'nome', campo: 'Motivo - Deixou de Frequentar', valor: $this->nome, tamanhovisivel: 30, tamanhomaximo: 255, obrigatorio: true);
     }
 
     public function Novo()
@@ -125,7 +125,7 @@ return new class extends clsCadastro
 
     public function Formular()
     {
-        $this->title = 'Motivo Abandono';
+        $this->title = 'Motivo - Deixou de Frequentar';
         $this->processoAp = '950';
     }
 };

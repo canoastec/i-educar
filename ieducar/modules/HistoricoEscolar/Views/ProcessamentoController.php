@@ -118,7 +118,7 @@ class ProcessamentoController extends Portabilis_Controller_Page_ListController
                         <option value='reprovado'>Reprovado</option>
                         <option value='transferido'>Transferido</option>
                         <option value='reclassificado'>Reclassificado</option>
-                        <option value='abandono'>Abandono</option>
+                        <option value='abandono'>Deixou de Frequentar</option>
                     </select>
                 </td>
             </tr>

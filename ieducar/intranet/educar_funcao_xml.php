@@ -13,7 +13,7 @@ if (is_numeric($_GET['ins'])) {
 
         $conc = $_GET['professor'] ? "-{$professor}" : '';
 
-        echo "  <funcao cod_funcao=\"{$cod}{$conc}\">{$nome}</funcao>\n";
+        echo "  <funcao cod_funcao=\"{$cod}{$conc}\">" . htmlspecialchars($nome, ENT_XML1, 'UTF-8') . "</funcao>\n";
     }
 }
 echo '</query>';

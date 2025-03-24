@@ -48,8 +48,6 @@ class Process
 
     public const EXEMPTION_LIST = 2002;
 
-    public const ALLOW_VACANCY_RESERVATION_REPORT_WITHOUT_SCHOOL = 2003;
-
     public const EDUCACENSO_IMPORT_HISTORY = 2004;
 
     public const UPDATE_REGISTRATION_STATUS = 2005;

@@ -35,7 +35,7 @@ class SchoolHistoryStatus implements Enum
             self::ONGOING => 'Curs',
             self::TRANSFERRED => 'Tran',
             self::RECLASSIFIED => 'Recl',
-            self::ABANDONED => 'Aban',
+            self::ABANDONED => 'DeFr',
             self::APPROVED_WITH_DEPENDENCY => 'AprDep',
             self::APPROVED_BY_BOARD => 'AprCo',
             self::REPROVED_BY_ABSENCE => 'RpFt',

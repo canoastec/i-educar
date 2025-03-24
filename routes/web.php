@@ -4,6 +4,8 @@ use App\Http\Controllers\EnrollmentInepController;
 use App\Http\Controllers\EnrollmentsPromotionController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\SchoolClassController;
+use App\Http\Controllers\SocialiteCallbackController;
+use App\Http\Controllers\SocialiteRedirectController;
 use App\Http\Controllers\WebController;
 use App\Http\Middleware\AnnouncementMiddleware;
 use App\Process;
@@ -180,3 +182,6 @@ Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.
 
     Route::fallback([WebController::class, 'fallback']);
 });
+
+Route::get('/auth/redirect', SocialiteRedirectController::class)->name('socialite.redirect');
+Route::get('/auth/callback', SocialiteCallbackController::class)->name('socialite.callback');

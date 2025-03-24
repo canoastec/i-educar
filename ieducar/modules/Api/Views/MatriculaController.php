@@ -574,7 +574,7 @@ class MatriculaController extends ApiCoreController
                     'data_fim' => null,
                 ]);
 
-            $this->messenger->append('Abandono desfeito.', 'success');
+            $this->messenger->append('Registro da situação deixou de frequentar desfeito.', 'success');
         }
     }
 
@@ -966,7 +966,7 @@ class MatriculaController extends ApiCoreController
         $legacyActiveLooking = LegacyActiveLooking::withTrashed()
             ->select('busca_ativa.*')
             ->selectRaw("CASE resultado_busca_ativa
-                                  WHEN 1 THEN 'Abandono'::varchar
+                                  WHEN 1 THEN 'Deixou de Frequentar'::varchar
                                   WHEN 3 THEN 'Retorno com ausência justificada'::varchar
                                   WHEN 4 THEN 'Retorno sem ausência justificada'::varchar
                                   WHEN 5 THEN 'Transferência'::varchar

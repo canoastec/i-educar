@@ -326,7 +326,7 @@ class clsPmieducarEscola extends Model
             e.quantidade_computadores_alunos_mesa, e.quantidade_computadores_alunos_portateis, e.quantidade_computadores_alunos_tablets,
             e.lousas_digitais, e.projetores_digitais, e.faxs, e.maquinas_fotograficas, e.computadores, e.computadores_administrativo, e.computadores_alunos, e.impressoras_multifuncionais, e.acesso_internet, e.ato_criacao,
             e.ato_autorizativo, e.ref_idpes_secretario_escolar, e.utiliza_regra_diferenciada, e.categoria_escola_privada, e.conveniada_com_poder_publico, e.mantenedora_escola_privada, e.cnpj_mantenedora_principal,
-            e.email_gestor, e.orgao_vinculado_escola, e.esfera_administrativa, e.unidade_vinculada_outra_instituicao, e.inep_escola_sede, e.codigo_ies, e.caracteristica_escolar,
+            e.email_gestor, e.orgao_vinculado_escola, e.esfera_administrativa, e.unidade_vinculada_outra_instituicao, e.inep_escola_sede, e.codigo_ies, e.caracteristica_escolar, e.lei_conclusao_ensino_medio,
             e.qtd_secretario_escolar,
             e.qtd_auxiliar_administrativo,
             e.qtd_apoio_pedagogico,
@@ -1292,6 +1292,12 @@ class clsPmieducarEscola extends Model
             if (is_numeric($this->qtd_edu_eja_ensino_med)) {
                 $campos .= "{$gruda}qtd_edu_eja_ensino_med";
                 $valores .= "{$gruda}'{$this->qtd_edu_eja_ensino_med}'";
+                $gruda = ', ';
+            }
+
+            if (is_string($this->lei_conclusao_ensino_medio)) {
+                $campos .= "{$gruda}lei_conclusao_ensino_medio";
+                $valores .= "{$gruda}'{$this->lei_conclusao_ensino_medio}'";
                 $gruda = ', ';
             }
 
@@ -2366,6 +2372,13 @@ class clsPmieducarEscola extends Model
                 $gruda = ', ';
             } else {
                 $set .= "{$gruda}qtd_edu_eja_ensino_med = NULL";
+            }
+
+            if (is_string($this->lei_conclusao_ensino_medio)) {
+                $set .= "{$gruda}lei_conclusao_ensino_medio = '{$this->lei_conclusao_ensino_medio}'";
+                $gruda = ', ';
+            } else {
+                $set .= "{$gruda}lei_conclusao_ensino_medio = NULL";
             }
 
             if ($set) {

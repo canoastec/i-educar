@@ -125,7 +125,7 @@ class Util
         $final = [
             'Transferido',
             'Reclassificado',
-            'Abandono',
+            'Deixou de Frequentar',
             'Remanejado',
         ];
 
