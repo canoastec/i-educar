@@ -27,8 +27,6 @@ return new class extends clsListagem
 
     public $cod_matricula;
 
-    public $ref_cod_reserva_vaga;
-
     public $ref_ref_cod_escola;
 
     public $ref_ref_cod_serie;

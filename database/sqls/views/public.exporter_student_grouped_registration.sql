@@ -55,7 +55,8 @@ SELECT p.id,
        ap.peso as weight,
        a.rota_transporte as transport_route,
        a.codigo_sistema,
-       a.utiliza_transporte_rural AS uses_rural_transport
+       a.utiliza_transporte_rural AS uses_rural_transport,
+       p.localization_type
 FROM exporter_person p
          JOIN pmieducar.aluno a ON p.id = a.ref_idpes::numeric
          JOIN pmieducar.matricula m ON m.ref_cod_aluno = a.cod_aluno

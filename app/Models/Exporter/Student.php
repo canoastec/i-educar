@@ -96,6 +96,7 @@ class Student extends Model
                 'place.state_abbreviation' => 'Sigla do Estado',
                 'place.state' => 'Estado',
                 'place.country' => 'País',
+                'localization_type' => 'Localização Diferenciada de Residência',
             ],
             'Mãe' => [
                 'mother.id' => 'ID da mãe',

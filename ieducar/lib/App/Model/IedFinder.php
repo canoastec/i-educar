@@ -741,7 +741,6 @@ class App_Model_IedFinder extends CoreExt_Entity
         $sql = '
             SELECT
                 m.cod_matricula,
-                m.ref_cod_reserva_vaga,
                 m.ref_ref_cod_escola,
                 m.ref_ref_cod_serie,
                 m.ref_usuario_exc,

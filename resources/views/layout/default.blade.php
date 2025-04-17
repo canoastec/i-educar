@@ -245,9 +245,6 @@
 <script src="{{ Asset::get("/intranet/scripts/notifications.js") }}"></script>
 <script src="{{ Asset::get("/intranet/scripts/jquery-maxlength/jquery.plugin.min.js") }}"></script>
 <script src="{{ Asset::get("/intranet/scripts/jquery-maxlength/jquery.maxlength.min.js") }}"></script>
-<script>
-    getNotifications();
-</script>
 
 @include('layout.vue')
 

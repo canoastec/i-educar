@@ -13,8 +13,6 @@ return new class extends clsDetalhe
 
     public $ref_cod_matricula;
 
-    public $ref_cod_reserva_vaga;
-
     public $ref_ref_cod_escola;
 
     public $ref_ref_cod_serie;
@@ -132,6 +130,10 @@ return new class extends clsDetalhe
             $this->addDetalhe(detalhe: ['Série', $registro['ref_ref_cod_serie']]);
         }
 
+        if ($registro['observacoes']) {
+            $this->addDetalhe(detalhe: ['Observações', $registro['observacoes']]);
+        }
+
         // Nome da turma
         $enturmacoes = new clsPmieducarMatriculaTurma;
 
@@ -218,10 +220,6 @@ return new class extends clsDetalhe
             $this->addDetalhe(detalhe: ['Turma', '']);
             $this->addDetalhe(detalhe: ['Turno', '']);
             $this->addDetalhe(detalhe: ['Data Enturmação', '']);
-        }
-
-        if ($registro['ref_cod_reserva_vaga']) {
-            $this->addDetalhe(detalhe: ['Número Reserva Vaga', $registro['ref_cod_reserva_vaga']]);
         }
 
         $situacao = App_Model_MatriculaSituacao::getSituacao(id: $registro['aprovado']);
