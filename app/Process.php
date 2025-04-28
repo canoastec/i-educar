@@ -56,6 +56,8 @@ class Process
 
     public const EDUCACENSO_IMPORT_INEP = 2007;
 
+    public const EDUCACENSO_IMPORT_SITUATION = 2008;
+
     public const SETTINGS = 3000;
 
     public const RELEASE_PERIOD = 999848;
