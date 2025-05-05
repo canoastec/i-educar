@@ -119,7 +119,7 @@ class StageRequest extends FormRequest
                     ->count();
 
                 // Valida número máximo de etapas
-                $stagesCount = LegacyStageType::query()->where('cod_modulo', $stage)->value('num_etapas') ;
+                $stagesCount = LegacyStageType::query()->where('cod_modulo', $stage)->value('num_etapas');
 
                 if ($filledStagesCount > $stagesCount) {
                     $validator->errors()->add('etapas', "O número de etapas preenchidas não pode exceder {$stagesCount} conforme o filtro.");

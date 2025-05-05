@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\DB;
 
 class StageController extends Controller
 {
-
     public function update(StageRequest $request)
     {
         $params = [
@@ -42,7 +41,7 @@ class StageController extends Controller
         } catch (StageException $e) {
             session()->flash('error', $e->getMessage());
         } catch (\Exception) {
-            session()->flash('error','Atualização em lote não realizada.');
+            session()->flash('error', 'Atualização em lote não realizada.');
         }
 
         return redirect()->route('stage.edit')->withInput();
@@ -122,8 +121,8 @@ class StageController extends Controller
 
     private function prepareUpdateData(array $data): array
     {
-        //Deve-se remove os campos vazios, com intuito de manter os valores no banco durante o update
-        //Transforma as datas no formato do banco
+        // Deve-se remove os campos vazios, com intuito de manter os valores no banco durante o update
+        // Transforma as datas no formato do banco
         return array_filter([
             'data_inicio' => $data['data_inicio'] ? Carbon::createFromFormat('d/m/Y', $data['data_inicio']) : null,
             'data_fim' => $data['data_fim'] ? Carbon::createFromFormat('d/m/Y', $data['data_fim']) : null,
