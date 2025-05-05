@@ -15,16 +15,7 @@ return new class extends Migration
      */
     public function up()
     {
-        $typeClass = new TypeIntergerArray(2);
-
-        DB::connection()->setSchemaGrammar($typeClass);
-
-        Schema::table(
-            'pmieducar.turma',
-            static fn (Blueprint $table) => $table
-                ->addColumn('int_array', 'unidade_curricular')
-                ->nullable()
-        );
+        DB::statement('ALTER TABLE IF EXISTS pmieducar.turma ADD COLUMN unidade_curricular smallint[];');
     }
 
     /**
