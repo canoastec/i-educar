@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('ALTER TABLE IF EXISTS pmieducar.professor_turma ADD COLUMN unidades_curriculares smallint[];');
+        DB::statement('ALTER TABLE IF EXISTS modules.professor_turma ADD COLUMN unidades_curriculares smallint[];');
     }
 
     /**
