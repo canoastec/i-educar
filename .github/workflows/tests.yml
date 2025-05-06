@@ -30,7 +30,8 @@ jobs:
       API_ACCESS_KEY: ieducar-access-key
       API_SECRET_KEY: ieducar-secret-key
       BROADCAST_DRIVER: log
-      CACHE_DRIVER: array
+      CACHE_STORE: array
+      REDIS_CLIENT: predis
       QUEUE_CONNECTION: sync
       SESSION_DRIVER: array
       LEGACY_SEED_DATA: false
