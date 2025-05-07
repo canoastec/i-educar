@@ -1783,23 +1783,6 @@ class EducacensoAnaliseController extends ApiCoreController
                     ];
                 }
 
-                if ($aluno->composicaoItinerarioFormacaoTecnica && empty($aluno->cursoItinerario)) {
-                    $mensagem[] = [
-                        'text' => "Dados para formular o registro 60 da escola {$nomeEscola} não encontrados. Verificamos que a composição do itinerário formativo do(a) aluno(a) {$nomeAluno} foi preenchido com a opção de formação técnica e profissional, portanto é necessário informar o tipo do curso do itinerário de formação técnica e profissional.",
-                        'path' => '(Escola > Cadastros > Alunos > Visualizar > Itinerário formativo > Campo: Tipo do curso do itinerário de formação técnica e profissional)',
-                        'linkPath' => "/enrollment-formative-itinerary/{$aluno->enturmacaoId}",
-                        'fail' => true,
-                    ];
-                }
-
-                if ($aluno->composicaoItinerarioFormacaoTecnica && $aluno->itinerarioConcomitante === null) {
-                    $mensagem[] = [
-                        'text' => "Dados para formular o registro 60 da escola {$nomeEscola} não encontrados. Verificamos que a composição do itinerário formativo do(a) aluno(a) {$nomeAluno} foi preenchido com a opção de formação técnica e profissional, portanto é necessário informar se é um itinerário concomitante intercomplementar à matrícula de formação geral básica.",
-                        'path' => '(Escola > Cadastros > Alunos > Visualizar > Itinerário formativo > Campo: Itinerário concomitante intercomplementar à matrícula de formação geral básica)',
-                        'linkPath' => "/enrollment-formative-itinerary/{$aluno->enturmacaoId}",
-                        'fail' => true,
-                    ];
-                }
             }
 
             if (isArrayEmpty($aluno->tipoAtendimentoMatricula) && $aluno->tipoAtendimentoTurma == TipoAtendimentoTurma::AEE) {
