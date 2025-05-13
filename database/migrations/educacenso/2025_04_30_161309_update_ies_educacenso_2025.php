@@ -13,7 +13,7 @@ return new class extends Migration
 
         $admin = LegacyUser::query()
             ->where('ativo', 1)
-            ->where('ref_cod_tipo_usuario', LegacyUserType::LEVEL_ADMIN)
+            ->whereHas('type', fn ($q) => $q->where('nivel', LegacyUserType::LEVEL_ADMIN))
             ->first();
 
         if ($admin) {
