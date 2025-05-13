@@ -120,10 +120,10 @@ class Registro10 extends AbstractRegistro
             $data->recursosAcessibilidadeSinalizacaoTatil() ?: 0, // 87	Sinalização tátil
             $data->recursosAcessibilidadeSinalizacaoVisual() ?: 0, // 88 Sinalização visual (piso/paredes)
             $data->recursosAcessibilidadeNenhum() ?: 0, // 89 Nenhum dos recursos de acessibilidade listados
-            $data->predioEscolar() ? $data->numeroSalasUtilizadasDentroPredio : '', // 90 Número de salas de aula utilizadas na escola dentro do prédio escolar
-            $data->numeroSalasUtilizadasForaPredio, // 91 Número de salas de aula utilizadas na escola fora do prédio escolar
-            $data->numeroSalasUtilizadasDentroPredio || $data->numeroSalasUtilizadasForaPredio ? $data->numeroSalasClimatizadas : null, // 92 Número de salas de aula climatizadas (ar condicionado, aquecedor ou climatizador)
-            $data->numeroSalasUtilizadasDentroPredio || $data->numeroSalasUtilizadasForaPredio ? $data->numeroSalasAcessibilidade : null, // 93	Número de salas de aula com acessibilidade para pessoas com deficiência ou mobilidade reduzida
+            $data->predioEscolar() ? $data->numeroSalasUtilizadasDentroPredio : '', // 90 Quantidade de salas de aula utilizadas pela escola dentro do prédio escolar
+            $data->numeroSalasUtilizadasForaPredio, // 91 Quantidade de salas de aula utilizadas pela escola fora do prédio escolar
+            $data->numeroSalasUtilizadasDentroPredio || $data->numeroSalasUtilizadasForaPredio ? $data->numeroSalasClimatizadas : null, // 92 Quantidade de salas de aula climatizadas (com ar-condicionado, aquecedor ou climatizador)
+            $data->numeroSalasUtilizadasDentroPredio || $data->numeroSalasUtilizadasForaPredio ? $data->numeroSalasAcessibilidade : null, // 93	Quantidade de salas de aula com acessibilidade para pessoas com deficiência ou mobilidade reduzida
             $data->possuiAntenaParabolica() ?: 0, // 94	Antena parabólica
             $data->possuiComputadores() ?: 0, // 95	Computadores
             $data->possuiCopiadora() ?: 0, // 96 Copiadora
