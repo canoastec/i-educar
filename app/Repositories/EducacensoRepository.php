@@ -246,6 +246,7 @@ SQL;
                 escola.numero_salas_utilizadas_fora_predio AS "numeroSalasUtilizadasForaPredio",
                 escola.numero_salas_climatizadas AS "numeroSalasClimatizadas",
                 escola.numero_salas_acessibilidade AS "numeroSalasAcessibilidade",
+                escola.numero_salas_cantinho_leitura AS "numeroSalasCantinhoLeitura",
                 escola.televisoes AS "televisoes",
                 escola.videocassetes AS "videocassetes",
                 escola.dvds AS "dvds",
