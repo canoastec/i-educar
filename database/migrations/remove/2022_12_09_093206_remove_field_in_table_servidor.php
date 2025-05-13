@@ -9,8 +9,11 @@ return new class extends Migration
     public function up()
     {
         DB::unprepared('ALTER TABLE IF EXISTS pmieducar.servidor DROP CONSTRAINT IF EXISTS servidor_ref_cod_subnivel_;');
-        Schema::table('pmieducar.servidor', function (Blueprint $table) {
-            $table->dropColumn('ref_cod_subnivel');
-        });
+
+        if (Schema::hasColumn('pmieducar.servidor', 'ref_cod_subnivel')) {
+            Schema::table('pmieducar.servidor', function (Blueprint $table) {
+                $table->dropColumn('ref_cod_subnivel');
+            });
+        }
     }
 };
