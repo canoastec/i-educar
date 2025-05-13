@@ -42,6 +42,8 @@ class Registro30 implements RegistroEducacenso
 
     public $raca;
 
+    public $povoIndigena;
+
     public $nacionalidade;
 
     public $paisNacionalidade;

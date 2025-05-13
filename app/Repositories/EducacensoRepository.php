@@ -423,6 +423,7 @@ SQL;
                 pessoa_pai.nome AS "filiacao2",
                 CASE WHEN fisica.sexo = 'M' THEN 1 ELSE 2 END AS "sexo",
                 raca.raca_educacenso AS "raca",
+                povo_indigena_educacenso_id AS "povoIndigena",
                 fisica.nacionalidade AS "nacionalidade",
                 CASE WHEN fisica.nacionalidade = 3 THEN countries.ibge_code ELSE 76 END AS "paisNacionalidade",
                 municipio_nascimento.ibge_code AS "municipioNascimento",

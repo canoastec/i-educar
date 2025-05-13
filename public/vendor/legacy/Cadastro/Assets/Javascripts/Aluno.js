@@ -2553,8 +2553,6 @@ function canShowParentsFields() {
         "/intranet/atendidos_cad.php?cod_pessoa_fj=" + person_details.id
       );
 
-      console.log(person_details);
-
       name.val(person_details.nome);
       observacao.val(person_details.observacao);
       nome_social.val(person_details.nome_social);
