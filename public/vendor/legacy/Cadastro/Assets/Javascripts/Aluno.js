@@ -1961,7 +1961,7 @@ function canShowParentsFields() {
     $j("body").append(`
           <div id="dialog-recursos-prova-inep" style="font-size: 85%; z-index: 9999;">
           <ul style="padding-right: 30px;">
-            <li>Dentre as opções: Prova Ampliada (Fonte 18), Prova superampliada (Fonte 24) ou Material didático e Prova em Braille, apenas uma deve ser informada;</li>
+            <li>Dentre as opções: Prova Ampliada (Fonte 18), Prova superampliada (Fonte 24), Material didático em Braille e Prova em Braille, apenas uma deve ser informada;</li>
             <li><b>Auxílio ledor</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Cegueira, Baixa visão, Visão monocular, Surdocegueira, Deficiência física, Deficiência intelectual e Transtorno do espectro autista. <b>Exceto</b> se possuir também Surdez;</li>
             <li><b>Auxílio transcrição</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Cegueira, Baixa visão, Visão monocular, Surdocegueira, Deficiência física, Deficiência intelectual e Transtorno do espectro autista. Obs.: Quando a deficiência for Cegueira ou Surdocegueira, obrigatoriamente este auxílio deve ser informado junto com um outro auxílio;</li>
             <li><b>Guia-Intérprete</b>: pode ser informado quando o(a) aluno(a) possuir qualquer deficiência. <b>Exceto</b> se possuir Surdocegueira;</li>
@@ -1972,7 +1972,8 @@ function canShowParentsFields() {
             <li><b>CD com áudio para deficiente visual</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Cegueira, Baixa visão, Visão monocular, Surdocegueira, Deficiência física, Deficiência intelectual e Transtorno do espectro autista. <b>Exceto</b> se possuir também Surdez;</li>
             <li><b>Prova de Língua Portuguesa como segunda língua para surdos e deficientes auditivos</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Surdez, Deficiência auditiva e Surdocegueira. <b>Exceto</b> se possuir também Cegueira;</li>
             <li><b>Prova em Vídeo em Libras</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Surdez, Deficiência auditiva e Surdocegueira. <b>Exceto</b> se possuir também Cegueira;</li>
-            <li><b>Material didático e Prova em Braille</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Cegueira e Surdocegueira;</li>
+            <li><b>Material didático em Braille</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Cegueira e Surdocegueira;</li>
+            <li><b>Prova em Braille</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Cegueira e Surdocegueira;</li>
             <li><b>Nenhum</b>: não pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Cegueira e Surdocegueira;</li>
            </ul>
           </div>
