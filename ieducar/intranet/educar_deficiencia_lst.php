@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\DeficiencyType;
 use App\Models\LegacyDeficiency;
+use iEducar\Modules\Educacenso\Model\Deficiencias;
+use iEducar\Modules\Educacenso\Model\Transtornos;
 
 return new class extends clsListagem
 {
@@ -25,7 +28,9 @@ return new class extends clsListagem
         }
 
         $this->addCabecalhos([
-            'Deficiência e transtorno',
+            'Descrição',
+            'Tipo',
+            'Educacenso',
         ]);
 
         // Filtros de Foreign Keys
@@ -35,20 +40,42 @@ return new class extends clsListagem
 
         // Paginador
         $this->limite = 20;
-        $lista = LegacyDeficiency::filter(
-            ['name' => $this->nm_deficiencia]
-        )->orderBy('nm_deficiencia')->paginate(perPage: $this->limite, columns: ['cod_deficiencia', 'nm_deficiencia'], pageName: 'pagina_' . $this->nome);
+        $lista = LegacyDeficiency::query()
+            ->filter([
+                'name' => $this->nm_deficiencia,
+            ])
+            ->orderBy('nm_deficiencia')
+            ->paginate(
+                perPage: $this->limite,
+                pageName: 'pagina_' . $this->nome
+            );
         $total = $lista->total();
 
         // monta a lista
         if ($lista->isNotEmpty()) {
+            $deficiencies = Deficiencias::getDescriptiveValues();
+            $disorders = Transtornos::getDescriptiveValues();
+            $types = DeficiencyType::getDescriptiveValues();
+
             foreach ($lista as $registro) {
                 // muda os campos data
 
                 // pega detalhes de foreign_keys
 
+                $educacenso = '';
+
+                if ($registro['deficiency_type_id'] === 1) {
+                    $educacenso = $deficiencies[$registro['deficiencia_educacenso']];
+                }
+
+                if ($registro['deficiency_type_id'] === 2) {
+                    $educacenso = $disorders[$registro['transtorno_educacenso']];
+                }
+
                 $this->addLinhas([
                     "<a href=\"educar_deficiencia_det.php?cod_deficiencia={$registro['cod_deficiencia']}\">{$registro['nm_deficiencia']}</a>",
+                    "<a href=\"educar_deficiencia_det.php?cod_deficiencia={$registro['cod_deficiencia']}\">{$types[$registro['deficiency_type_id']]}</a>",
+                    "<a href=\"educar_deficiencia_det.php?cod_deficiencia={$registro['cod_deficiencia']}\">{$educacenso}</a>",
                 ]);
             }
         }

@@ -1382,7 +1382,16 @@ class EducacensoAnaliseController extends ApiCoreController
 
         if (DB::table('cadastro.deficiencia')->where('deficiency_type_id', 1)->whereNull('deficiencia_educacenso')->exists()) {
             $mensagem[] = [
-                'text' => "Dados para formular o registro 30 da escola {$pessoas[0]->nomeEscola} não encontrados. Verifique se a(s) deficiência(s) do educacenso foi(ram) informada(s).",
+                'text' => "Dados para formular o registro 30 da escola {$pessoas[0]->nomeEscola} não encontrados. Verifique se a(s) deficiência(s) do Educacenso foi(ram) informada(s).",
+                'path' => '(Pessoas > Cadastros > Tipos > Tipos de deficiência)',
+                'linkPath' => '/intranet/educar_deficiencia_lst.php',
+                'fail' => true,
+            ];
+        }
+
+        if (DB::table('cadastro.deficiencia')->where('deficiency_type_id', 2)->whereNull('transtorno_educacenso')->exists()) {
+            $mensagem[] = [
+                'text' => "Dados para formular o registro 30 da escola {$pessoas[0]->nomeEscola} não encontrados. Verifique se o(s) transtornos(s) do Educacenso foi(ram) informado(s).",
                 'path' => '(Pessoas > Cadastros > Tipos > Tipos de deficiência)',
                 'linkPath' => '/intranet/educar_deficiencia_lst.php',
                 'fail' => true,
