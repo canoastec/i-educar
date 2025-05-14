@@ -2251,6 +2251,25 @@ function canShowParentsFields() {
       .removeClass();
     $j("#cor_raca").unwrap().unwrap().unwrap();
 
+    $j("<label>")
+      .html("Povo Indígena")
+      .attr("for", "povo_indigena_educacenso_id")
+      .attr("style", "display:block;")
+      .insertBefore($j("#povo_indigena_educacenso_id"));
+
+    $j("#povo_indigena_educacenso_id")
+      .toggleClass("geral text")
+      .closest("tr")
+      .show()
+      .find("td:first-child")
+      .hide()
+      .closest("tr")
+      .removeClass()
+      .insertAfter("#cor_raca")
+      .find("td")
+      .removeClass();
+    $j("#povo_indigena_educacenso_id").unwrap().unwrap().unwrap();
+
     $label = $j("<label>")
       .html("Nacionalidade")
       .attr("for", "tipo_nacionalidade")
@@ -2264,7 +2283,7 @@ function canShowParentsFields() {
       .hide()
       .closest("tr")
       .removeClass()
-      .insertAfter("#cor_raca")
+      .insertAfter("#povo_indigena_educacenso_id")
       .find("td")
       .removeClass();
     $j("#tipo_nacionalidade").unwrap().unwrap().unwrap();
@@ -2396,7 +2415,8 @@ function canShowParentsFields() {
               $j("#zona_localizacao_censo").val(),
               $j("#localizacao_diferenciada").val(),
               nome_social.val(),
-              $j("#pais_residencia").val()
+              $j("#pais_residencia").val(),
+              $j("#povo_indigena_educacenso_id").val(),
             );
           }
         },
@@ -2952,7 +2972,8 @@ function canShowParentsFields() {
     zona_localizacao_censo,
     localizacao_diferenciada,
     nome_social,
-    pais_residencia
+    pais_residencia,
+    povo_indigena_educacenso_id
   ) {
     var data = {
       nome: nome,
@@ -2974,6 +2995,7 @@ function canShowParentsFields() {
       nome_social: nome_social,
       pais_residencia: pais_residencia,
       observacao_aluno: $j("#observacao").val(),
+      povo_indigena_educacenso_id: povo_indigena_educacenso_id
     };
 
     var options = {
