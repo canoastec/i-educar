@@ -627,8 +627,8 @@ class EducacensoAnaliseController extends ApiCoreController
 
         if ($escola->predioEscolar() && !$escola->numeroSalasUtilizadasDentroPredio) {
             $mensagem[] = [
-                'text' => "Dados para formular o registro 10 da escola {$escola->nomeEscola} não encontrados. Verifique se o número de salas de aula utilizadas na escola dentro do prédio escolar da escola foi informado.",
-                'path' => '(Escola > Cadastros > Escolas > Editar > Aba: Dependências > Campo: Número de salas de aula utilizadas na escola dentro do prédio escolar)',
+                'text' => "Dados para formular o registro 10 da escola {$escola->nomeEscola} não encontrados. Verifique se a quantidade de salas de aula utilizadas pela escola dentro do prédio escolar da escola foi informado.",
+                'path' => '(Escola > Cadastros > Escolas > Editar > Aba: Dependências > Campo: Quantidade de salas de aula utilizadas pela escola dentro do prédio escolar)',
                 'linkPath' => "/intranet/educar_escola_cad.php?cod_escola={$escola->codEscola}",
                 'fail' => true,
             ];
@@ -636,8 +636,8 @@ class EducacensoAnaliseController extends ApiCoreController
 
         if (!$escola->predioEscolar() && !$escola->numeroSalasUtilizadasForaPredio) {
             $mensagem[] = [
-                'text' => "Dados para formular o registro 10 da escola {$escola->nomeEscola} não encontrados. Verifique se o número de salas de aula utilizadas na escola fora do prédio escolar da escola foi informado.",
-                'path' => '(Escola > Cadastros > Escolas > Editar > Aba: Dependências > Campo: Número de salas de aula utilizadas na escola fora do prédio escolar)',
+                'text' => "Dados para formular o registro 10 da escola {$escola->nomeEscola} não encontrados. Verifique se a quantidade de salas de aula utilizadas pela escola fora do prédio escolar da escola foi informado.",
+                'path' => '(Escola > Cadastros > Escolas > Editar > Aba: Dependências > Campo: Quantidade de salas de aula utilizadas pela escola fora do prédio escolar)',
                 'linkPath' => "/intranet/educar_escola_cad.php?cod_escola={$escola->codEscola}",
                 'fail' => true,
             ];
