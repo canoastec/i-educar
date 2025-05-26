@@ -2,19 +2,26 @@
 
 namespace iEducar\Modules\Educacenso\Model;
 
+/**
+ * Class Transtornos
+ * Os valores das constantes foram iniciados em 50,
+ * pois não podem coincidir com os valores presentes na classe de Deficiências.
+ *
+ * @package iEducar\Modules\Educacenso\Model
+ */
 class Transtornos
 {
-    public const DISCALCULIA = 1;
+    public const DISCALCULIA = 50;
 
-    public const DISGRAFIA = 2;
+    public const DISGRAFIA = 51;
 
-    public const DISLALIA = 3;
+    public const DISLALIA = 52;
 
-    public const DISLEXIA = 4;
+    public const DISLEXIA = 53;
 
-    public const TDAH = 5;
+    public const TDAH = 54;
 
-    public const TPAC = 6;
+    public const TPAC = 55;
 
     public const OUTROS = 999;
 

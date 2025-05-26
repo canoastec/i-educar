@@ -1203,9 +1203,12 @@ var handleGetPersonDetails = function (dataResponse) {
 
   function habilitaRecursosProvaInep() {
     var deficiencias = $j("#deficiencias").val();
+    var transtornos = $j("#transtornos").val();
+
+    var combinados = deficiencias.concat(transtornos);
 
     var additionalVars = {
-      deficiencias: deficiencias,
+      deficiencias: combinados,
     };
 
     var options = {

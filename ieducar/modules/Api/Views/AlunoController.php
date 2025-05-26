@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\DeficiencyType;
 use App\Models\Educacenso\Registro30;
 use App\Models\Individual;
 use App\Models\LegacyDeficiency;
@@ -14,7 +15,9 @@ use App\Models\LogUnification;
 use App\Models\SchoolInep;
 use App\Models\TransportationProvider;
 use App\User;
+use iEducar\Modules\Educacenso\Model\Deficiencias;
 use iEducar\Modules\Educacenso\Model\Nacionalidade;
+use iEducar\Modules\Educacenso\Model\Transtornos;
 use iEducar\Modules\Educacenso\Validator\BirthCertificateValidator;
 use iEducar\Modules\Educacenso\Validator\DeficiencyValidator;
 use iEducar\Modules\Educacenso\Validator\InepExamValidator;
@@ -2190,10 +2193,34 @@ class AlunoController extends ApiCoreController
 
     private function replaceByEducacensoDeficiencies($deficiencies)
     {
-        $databaseDeficiencies = LegacyDeficiency::all()->getKeyValueArray('deficiencia_educacenso');
+        $databaseDeficiencies = LegacyDeficiency::query()
+            ->where('deficiency_type_id', DeficiencyType::DEFICIENCY)
+            ->where('deficiencia_educacenso', '!=', Deficiencias::OUTRAS)
+            ->get()
+            ->getKeyValueArray('deficiencia_educacenso');
+
+        $databaseDisorders = LegacyDeficiency::query()
+            ->where('deficiency_type_id', DeficiencyType::DISORDER)
+            ->where('transtorno_educacenso', '!=', Transtornos::OUTROS)
+            ->get()
+            ->getKeyValueArray('transtorno_educacenso');
 
         $arrayEducacensoDeficiencies = [];
         foreach ($deficiencies as $deficiency) {
+            $deficiencyObject = LegacyDeficiency::find($deficiency);
+
+            if (!$deficiencyObject) {
+                continue;
+            }
+
+            if ($deficiencyObject->deficiency_type_id == DeficiencyType::DEFICIENCY) {
+                $arrayEducacensoDeficiencies[] = $databaseDeficiencies[$deficiency];
+            }
+
+            if ($deficiencyObject->deficiency_type_id == DeficiencyType::DISORDER) {
+                $arrayEducacensoDeficiencies[] = $databaseDisorders[$deficiency];
+            }
+
             $arrayEducacensoDeficiencies[] = $databaseDeficiencies[$deficiency];
         }
 
