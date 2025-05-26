@@ -33,7 +33,8 @@ class InepExamValidator implements EducacensoValidator
             && $this->validateCdAudioDeficienteVisual()
             && $this->validateProvaLinguaPortuguesaSegundaLingua()
             && $this->validateVideoLibras()
-            && $this->validateMaterialDidaticoProvaBraille();
+            && $this->validateMaterialDidaticoBraille()
+            && $this->validateProvaBraille();
     }
 
     /**
@@ -75,7 +76,7 @@ class InepExamValidator implements EducacensoValidator
         $values = [
             RecursosRealizacaoProvas::PROVA_AMPLIADA_FONTE_18,
             RecursosRealizacaoProvas::PROVA_SUPERAMPLIADA_FONTE_24,
-            RecursosRealizacaoProvas::MATERIAL_DIDATICO_E_PROVA_EM_BRAILLE,
+            RecursosRealizacaoProvas::PROVA_EM_BRAILLE,
         ];
 
         if (count(array_intersect($values, $this->resources)) > 1) {
@@ -343,10 +344,31 @@ class InepExamValidator implements EducacensoValidator
     /**
      * @return bool
      */
-    private function validateMaterialDidaticoProvaBraille()
+    private function validateMaterialDidaticoBraille()
     {
         if ($this->validateResource(
-            RecursosRealizacaoProvas::MATERIAL_DIDATICO_E_PROVA_EM_BRAILLE,
+            RecursosRealizacaoProvas::MATERIAL_DIDATICO_EM_BRAILLE,
+            [
+                Deficiencias::CEGUEIRA,
+                Deficiencias::SURDOCEGUEIRA,
+            ],
+            []
+        )) {
+            return true;
+        }
+
+        $this->setDefaultErrorMessage();
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    private function validateProvaBraille()
+    {
+        if ($this->validateResource(
+            RecursosRealizacaoProvas::PROVA_EM_BRAILLE,
             [
                 Deficiencias::CEGUEIRA,
                 Deficiencias::SURDOCEGUEIRA,
