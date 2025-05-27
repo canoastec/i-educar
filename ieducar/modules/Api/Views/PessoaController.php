@@ -589,6 +589,7 @@ class PessoaController extends ApiCoreController
         $individual->localizacao_diferenciada = $this->getRequest()->localizacao_diferenciada ?: $individual->localizacao_diferenciada;
         $individual->nome_social = $this->getRequest()->nome_social ?: $individual->nome_social;
         $individual->observacao = $this->getRequest()->observacao_aluno ?: $individual->observacao;
+        $individual->povo_indigena_educacenso_id = $this->getRequest()->povo_indigena_educacenso_id ?: $individual->povo_indigena_educacenso_id;
 
         $individual->saveOrFail();
 
