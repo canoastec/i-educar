@@ -1384,7 +1384,7 @@ class EducacensoAnaliseController extends ApiCoreController
             $mensagem[] = [
                 'text' => "Dados para formular o registro 30 da escola {$pessoas[array_key_first($pessoas)]->nomeEscola} não encontrados. Verifique se a(s) deficiência(s) do Educacenso foi(ram) informada(s).",
                 'path' => '(Pessoas > Cadastros > Tipos > Tipos de deficiência)',
-                'linkPath' => '/intranet/educar_deficiencia_lst.php',
+                'linkPath' => '/intranet/educar_deficiencia_lst.php?busca=S&deficiency_type_id=1',
                 'fail' => true,
             ];
         }
@@ -1393,7 +1393,7 @@ class EducacensoAnaliseController extends ApiCoreController
             $mensagem[] = [
                 'text' => "Dados para formular o registro 30 da escola {$pessoas[array_key_first($pessoas)]->nomeEscola} não encontrados. Verifique se o(s) transtornos(s) do Educacenso foi(ram) informado(s).",
                 'path' => '(Pessoas > Cadastros > Tipos > Tipos de deficiência)',
-                'linkPath' => '/intranet/educar_deficiencia_lst.php',
+                'linkPath' => '/intranet/educar_deficiencia_lst.php?busca=S&deficiency_type_id=2',
                 'fail' => true,
             ];
         }

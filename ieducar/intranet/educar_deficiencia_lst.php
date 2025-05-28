@@ -4,6 +4,7 @@ use App\Models\DeficiencyType;
 use App\Models\LegacyDeficiency;
 use iEducar\Modules\Educacenso\Model\Deficiencias;
 use iEducar\Modules\Educacenso\Model\Transtornos;
+use iEducar\Support\View\SelectOptions;
 
 return new class extends clsListagem
 {
@@ -38,12 +39,26 @@ return new class extends clsListagem
         // outros Filtros
         $this->campoTexto(nome: 'nm_deficiencia', campo: 'Deficiência e transtorno', valor: $this->nm_deficiencia, tamanhovisivel: 30, tamanhomaximo: 255, obrigatorio: false);
 
+        $options = [
+            'label' => 'Tipo',
+            'resources' => SelectOptions::deficiencyTypes(),
+            'value' => request()->integer('deficiency_type_id'),
+        ];
+
+        $this->inputsHelper()->select(attrName: 'deficiency_type_id', inputOptions: $options);
+
         // Paginador
         $this->limite = 20;
         $lista = LegacyDeficiency::query()
             ->filter([
                 'name' => $this->nm_deficiencia,
             ])
+            ->when(
+                request()->has('deficiency_type_id') && request()->integer('deficiency_type_id') !== 0,
+                function ($query) {
+                    $query->where('deficiency_type_id', request()->integer('deficiency_type_id'));
+                }
+            )
             ->orderBy('nm_deficiencia')
             ->paginate(
                 perPage: $this->limite,
