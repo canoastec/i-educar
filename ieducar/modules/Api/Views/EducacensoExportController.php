@@ -253,104 +253,114 @@ class EducacensoExportController extends ApiCoreController
             $pessoa = RegrasEspecificasRegistro30::handle($pessoa);
 
             $data = [
-                $pessoa->registro,
-                $pessoa->inepEscola,
-                $pessoa->codigoPessoa,
-                $pessoa->getInep(),
-                (string) $pessoa->cpf,
-                $pessoa->nomePessoa,
-                $pessoa->dataNascimento,
-                $pessoa->filiacao,
-                $pessoa->filiacao1,
-                $pessoa->filiacao2,
-                $pessoa->sexo,
-                $pessoa->raca,
-                $pessoa->nacionalidade,
-                $pessoa->paisNacionalidade,
-                $pessoa->municipioNascimento,
-                $pessoa->deficiencia,
-                $pessoa->deficienciaCegueira,
-                $pessoa->deficienciaBaixaVisao,
-                $pessoa->deficienciaVisaoMonocular,
-                $pessoa->deficienciaSurdez,
-                $pessoa->deficienciaAuditiva,
-                $pessoa->deficienciaSurdoCegueira,
-                $pessoa->deficienciaFisica,
-                $pessoa->deficienciaIntelectual,
-                $pessoa->deficienciaMultipla(),
-                $pessoa->deficienciaAutismo,
-                $pessoa->deficienciaAltasHabilidades,
-                $pessoa->recursoLedor,
-                $pessoa->recursoTranscricao,
-                $pessoa->recursoGuia,
-                $pessoa->recursoTradutor,
-                $pessoa->recursoLeituraLabial,
-                $pessoa->recursoProvaAmpliada,
-                $pessoa->recursoProvaSuperampliada,
-                $pessoa->recursoAudio,
-                $pessoa->recursoLinguaPortuguesaSegundaLingua,
-                $pessoa->recursoVideoLibras,
-                $pessoa->recursoBraile,
-                $pessoa->recursoNenhum,
-                $pessoa->certidaoNascimento,
-                $pessoa->paisResidencia,
-                $pessoa->cep,
-                $pessoa->cep ? $pessoa->municipioResidencia : '',
-                $pessoa->localizacaoResidencia,
-                $pessoa->localizacaoDiferenciada,
-                $pessoa->escolaridade,
-                $pessoa->tipoEnsinoMedioCursado,
-                $pessoa->formacaoCurso[0],
-                $pessoa->formacaoAnoConclusao[0],
-                $pessoa->formacaoInstituicao[0],
-                $pessoa->formacaoCurso[1],
-                $pessoa->formacaoAnoConclusao[1],
-                $pessoa->formacaoInstituicao[1],
-                $pessoa->formacaoCurso[2],
-                $pessoa->formacaoAnoConclusao[2],
-                $pessoa->formacaoInstituicao[2],
-                $pessoa->complementacaoPedagogica[0],
-                $pessoa->complementacaoPedagogica[1],
-                $pessoa->complementacaoPedagogica[2],
-                $pessoa->posGraduacoes[0]->type_id,
-                $pessoa->posGraduacoes[0]->area_id,
-                $pessoa->posGraduacoes[0]->completion_year,
-                $pessoa->posGraduacoes[1]->type_id,
-                $pessoa->posGraduacoes[1]->area_id,
-                $pessoa->posGraduacoes[1]->completion_year,
-                $pessoa->posGraduacoes[2]->type_id,
-                $pessoa->posGraduacoes[2]->area_id,
-                $pessoa->posGraduacoes[2]->completion_year,
-                $pessoa->posGraduacoes[3]->type_id,
-                $pessoa->posGraduacoes[3]->area_id,
-                $pessoa->posGraduacoes[3]->completion_year,
-                $pessoa->posGraduacoes[4]->type_id,
-                $pessoa->posGraduacoes[4]->area_id,
-                $pessoa->posGraduacoes[4]->completion_year,
-                $pessoa->posGraduacoes[5]->type_id,
-                $pessoa->posGraduacoes[5]->area_id,
-                $pessoa->posGraduacoes[5]->completion_year,
-                $pessoa->posGraduacaoNaoPossui,
-                $pessoa->formacaoContinuadaCreche,
-                $pessoa->formacaoContinuadaPreEscola,
-                $pessoa->formacaoContinuadaAnosIniciaisFundamental,
-                $pessoa->formacaoContinuadaAnosFinaisFundamental,
-                $pessoa->formacaoContinuadaEnsinoMedio,
-                $pessoa->formacaoContinuadaEducacaoJovensAdultos,
-                $pessoa->formacaoContinuadaEducacaoEspecial,
-                $pessoa->formacaoContinuadaEducacaoIndigena,
-                $pessoa->formacaoContinuadaEducacaoCampo,
-                $pessoa->formacaoContinuadaEducacaoAmbiental,
-                $pessoa->formacaoContinuadaEducacaoDireitosHumanos,
-                $pessoa->formacaoContinuadaEducacaoBilingueSurdos,
-                $pessoa->formacaoContinuadaEducacaoTecnologiaInformaçãoComunicacao,
-                $pessoa->formacaoContinuadaGeneroDiversidadeSexual,
-                $pessoa->formacaoContinuadaDireitosCriancaAdolescente,
-                $pessoa->formacaoContinuadaEducacaoRelacoesEticoRaciais,
-                $pessoa->formacaoContinuadaEducacaoGestaoEscolar,
-                $pessoa->formacaoContinuadaEducacaoOutros,
-                $pessoa->formacaoContinuadaEducacaoNenhum,
-                $pessoa->email,
+                $pessoa->registro, // 01 - Tipo de registro
+                $pessoa->inepEscola, // 02 - Código da escola - INEP
+                $pessoa->codigoPessoa, // 03 - Código da pessoa física no sistema próprio
+                $pessoa->getInep(), // 04 - Identificação única (INEP)
+                (string) $pessoa->cpf, // 05 - CPF
+                $pessoa->nomePessoa, // 06 - Nome completo
+                $pessoa->dataNascimento, // 07 - Data de nascimento
+                $pessoa->filiacao, // 08 - Filiação
+                $pessoa->filiacao1, // 09 - Filiação 1
+                $pessoa->filiacao2, // 10 - Filiação 2
+                $pessoa->sexo, // 11 - Sexo
+                $pessoa->raca, // 12 - Cor / Raça
+                $pessoa->povoIndigena, // 13 - Povo indígena
+                $pessoa->nacionalidade, // 14 - Nacionalidade
+                $pessoa->paisNacionalidade, // 15 - País de nacionalidade
+                $pessoa->municipioNascimento, // 16 - Município de nascimento
+                $pessoa->deficiencia, // 17 - Deficiência, transtorno do espectro autista e altas habilidades ou superdotação
+                $pessoa->deficienciaCegueira, // 18 - Cegueira
+                $pessoa->deficienciaBaixaVisao, // 19 - Baixa visão
+                $pessoa->deficienciaVisaoMonocular, // 20 - Visão monocular
+                $pessoa->deficienciaSurdez, // 21 - Surdez
+                $pessoa->deficienciaAuditiva, // 22 - Deficiência auditiva
+                $pessoa->deficienciaSurdoCegueira, // 23 - Surdocegueira
+                $pessoa->deficienciaFisica, // 24 - Deficiência física
+                $pessoa->deficienciaIntelectual, // 25 - Deficiência intelectual
+                $pessoa->deficienciaMultipla(), // 26 - Deficiência múltipla
+                $pessoa->deficienciaAutismo, // 27 - Transtorno do espectro autista
+                $pessoa->deficienciaAltasHabilidades, // 28 - Altas habilidades / superdotação
+                $pessoa->transtorno, // 29 - Pessoa física com transtorno(s) que impacta(m) o desenvolvimento da aprendizagem
+                $pessoa->transtornoDiscalculia, // 30 - Discalculia ou outro transtorno da matemática e raciocínio lógico
+                $pessoa->transtornoDisgrafia, // 31 - Disgrafia, Disortografia ou outro transtorno da escrita e ortografia
+                $pessoa->transtornoDislalia, // 32 - Dislalia ou outro transtorno da linguagem e comunicação
+                $pessoa->transtornoDislexia, // 33 - Dislexia
+                $pessoa->transtornoTdah, // 34 - Transtorno do Déficit de Atenção com Hiperatividade (TDAH)
+                $pessoa->transtornoTpac, // 35 - Transtorno do Processamento Auditivo Central (TPAC)
+                $pessoa->recursoLedor, // 36 - Auxílio ledor
+                $pessoa->recursoTranscricao, // 37 - Auxílio transcrição
+                $pessoa->recursoGuia, // 38 - Guia-Intérprete
+                $pessoa->recursoTradutor, // 39 - Tradutor-Intérprete de Libras
+                $pessoa->recursoLeituraLabial, // 40 - Leitura Labial
+                $pessoa->recursoProvaAmpliada, // 41 - Prova Ampliada (Fonte 18)
+                $pessoa->recursoProvaSuperampliada, // 42 - Prova superampliada (Fonte 24)
+                $pessoa->recursoAudio, // 43 - CD com áudio para deficiente visual
+                $pessoa->recursoLinguaPortuguesaSegundaLingua, // 44 - Prova de Língua Portuguesa como Segunda Língua para surdos e deficientes auditivos
+                $pessoa->recursoVideoLibras, // 45 - Prova em Vídeo em Libras
+                $pessoa->recursoBraile, // 46 - Material didático em Braille
+                $pessoa->provaBraile, // 47 - Prova em Braille
+                $pessoa->recursoTempoAdicional, // 48 - Tempo adicional
+                $pessoa->recursoNenhum, // 49 - Nenhum recurso
+                $pessoa->certidaoNascimento, // 50 - Número da matrícula da certidão de nascimento (certidão nova)
+                $pessoa->paisResidencia, // 51 - País de residência
+                $pessoa->cep, // 52 - CEP
+                $pessoa->cep ? $pessoa->municipioResidencia : '', // 53 - Município de residência
+                $pessoa->localizacaoResidencia, // 54 - Localização/ Zona de residência
+                $pessoa->localizacaoDiferenciada, // 55 - Localização diferenciada de residência
+                $pessoa->escolaridade, // 56 - Maior nível de escolaridade concluído
+                $pessoa->tipoEnsinoMedioCursado, // 57 - Tipo de ensino médio cursado
+                $pessoa->formacaoCurso[0], // 58 - Código do Curso 1
+                $pessoa->formacaoAnoConclusao[0], // 59 - Ano de Conclusão 1
+                $pessoa->formacaoInstituicao[0], // 60 - Instituição de educação superior 1
+                $pessoa->formacaoCurso[1], // 61 - Código do Curso 2
+                $pessoa->formacaoAnoConclusao[1], // 62 - Ano de Conclusão 2
+                $pessoa->formacaoInstituicao[1], // 63 - Instituição de educação superior 2
+                $pessoa->formacaoCurso[2], // 64 - Código do Curso 3
+                $pessoa->formacaoAnoConclusao[2], // 65 - Ano de Conclusão 3
+                $pessoa->formacaoInstituicao[2], // 66 - Instituição de educação superior 3
+                $pessoa->complementacaoPedagogica[0], // 67 - Área do conhecimento/ componentes curriculares 1
+                $pessoa->complementacaoPedagogica[1], // 68 - Área do conhecimento/ componentes curriculares 2
+                $pessoa->complementacaoPedagogica[2], // 69 - Área do conhecimento/ componentes curriculares 3
+                $pessoa->posGraduacoes[0]->type_id, // 70 - Tipo de pós-graduação 1
+                $pessoa->posGraduacoes[0]->area_id, // 71 - Área da pós-graduação 1
+                $pessoa->posGraduacoes[0]->completion_year, // 72 - Ano de conclusão da pós-graduação 1
+                $pessoa->posGraduacoes[1]->type_id, // 73 - Tipo de pós-graduação 2
+                $pessoa->posGraduacoes[1]->area_id, // 74 - Área da pós-graduação 2
+                $pessoa->posGraduacoes[1]->completion_year, // 75 - Ano de conclusão da pós-graduação 2
+                $pessoa->posGraduacoes[2]->type_id, // 76 - Tipo de pós-graduação 3
+                $pessoa->posGraduacoes[2]->area_id, // 77 - Área da pós-graduação 3
+                $pessoa->posGraduacoes[2]->completion_year, // 78 - Ano de conclusão da pós-graduação 3
+                $pessoa->posGraduacoes[3]->type_id, // 79 - Tipo de pós-graduação 4
+                $pessoa->posGraduacoes[3]->area_id, // 80 - Área da pós-graduação 4
+                $pessoa->posGraduacoes[3]->completion_year, // 81 - Ano de conclusão da pós-graduação 4
+                $pessoa->posGraduacoes[4]->type_id, // 82 - Tipo de pós-graduação 5
+                $pessoa->posGraduacoes[4]->area_id, // 83 - Área da pós-graduação 5
+                $pessoa->posGraduacoes[4]->completion_year, // 84 - Ano de conclusão da pós-graduação 5
+                $pessoa->posGraduacoes[5]->type_id, // 85 - Tipo de pós-graduação 6
+                $pessoa->posGraduacoes[5]->area_id, // 86 - Área da pós-graduação 6
+                $pessoa->posGraduacoes[5]->completion_year, // 87 - Ano de conclusão da pós-graduação 6
+                $pessoa->posGraduacaoNaoPossui, // 88 - Não tem pós-graduação concluída
+                $pessoa->formacaoContinuadaCreche, // 89 - Creche (0 a 3 anos)
+                $pessoa->formacaoContinuadaPreEscola, // 90 - Pré-escola (4 e 5 anos)
+                $pessoa->formacaoContinuadaAnosIniciaisFundamental, // 91 - Anos iniciais do ensino fundamental
+                $pessoa->formacaoContinuadaAnosFinaisFundamental, // 92 - Anos finais do ensino fundamental
+                $pessoa->formacaoContinuadaEnsinoMedio, // 93 - Ensino médio
+                $pessoa->formacaoContinuadaEducacaoJovensAdultos, // 94 - Educação de jovens e adultos
+                $pessoa->formacaoContinuadaEducacaoEspecial, // 95 - Educação especial
+                $pessoa->formacaoContinuadaEducacaoIndigena, // 96 - Educação Indígena
+                $pessoa->formacaoContinuadaEducacaoCampo, // 97 - Educação do campo
+                $pessoa->formacaoContinuadaEducacaoAmbiental, // 98 - Educação ambiental
+                $pessoa->formacaoContinuadaEducacaoDireitosHumanos, // 99 - Educação em direitos humanos
+                $pessoa->formacaoContinuadaEducacaoBilingueSurdos, // 100 - Educação bilíngue de surdos
+                $pessoa->formacaoContinuadaEducacaoTecnologiaInformacaoComunicacao, // 101 - Educação e Tecnologia de Informação e Comunicação (TIC)
+                $pessoa->formacaoContinuadaGeneroDiversidadeSexual, // 102 - Gênero e diversidade sexual
+                $pessoa->formacaoContinuadaDireitosCriancaAdolescente, // 103 - Direitos de criança e adolescente
+                $pessoa->formacaoContinuadaEducacaoRelacoesEticoRaciais, // 104 - Educação para as relações étnico-raciais e História e cultura afro-brasileira e africana
+                $pessoa->formacaoContinuadaEducacaoGestaoEscolar, // 105 - Gestão escolar
+                $pessoa->formacaoContinuadaEducacaoOutros, // 106 - Outros
+                $pessoa->formacaoContinuadaEducacaoNenhum, // 107 - Nenhum
+                $pessoa->email, // 108 - E-mail
             ];
 
             $stringCenso .= ArrayToCenso::format($data) . PHP_EOL;
