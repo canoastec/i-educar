@@ -206,13 +206,13 @@ class AvailableTimeService
      */
     private function hasEscolarizacaoAndAee(LegacySchoolClass $schoolClass, LegacySchoolClass $otherSchoolClass)
     {
-        if ($schoolClass->tipo_atendimento == TipoAtendimentoTurma::ESCOLARIZACAO &&
+        if ($schoolClass->tipo_atendimento == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO &&
             $otherSchoolClass->tipo_atendimento == TipoAtendimentoTurma::AEE) {
             return true;
         }
 
         if ($schoolClass->tipo_atendimento == TipoAtendimentoTurma::AEE &&
-            $otherSchoolClass->tipo_atendimento == TipoAtendimentoTurma::ESCOLARIZACAO) {
+            $otherSchoolClass->tipo_atendimento == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO) {
             return true;
         }
 

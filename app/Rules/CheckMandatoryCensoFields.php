@@ -276,7 +276,7 @@ class CheckMandatoryCensoFields implements Rule
 
     protected function validaCampoTipoAtendimento($params)
     {
-        if ($params->tipo_atendimento != TipoAtendimentoTurma::ESCOLARIZACAO && in_array(
+        if ($params->tipo_atendimento != TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO && in_array(
             $params->tipo_mediacao_didatico_pedagogico,
             [
                 App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA,
@@ -336,7 +336,7 @@ class CheckMandatoryCensoFields implements Rule
             $params->etapa_educacenso = null;
         }
 
-        if ($params->tipo_atendimento == TipoAtendimentoTurma::ESCOLARIZACAO && empty($estruturaCurricular)) {
+        if ($params->tipo_atendimento == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO && empty($estruturaCurricular)) {
             $this->message = 'Campo "Estrutura Curricular" é obrigatório quando o campo tipo de turma é "Curricular (etapa de ensino)".';
 
             return false;

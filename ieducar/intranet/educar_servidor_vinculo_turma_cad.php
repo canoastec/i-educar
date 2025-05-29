@@ -433,7 +433,7 @@ return new class extends clsCadastro
             return false;
         }
 
-        if ($turma['tipo_atendimento'] != TipoAtendimentoTurma::ESCOLARIZACAO && $this->funcao_exercida == FuncaoExercida::AUXILIAR_EDUCACIONAL) {
+        if ($turma['tipo_atendimento'] != TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO && $this->funcao_exercida == FuncaoExercida::AUXILIAR_EDUCACIONAL) {
             $this->mensagem = 'O campo: <b>Função exercida</b> não pode ser: <b>Auxiliar/Assistente Educacional</b> quando o tipo de atendimento da turma for: <b>' . TipoAtendimentoTurma::getDescriptiveValues()[$turma['tipo_atendimento']] . '</b>';
 
             return false;

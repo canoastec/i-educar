@@ -205,7 +205,7 @@ class AvailableTimeServiceTest extends TestCase
         $otherSchoolClass = LegacySchoolClassFactory::new()->morning()->create(
             [
                 'tipo_mediacao_didatico_pedagogico' => 1,
-                'tipo_atendimento' => TipoAtendimentoTurma::ESCOLARIZACAO,
+                'tipo_atendimento' => TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO,
                 'hora_final' => '15:45',
             ]
         );
