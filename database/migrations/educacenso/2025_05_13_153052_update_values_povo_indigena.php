@@ -16,8 +16,9 @@ return new class extends Migration
             );
 
             EducacensoIndigenousPeople::query()
-                ->create([
+                ->updateOrCreate([
                     'id' => $data[0],
+                ], [
                     'name' => $data[1],
                 ]);
         }
