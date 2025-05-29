@@ -1179,6 +1179,11 @@ var handleGetPersonDetails = function (dataResponse) {
     nomeResponsavel = dataResponse.responsavel_id + " - " + nomeResponsavel;
   }
 
+  if (dataResponse.povo_indigena_educacenso_id) {
+    $j("#povo_indigena_educacenso_id").val(dataResponse.povo_indigena_educacenso_id);
+    $j("#povo_indigena_educacenso_id").trigger("change");
+  }
+
   $j("#data_nascimento").val(dataResponse.data_nascimento);
   $j("#rg").val(dataResponse.rg);
 
