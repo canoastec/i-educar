@@ -503,15 +503,22 @@ SQL;
                  WHERE educacenso_cod_escola.cod_escola = :school
                  ) dadosescola ON true
             LEFT JOIN LATERAL (
-                 SELECT fisica_deficiencia.ref_idpes,
-                        ARRAY_AGG(deficiencia.deficiencia_educacenso) as array_deficiencias
-                 FROM cadastro.fisica_deficiencia
-                 JOIN cadastro.deficiencia ON deficiencia.cod_deficiencia = fisica_deficiencia.ref_cod_deficiencia
-                 WHERE fisica_deficiencia.ref_idpes = fisica.idpes
-                   AND deficiencia.deficiencia_educacenso IN (1,2,3,4,5,6,7,8,25,13,50,51,52,53,54,55)
-                 GROUP BY 1
-                 ) deficiencias ON true
+                 SELECT ARRAY_AGG(def) AS array_deficiencias
+                    FROM (
+                        SELECT deficiencia.deficiencia_educacenso AS def
+                        FROM cadastro.fisica_deficiencia
+                        JOIN cadastro.deficiencia ON deficiencia.cod_deficiencia = fisica_deficiencia.ref_cod_deficiencia
+                        WHERE fisica_deficiencia.ref_idpes = fisica.idpes
+                          AND deficiencia.deficiencia_educacenso IN (1,2,3,4,5,6,7,8,25,13)
+                        UNION ALL
 
+                        SELECT deficiencia.transtorno_educacenso AS def
+                            FROM cadastro.fisica_deficiencia
+                            JOIN cadastro.deficiencia ON deficiencia.cod_deficiencia = fisica_deficiencia.ref_cod_deficiencia
+                            WHERE fisica_deficiencia.ref_idpes = fisica.idpes
+                              AND deficiencia.transtorno_educacenso IN (50,51,52,53,54,55)
+                    ) AS sub
+                ) deficiencias ON true
             WHERE fisica.idpes IN ({$stringPersonId})
 
 SQL;
