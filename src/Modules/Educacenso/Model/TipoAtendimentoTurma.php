@@ -22,7 +22,7 @@ class TipoAtendimentoTurma
     public static function getDescriptiveValues()
     {
         return [
-            self::ESCOLARIZACAO => 'Escolarização',
+            self::ESCOLARIZACAO => 'Curricular (etapa de ensino)',
             self::ATIVIDADE_COMPLEMENTAR => 'Atividade complementar',
             self::AEE => 'Atendimento educacional especializado (AEE)',
         ];

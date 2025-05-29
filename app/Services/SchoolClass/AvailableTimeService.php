@@ -199,7 +199,7 @@ class AvailableTimeService
     }
 
     /**
-     * Retorna true caso uma das turmas for Escolarização e a outra Atendimento educacional especializado - AEE
+     * Retorna true caso uma das turmas for Curricular (etapa de ensino) e a outra Atendimento educacional especializado - AEE
      *
      *
      * @return bool
