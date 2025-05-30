@@ -663,6 +663,7 @@ return new class extends clsCadastro
             'label' => 'Código do curso',
             'size' => 50,
             'required' => false,
+            'label_hint' => 'Esse campo se refere ao código do curso de educação profissional',
             'options' => [
                 'values' => $this->cod_curso_profissional,
                 'all_values' => $cursos,
