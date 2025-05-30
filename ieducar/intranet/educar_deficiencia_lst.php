@@ -54,7 +54,7 @@ return new class extends clsListagem
                 'name' => $this->nm_deficiencia,
             ])
             ->when(
-                request()->has('deficiency_type_id') && request()->integer('deficiency_type_id') !== 0,
+                request()->integer('deficiency_type_id') !== 0,
                 function ($query) {
                     $query->where('deficiency_type_id', request()->integer('deficiency_type_id'));
                 }
