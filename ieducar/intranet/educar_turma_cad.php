@@ -702,7 +702,7 @@ return new class extends clsCadastro
         $options = [
             'label' => 'Turma de Educação Especial (classe especial)',
             'resources' => $resources,
-            'value' => $this->classe_especial,
+            'value' => (string) $this->classe_especial,
             'required' => false,
             'size' => 70,
         ];

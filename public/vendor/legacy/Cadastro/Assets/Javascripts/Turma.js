@@ -301,7 +301,7 @@ function habilitaEtapaAgregada() {
   $j("#etapa_agregada").prop('disabled', true);
 
   if ($j('#tipo_atendimento').val() === '0') {
-    $j("#etapa_agregada").prop('disabled', false).val('');
+    $j("#etapa_agregada").prop('disabled', false);
   } else {
     $j("#etapa_agregada").val('');
   }
@@ -310,7 +310,7 @@ function habilitaEtapaAgregada() {
 function habilitaClasseEspecial() {
   $j("#classe_especial").prop('disabled', true);
   if ($j('#tipo_atendimento').val() === '0') {
-    $j("#classe_especial").prop('disabled', false).val('');
+    $j("#classe_especial").prop('disabled', false);
   } else {
     $j("#classe_especial").val('');
   }
