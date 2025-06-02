@@ -199,20 +199,20 @@ class AvailableTimeService
     }
 
     /**
-     * Retorna true caso uma das turmas for Escolarização e a outra Atendimento educacional especializado - AEE
+     * Retorna true caso uma das turmas for Curricular (etapa de ensino) e a outra Atendimento educacional especializado - AEE
      *
      *
      * @return bool
      */
     private function hasEscolarizacaoAndAee(LegacySchoolClass $schoolClass, LegacySchoolClass $otherSchoolClass)
     {
-        if ($schoolClass->tipo_atendimento == TipoAtendimentoTurma::ESCOLARIZACAO &&
+        if ($schoolClass->tipo_atendimento == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO &&
             $otherSchoolClass->tipo_atendimento == TipoAtendimentoTurma::AEE) {
             return true;
         }
 
         if ($schoolClass->tipo_atendimento == TipoAtendimentoTurma::AEE &&
-            $otherSchoolClass->tipo_atendimento == TipoAtendimentoTurma::ESCOLARIZACAO) {
+            $otherSchoolClass->tipo_atendimento == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO) {
             return true;
         }
 

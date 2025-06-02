@@ -375,7 +375,7 @@ class Registro20 implements RegistroEducacenso
      */
     public function escolarizacao()
     {
-        return $this->tipoAtendimento == TipoAtendimentoTurma::ESCOLARIZACAO;
+        return $this->tipoAtendimento == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO;
     }
 
     /**

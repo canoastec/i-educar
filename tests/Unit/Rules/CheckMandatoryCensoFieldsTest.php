@@ -17,7 +17,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
 
         $result = $mandatoryFields->validaCampoEstruturaCurricular($param);
 
-        $expectedMessage = 'Campo "Estrutura Curricular" é obrigatório quando o campo tipo de atentimento é "Escolarização".';
+        $expectedMessage = 'Campo "Estrutura Curricular" é obrigatório quando o campo tipo de turma é "Curricular (etapa de ensino)".';
 
         $this->assertEquals($expectedMessage, $mandatoryFields->message());
         $this->assertFalse($result);
