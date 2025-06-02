@@ -146,6 +146,8 @@ return new class extends clsCadastro
 
     public $classe_com_lingua_brasileira_sinais;
 
+    public $classe_especial;
+
     public $horario_funcionamento_turno_matutino;
 
     public $codigo_inep_matutino;
@@ -690,6 +692,21 @@ return new class extends clsCadastro
 
         $options = ['label' => 'Local de funcionamento diferenciado da turma', 'resources' => $resources, 'value' => $this->local_funcionamento_diferenciado, 'required' => false, 'size' => 70];
         $this->inputsHelper()->select(attrName: 'local_funcionamento_diferenciado', inputOptions: $options);
+
+        $resources = [
+            null => 'Selecione',
+            1 => 'Sim',
+            0 => 'Não',
+        ];
+
+        $options = [
+            'label' => 'Turma de Educação Especial (classe especial)',
+            'resources' => $resources,
+            'value' => $this->classe_especial,
+            'required' => false,
+            'size' => 70,
+        ];
+        $this->inputsHelper()->select(attrName: 'classe_especial', inputOptions: $options);
 
         $resources = [
             null => 'Selecione',

@@ -52,8 +52,16 @@ let verificaEtapaAgregada = ()=>{
 
   if ($j('#tipo_atendimento').val() === '0' &&
     obrigarCamposCenso) {
-    alert($j('#tipo_atendimento').val());
     $j('#etapa_agregada').makeRequired();
+  }
+}
+
+let verificaClasseEspecial = ()=>{
+  $j('#classe_especial').makeUnrequired();
+
+  if ($j('#tipo_atendimento').val() === '0' &&
+    obrigarCamposCenso) {
+    $j('#classe_especial').makeRequired();
   }
 }
 
@@ -145,6 +153,8 @@ $j('#tipo_atendimento').change(function() {
   verificaFormaOrganizacaoTurma();
   verificaEtapaAgregada();
   habilitaEtapaAgregada();
+  verificaClasseEspecial();
+  habilitaClasseEspecial();
 });
 $j('#estrutura_curricular').change(function() {
   verificaUnidadeCurricular();
@@ -294,6 +304,15 @@ function habilitaEtapaAgregada() {
     $j("#etapa_agregada").prop('disabled', false).val('');
   } else {
     $j("#etapa_agregada").val('');
+  }
+}
+
+function habilitaClasseEspecial() {
+  $j("#classe_especial").prop('disabled', true);
+  if ($j('#tipo_atendimento').val() === '0') {
+    $j("#classe_especial").prop('disabled', false).val('');
+  } else {
+    $j("#classe_especial").val('');
   }
 }
 
@@ -526,6 +545,8 @@ $j(document).ready(function() {
       verificaEtapaEducacenso();
       verificaEtapaAgregada();
       habilitaEtapaAgregada();
+      verificaClasseEspecial();
+      habilitaClasseEspecial();
       verificaFormaOrganizacaoTurma();
       verificaUnidadeCurricular();
       habilitaUnidadeCurricular();
