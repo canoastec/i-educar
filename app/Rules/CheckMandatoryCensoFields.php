@@ -252,7 +252,7 @@ class CheckMandatoryCensoFields implements Rule
 
     protected function validaCampoAtividadesComplementares($params)
     {
-        if ($params->tipo_atendimento == TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR
+        if ($params->tipo_atendimento && in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $params->tipo_atendimento)
             && empty($params->atividades_complementares)
         ) {
             $this->message = 'Campo atividades complementares é obrigatório.';
@@ -276,7 +276,7 @@ class CheckMandatoryCensoFields implements Rule
 
     protected function validaCampoTipoAtendimento($params)
     {
-        if ($params->tipo_atendimento != TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO && in_array(
+        if ($params->tipo_atendimento && !in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $params->tipo_atendimento) && in_array(
             $params->tipo_mediacao_didatico_pedagogico,
             [
                 App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA,
@@ -288,7 +288,7 @@ class CheckMandatoryCensoFields implements Rule
         }
 
         $course = LegacyCourse::find($params->ref_cod_curso);
-        if ((int) $params->tipo_atendimento === TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR && (int) $course->modalidade_curso === ModalidadeCurso::EJA) {
+        if ($params->tipo_atendimento && in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $params->tipo_atendimento) && (int) $course->modalidade_curso === ModalidadeCurso::EJA) {
             $this->message = 'Quando a modalidade do curso é: <b>Educação de Jovens e Adultos (EJA)</b>, o campo <b>Tipo de atendimento</b> não pode ser <b>Atividade complementar</b>';
 
             return false;
@@ -336,7 +336,7 @@ class CheckMandatoryCensoFields implements Rule
             $params->etapa_educacenso = null;
         }
 
-        if ($params->tipo_atendimento == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO && empty($estruturaCurricular)) {
+        if ($params->tipo_atendimento && in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $params->tipo_atendimento) && empty($estruturaCurricular)) {
             $this->message = 'Campo "Estrutura Curricular" é obrigatório quando o campo tipo de turma é "Curricular (etapa de ensino)".';
 
             return false;

@@ -183,7 +183,7 @@ return new class extends clsDetalhe
                 $existeTurmaTurnoIntegral = true;
             }
 
-            if ($turma['tipo_atendimento'] == TipoAtendimentoTurma::AEE) {
+            if (in_array(TipoAtendimentoTurma::AEE, $turma['tipo_atendimento'])) {
                 $existeAtendimentoEspecializado = true;
             }
 

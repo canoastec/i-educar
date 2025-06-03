@@ -50,7 +50,7 @@ let verificaEtapaEducacenso = ()=>{
 let verificaEtapaAgregada = ()=>{
   $j('#etapa_agregada').makeUnrequired();
 
-  if ($j('#tipo_atendimento').val() === '0' &&
+  if ($j('#tipo_atendimento').val().includes('0') &&
     obrigarCamposCenso) {
     $j('#etapa_agregada').makeRequired();
   }
@@ -59,7 +59,7 @@ let verificaEtapaAgregada = ()=>{
 let verificaClasseEspecial = ()=>{
   $j('#classe_especial').makeUnrequired();
 
-  if ($j('#tipo_atendimento').val() === '0' &&
+  if ($j('#tipo_atendimento').val().includes('0') &&
     obrigarCamposCenso) {
     $j('#classe_especial').makeRequired();
   }
@@ -105,7 +105,7 @@ let verificaOutrasUnidadesCurricularesObrigatorias = ()=> {
 
 let verificaFormaOrganizacaoTurma = ()=> {
   const etapasInvalidas = ['1', '2', '3', '24', '62'];
-  const escolarizacao = $j('#tipo_atendimento').val() == '0';
+  const escolarizacao = $j('#tipo_atendimento').val().includes('0');
   const etapaEducacenso = $j('#etapa_educacenso').val()
 
   $j('#formas_organizacao_turma').makeUnrequired();
@@ -147,7 +147,69 @@ let verificaLocalFuncionamentoDiferenciado = () => {
   }
 }
 
+function atualizaOpcoesTipoAtendimento() {
+  let valores = $j('#tipo_atendimento').val() || [];
+  const $options = $j('#tipo_atendimento option');
+
+  if (valores.length > 1 && (valores.includes('') || valores.includes('null'))) {
+    valores = valores.filter(v => v !== '' && v !== 'null');
+    $j('#tipo_atendimento').val(valores).trigger('chosen:updated');
+  }
+
+  if (valores.includes('5') && valores.length > 1) {
+    valores = ['5'];
+    $j('#tipo_atendimento').val(valores).trigger('chosen:updated');
+  }
+
+  $options.prop('disabled', false);
+
+  if (!valores.length) {
+    $j('#tipo_atendimento').trigger('chosen:updated');
+    return;
+  }
+
+  if (valores.length === 1 && valores.includes('0')) {
+    $options.each(function() {
+      if (!['0', '4'].includes($j(this).val())) {
+        $j(this).prop('disabled', true);
+      }
+    });
+  }
+  else if (valores.length === 1 && valores.includes('4')) {
+    $options.each(function() {
+      if (!['0', '4'].includes($j(this).val())) {
+        $j(this).prop('disabled', true);
+      }
+    });
+  }
+  else if (valores.length === 2 && valores.includes('0') && valores.includes('4')) {
+    $options.each(function() {
+      if (!['0', '4'].includes($j(this).val())) {
+        $j(this).prop('disabled', true);
+      }
+    });
+  }
+  else if (valores.length === 1 && valores.includes('5')) {
+    $options.each(function() {
+      if ($j(this).val() !== '5') {
+        $j(this).prop('disabled', true);
+      }
+    });
+  }
+
+  else {
+    $options.each(function() {
+      if ($j(this).val() !== '' && $j(this).val() !== 'null') {
+        $j(this).prop('disabled', true);
+      }
+    });
+  }
+
+  $j('#tipo_atendimento').trigger('chosen:updated');
+}
+
 $j('#tipo_atendimento').change(function() {
+  atualizaOpcoesTipoAtendimento();
   mostraAtividadesComplementares();
   verificaEstruturacurricular();
   verificaFormaOrganizacaoTurma();
@@ -173,7 +235,7 @@ $j('#etapa_educacenso').change(function() {
 });
 
 function mostraAtividadesComplementares(){
-  var mostraCampo = $j('#tipo_atendimento').val() == '4';
+  var mostraCampo = $j('#tipo_atendimento').val().includes('4');
   $j('#atividades_complementares').makeUnrequired();
   if (mostraCampo) {
     $j('#atividades_complementares').removeAttr('disabled');
@@ -188,7 +250,7 @@ function mostraAtividadesComplementares(){
 }
 
 function verificaEstruturacurricular() {
-  const mostraCampo = $j('#tipo_atendimento').val() === '0';
+  const mostraCampo = $j('#tipo_atendimento').val().includes('0');
   const estruturaCurricularField = $j('#estrutura_curricular');
 
   estruturaCurricularField.makeUnrequired();
@@ -623,6 +685,8 @@ $j(document).ready(function() {
     no_results_text: "Nenhum modelo encontrado!",
     allow_single_deselect: true,
   });
+
+  atualizaOpcoesTipoAtendimento();
 
 });
 

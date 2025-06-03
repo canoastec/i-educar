@@ -131,7 +131,7 @@ return new class extends clsCadastro
             $turma = new clsPmieducarTurma(cod_turma: $enturmacao['ref_cod_turma']);
             $turma = $turma->detalhe();
 
-            if ($turma['tipo_atendimento'] == TipoAtendimentoTurma::AEE) {
+            if (in_array(TipoAtendimentoTurma::AEE, $turma['tipo_atendimento'])) {
                 $arrayEnturmacoes[] = $enturmacao;
             }
         }

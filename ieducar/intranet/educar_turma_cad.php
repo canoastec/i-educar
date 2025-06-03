@@ -264,6 +264,7 @@ return new class extends clsCadastro
         $this->estrutura_curricular = transformStringFromDBInArray(string: $this->estrutura_curricular);
         $this->cod_curso_profissional = transformStringFromDBInArray(string: $this->cod_curso_profissional);
         $this->unidade_curricular = transformStringFromDBInArray(string: $this->unidade_curricular);
+        $this->tipo_atendimento = transformStringFromDBInArray(string: $this->tipo_atendimento);
 
         $this->url_cancelar = $retorno == 'Editar' ?
             'educar_turma_det.php?cod_turma=' . $registro['cod_turma'] : 'educar_turma_lst.php';
@@ -582,8 +583,18 @@ return new class extends clsCadastro
             5 => 'Atendimento educacional especializado (AEE)',
         ];
 
-        $options = ['label' => 'Tipo de turma', 'resources' => $resources, 'value' => $this->tipo_atendimento, 'required' => $obrigarCamposCenso, 'size' => 70];
-        $this->inputsHelper()->select(attrName: 'tipo_atendimento', inputOptions: $options);
+        $helperOptions = ['objectName' => 'tipo_atendimento'];
+        $options = [
+            'label' => 'Tipo de turma',
+            'required' => $obrigarCamposCenso,
+            'size' => 70,
+            'options' => [
+                'values' => $this->tipo_atendimento,
+                'all_values' => $resources,
+            ],
+        ];
+
+        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
 
         $helperOptions = ['objectName' => 'estrutura_curricular'];
         $options = [
