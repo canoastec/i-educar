@@ -571,12 +571,14 @@ return new class extends clsCadastro
             'max_length' => 14,
             'value' => $this->codigo_inep_educacenso]);
 
-        $resources = [null => 'Selecione',
-            0 => 'Escolarização',
+        $resources = [
+            null => 'Selecione',
+            0 => 'Curricular (etapa de ensino)',
             4 => 'Atividade complementar',
-            5 => 'Atendimento educacional especializado (AEE)'];
+            5 => 'Atendimento educacional especializado (AEE)'
+        ];
 
-        $options = ['label' => 'Tipo de atendimento', 'resources' => $resources, 'value' => $this->tipo_atendimento, 'required' => $obrigarCamposCenso, 'size' => 70];
+        $options = ['label' => 'Tipo de turma', 'resources' => $resources, 'value' => $this->tipo_atendimento, 'required' => $obrigarCamposCenso, 'size' => 70];
         $this->inputsHelper()->select(attrName: 'tipo_atendimento', inputOptions: $options);
 
         $helperOptions = ['objectName' => 'estrutura_curricular'];
@@ -656,11 +658,17 @@ return new class extends clsCadastro
         $cursos = loadJson(file: 'educacenso_json/cursos_da_educacao_profissional.json');
         $helperOptions = ['objectName' => 'cod_curso_profissional',
             'type' => 'single'];
-        $options = ['label' => 'Curso de educação profissional',
+
+        $options = [
+            'label' => 'Código do curso',
             'size' => 50,
             'required' => false,
-            'options' => ['values' => $this->cod_curso_profissional,
-                'all_values' => $cursos]];
+            'label_hint' => 'Esse campo se refere ao código do curso de educação profissional',
+            'options' => [
+                'values' => $this->cod_curso_profissional,
+                'all_values' => $cursos,
+            ],
+        ];
         $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
 
         $resources = App_Model_LocalFuncionamentoDiferenciado::getInstance()->getEnums();
@@ -675,7 +683,13 @@ return new class extends clsCadastro
             2 => 'Não',
         ];
 
-        $options = ['label' => 'Classe bilíngue de surdos tendo a Libras (Língua Brasileira de Sinais) como língua de instrução, ensino, comunicação e interação e a língua portuguesa escrita como segunda língua', 'resources' => $resources, 'value' => $this->classe_com_lingua_brasileira_sinais, 'required' => $obrigarCamposCenso, 'size' => 70];
+        $options = [
+            'label' => 'Turma de Educação Bilíngue de Surdos (classe bilíngue de surdos)',
+            'resources' => $resources,
+            'value' => $this->classe_com_lingua_brasileira_sinais,
+            'required' => $obrigarCamposCenso,
+            'size' => 70
+        ];
         $this->inputsHelper()->select(attrName: 'classe_com_lingua_brasileira_sinais', inputOptions: $options);
 
         $options = ['label' => 'Não informar esta turma no Censo escolar',

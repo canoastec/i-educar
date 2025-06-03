@@ -170,14 +170,7 @@ class InepExamValidator implements EducacensoValidator
     {
         if ($this->validateResource(
             RecursosRealizacaoProvas::GUIA_INTERPRETE,
-            [
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
-            ],
+            [],
             [
                 Deficiencias::SURDOCEGUEIRA,
             ]

@@ -1179,6 +1179,11 @@ var handleGetPersonDetails = function (dataResponse) {
     nomeResponsavel = dataResponse.responsavel_id + " - " + nomeResponsavel;
   }
 
+  if (dataResponse.povo_indigena_educacenso_id) {
+    $j("#povo_indigena_educacenso_id").val(dataResponse.povo_indigena_educacenso_id);
+    $j("#povo_indigena_educacenso_id").trigger("change");
+  }
+
   $j("#data_nascimento").val(dataResponse.data_nascimento);
   $j("#rg").val(dataResponse.rg);
 
@@ -1967,7 +1972,7 @@ function canShowParentsFields() {
             <li>Dentre as opções: Prova Ampliada (Fonte 18), Prova superampliada (Fonte 24), Material didático em Braille e Prova em Braille, apenas uma deve ser informada;</li>
             <li><b>Auxílio ledor</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Cegueira, Baixa visão, Visão monocular, Surdocegueira, Deficiência física, Deficiência intelectual e Transtorno do espectro autista. <b>Exceto</b> se possuir também Surdez;</li>
             <li><b>Auxílio transcrição</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Cegueira, Baixa visão, Visão monocular, Surdocegueira, Deficiência física, Deficiência intelectual e Transtorno do espectro autista. Obs.: Quando a deficiência for Cegueira ou Surdocegueira, obrigatoriamente este auxílio deve ser informado junto com um outro auxílio;</li>
-            <li><b>Guia-Intérprete</b>: pode ser informado quando o(a) aluno(a) possuir qualquer deficiência. <b>Exceto</b> se possuir Surdocegueira;</li>
+            <li><b>Guia-Intérprete</b>: pode ser informado quando o(a) aluno(a) possuir qualquer deficiência ou transtorno. <b>Exceto</b> se possuir Surdocegueira;</li>
             <li><b>Tradutor-Intérprete de Libras</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Surdez, Deficiência auditiva e Surdocegueira. <b>Exceto</b> se possuir também Cegueira;</li>
             <li><b>Leitura Labial</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Surdez, Deficiência auditiva e Surdocegueira. <b>Exceto</b> se possuir também Cegueira;</li>
             <li><b>Prova Ampliada (Fonte 18)</b>: pode ser informado quando o(a) aluno(a) possuir a(s) deficiência(s): Baixa visão e Surdocegueira. <b>Exceto</b> se possuir também Cegueira;</li>

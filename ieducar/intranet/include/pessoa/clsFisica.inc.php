@@ -155,7 +155,8 @@ class clsFisica
         $horario_inicial_trabalho = false,
         $horario_final_trabalho = false,
         $nome_social = false,
-        $observacao = false
+        $observacao = false,
+        $povo_indigena_educacenso_id = false,
     ) {
         $objPessoa = new clsPessoa_($idpes);
         if ($objPessoa->detalhe()) {
@@ -230,6 +231,7 @@ class clsFisica
         $this->horario_final_trabalho = $horario_final_trabalho;
         $this->nome_social = $nome_social;
         $this->observacao = $observacao;
+        $this->povo_indigena_educacenso_id = $povo_indigena_educacenso_id;
 
         $cpf = idFederal2int($cpf);
 

@@ -342,6 +342,9 @@ class AlunoController extends ApiCoreController
     {
         $resources = array_filter((array) $this->getRequest()->recursos_prova_inep__);
         $deficiencies = array_filter((array) $this->getRequest()->deficiencias);
+        $transtornos = array_filter((array) $this->getRequest()->transtornos);
+
+        $deficiencies = array_merge($deficiencies, $transtornos);
 
         $deficiencies = $this->replaceByEducacensoDeficiencies($deficiencies);
 
