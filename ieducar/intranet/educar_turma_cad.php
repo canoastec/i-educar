@@ -89,8 +89,6 @@ return new class extends clsCadastro
 
     public $tipo_mediacao_didatico_pedagogico;
 
-    public $unidade_curricular;
-
     public $dias_semana;
 
     public $tipo_boletim;
@@ -139,8 +137,6 @@ return new class extends clsCadastro
     public $url_cancelar = 'educar_turma_lst.php';
 
     public $ano;
-
-    public $outras_unidades_curriculares_obrigatorias;
 
     public $classe_com_lingua_brasileira_sinais;
 
@@ -259,7 +255,6 @@ return new class extends clsCadastro
         $this->atividades_complementares = transformStringFromDBInArray(string: $this->atividades_complementares);
         $this->estrutura_curricular = transformStringFromDBInArray(string: $this->estrutura_curricular);
         $this->cod_curso_profissional = transformStringFromDBInArray(string: $this->cod_curso_profissional);
-        $this->unidade_curricular = transformStringFromDBInArray(string: $this->unidade_curricular);
 
         $this->url_cancelar = $retorno == 'Editar' ?
             'educar_turma_det.php?cod_turma=' . $registro['cod_turma'] : 'educar_turma_lst.php';
@@ -629,31 +624,6 @@ return new class extends clsCadastro
 
         $options = ['label' => 'Formas de organização da turma', 'resources' => $resources, 'value' => $this->formas_organizacao_turma, 'required' => false, 'size' => 70];
         $this->inputsHelper()->select(attrName: 'formas_organizacao_turma', inputOptions: $options);
-
-        $helperOptions = ['objectName' => 'unidade_curricular'];
-        $options = [
-            'label' => 'Unidade curricular',
-            'required' => false,
-            'size' => 70,
-            'options' => [
-                'values' => $this->unidade_curricular,
-                'all_values' => UnidadesCurriculares::getDescriptiveValues(),
-            ],
-        ];
-
-        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
-
-        $options = [
-            'required' => false,
-            'label' => 'Outra(s) unidade(s) curricular(es) obrigatória(s)',
-            'label_hint' => 'Informe outras unidades curriculares que a turma trabalha separadas por ponto e vírgula (;)',
-            'value' => $this->outras_unidades_curriculares_obrigatorias,
-            'cols' => 45,
-            'max_length' => 500,
-            'disabled' => true,
-        ];
-
-        $this->inputsHelper()->textArea('outras_unidades_curriculares_obrigatorias', $options);
 
         $cursos = loadJson(file: 'educacenso_json/cursos_da_educacao_profissional.json');
         $helperOptions = ['objectName' => 'cod_curso_profissional',
