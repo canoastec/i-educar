@@ -396,7 +396,6 @@ class CheckMandatoryCensoFields implements Rule
             3 => 'Ciclo(s)',
             4 => 'Grupos não seriados com base na idade ou competência',
             5 => 'Módulos',
-            6 => 'Alternância regular de períodos de estudos',
         ];
 
         $validOptionCorrelationForEtapaEnsino = [
@@ -414,9 +413,6 @@ class CheckMandatoryCensoFields implements Rule
             ],
             FormaOrganizacaoTurma::MODULES => [
                 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 41, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 56, 64, 69, 70, 71, 72, 73, 74, 67, 68,
-            ],
-            FormaOrganizacaoTurma::ALTERNANCIA_REGULAR => [
-                19, 20, 21, 22, 23, 41, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 64, 69, 70, 71, 72, 73, 74, 67, 68,
             ],
         ];
 
