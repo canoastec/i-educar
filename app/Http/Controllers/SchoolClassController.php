@@ -227,7 +227,7 @@ class SchoolClassController extends Controller
             $params['unidade_curricular'] = null;
         }
 
-        if (!in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $params['tipo_atendimento'])) {
+        if (isset($params['tipo_atendimento']) && !in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $params['tipo_atendimento'])) {
             $params['atividades_complementares'] = '{}';
         }
 
