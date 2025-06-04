@@ -52,7 +52,6 @@ let verificaEtapaAgregada = ()=>{
 
   if ($j('#tipo_atendimento').val() === '0' &&
     obrigarCamposCenso) {
-    alert($j('#tipo_atendimento').val());
     $j('#etapa_agregada').makeRequired();
   }
 }
