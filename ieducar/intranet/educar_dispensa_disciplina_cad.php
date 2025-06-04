@@ -187,7 +187,7 @@ return new class extends clsCadastro
             $this->campoOculto(nome: 'modo_edicao', valor: $this->modoEdicao);
         } else {
             $this->inputsHelper()->multipleSearchComponenteCurricular(attrName: null, inputOptions: [
-                'label' => 'Áreas do conhecimento/componentes curriculares que leciona',
+                'label' => 'Componentes curriculares',
                 'required' => true,
             ], helperOptions: ['searchForArea' => true]);
         }
