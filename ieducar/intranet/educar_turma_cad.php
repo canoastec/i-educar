@@ -144,6 +144,8 @@ return new class extends clsCadastro
 
     public $classe_especial;
 
+    public $formacao_alternancia;
+
     public $horario_funcionamento_turno_matutino;
 
     public $codigo_inep_matutino;
@@ -676,6 +678,15 @@ return new class extends clsCadastro
             'size' => 70,
         ];
         $this->inputsHelper()->select(attrName: 'classe_especial', inputOptions: $options);
+
+        $options = [
+            'label' => 'Turma de Formação por Alternância (proposta pedagógica de formação por alternância: tempo-escola e tempo-comunidade',
+            'resources' => $resources,
+            'value' => (string) $this->formacao_alternancia,
+            'required' => false,
+            'size' => 70,
+        ];
+        $this->inputsHelper()->select(attrName: 'formacao_alternancia', inputOptions: $options);
 
         $resources = [
             null => 'Selecione',
