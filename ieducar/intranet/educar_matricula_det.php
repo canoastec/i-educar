@@ -146,7 +146,6 @@ return new class extends clsDetalhe
         $existeTurmaMulti = false;
         $existeTurmaTurnoIntegral = false;
         $existeAtendimentoEspecializado = false;
-        $existeTurmaItineraria = false;
         $nomesTurmas = [];
         $datasEnturmacoes = [];
         $nomesTurnos = [];
@@ -165,16 +164,9 @@ return new class extends clsDetalhe
             }
 
             $estruturaCurricular = transformStringFromDBInArray(string: $turma['estrutura_curricular']) ?? [];
-            $unidadeCurricular = transformStringFromDBInArray(string: $turma['unidade_curricular']) ?? [];
             $turmaItineraria = in_array(needle: 2, haystack: $estruturaCurricular);
             $turmaFormacaoBasica = in_array(needle: 1, haystack: $estruturaCurricular);
             $etapasItinerario = [25, 26, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 67, 71, 74];
-
-            if (in_array(UnidadesCurriculares::TRILHAS_DE_APROFUNDAMENTO_APRENDIZAGENS, $unidadeCurricular) &&
-                in_array($turma['etapa_educacenso'], $etapasItinerario)
-            ) {
-                $existeTurmaItineraria = true;
-            }
 
             $nomesTurmas[] = $turma['nm_turma'];
             $datasEnturmacoes[] = Portabilis_Date_Utils::pgSQLToBr(timestamp: $enturmacao['data_enturmacao']);
@@ -366,7 +358,7 @@ return new class extends clsDetalhe
                 $this->array_botao_url_script[] = "go(\"educar_matricula_turma_turno_cad.php?ref_cod_matricula={$registro['cod_matricula']}&ref_cod_aluno={$registro['ref_cod_aluno']}\")";
             }
 
-            if ($this->permissaoItinerarioFormativo() && $existeTurmaItineraria) {
+            if ($this->permissaoItinerarioFormativo()) {
                 $this->array_botao[] = 'Itinerário formativo';
                 $link = route(name: 'registration.formative-itinerary.index', parameters: $registro['cod_matricula']);
                 $this->array_botao_url_script[] = "go(\"{$link}\")";

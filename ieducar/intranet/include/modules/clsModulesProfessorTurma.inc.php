@@ -24,10 +24,6 @@ class clsModulesProfessorTurma extends Model
 
     public $codUsuario;
 
-    public $unidades_curriculares;
-
-    public $outras_unidades_curriculares_obrigatorias;
-
     /**
      * Construtor.
      *
@@ -51,13 +47,11 @@ class clsModulesProfessorTurma extends Model
         $tipo_vinculo = null,
         $permite_lancar_faltas_componente = null,
         $turno_id = null,
-        $unidades_curriculares = null,
-        $outras_unidades_curriculares_obrigatorias = null
     ) {
         $this->_schema = 'modules.';
         $this->_tabela = "{$this->_schema}professor_turma";
 
-        $this->_campos_lista = $this->_todos_campos = ' pt.id, pt.ano, pt.instituicao_id, pt.servidor_id, pt.turma_id, pt.funcao_exercida, pt.tipo_vinculo, pt.permite_lancar_faltas_componente, pt.turno_id, pt.unidades_curriculares';
+        $this->_campos_lista = $this->_todos_campos = ' pt.id, pt.ano, pt.instituicao_id, pt.servidor_id, pt.turma_id, pt.funcao_exercida, pt.tipo_vinculo, pt.permite_lancar_faltas_componente, pt.turno_id';
 
         if (is_numeric($id)) {
             $this->id = $id;
@@ -91,22 +85,10 @@ class clsModulesProfessorTurma extends Model
             $this->turno_id = $turno_id;
         }
 
-        if (is_string($unidades_curriculares)) {
-            $this->unidades_curriculares = $unidades_curriculares;
-        }
-
         if (isset($permite_lancar_faltas_componente)) {
             $this->permite_lancar_faltas_componente = '1';
         } else {
             $this->permite_lancar_faltas_componente = '0';
-        }
-
-        if (isset($outras_unidades_curriculares_obrigatorias) && ($outras_unidades_curriculares_obrigatorias) == 1) {
-            $this->outras_unidades_curriculares_obrigatorias = 1;
-        } elseif (isset($outras_unidades_curriculares_obrigatorias) && ($outras_unidades_curriculares_obrigatorias) == 0) {
-            $this->outras_unidades_curriculares_obrigatorias = 0;
-        } else {
-            $this->outras_unidades_curriculares_obrigatorias = null;
         }
     }
 
@@ -176,26 +158,6 @@ class clsModulesProfessorTurma extends Model
             if (is_numeric($this->turno_id)) {
                 $campos .= "{$gruda}turno_id";
                 $valores .= "{$gruda}'{$this->turno_id}'";
-                $gruda = ', ';
-            }
-
-            if (is_string($this->unidades_curriculares)) {
-                $campos .= "{$gruda}unidades_curriculares";
-                $valores .= "{$gruda}='{{$this->unidades_curriculares}}'";
-                $gruda = ', ';
-            } else {
-                $campos .= "{$gruda}unidades_curriculares";
-                $valores .= "{$gruda}null";
-                $gruda = ', ';
-            }
-
-            if (is_numeric($this->outras_unidades_curriculares_obrigatorias)) {
-                $campos .= "{$gruda}outras_unidades_curriculares_obrigatorias";
-                $valores .= "{$gruda}'{$this->outras_unidades_curriculares_obrigatorias}'";
-                $gruda = ', ';
-            } else {
-                $campos .= "{$gruda}outras_unidades_curriculares_obrigatorias";
-                $valores .= "{$gruda}null";
                 $gruda = ', ';
             }
 
@@ -277,22 +239,6 @@ class clsModulesProfessorTurma extends Model
                 $gruda = ', ';
             } elseif (is_null($this->turno_id)) {
                 $set .= "{$gruda}turno_id = NULL";
-                $gruda = ', ';
-            }
-
-            if (is_string($this->unidades_curriculares)) {
-                $set .= "{$gruda}unidades_curriculares ='{{$this->unidades_curriculares}}'";
-                $gruda = ', ';
-            } else {
-                $set .= "{$gruda}unidades_curriculares = NULL";
-                $gruda = ', ';
-            }
-
-            if (is_numeric($this->outras_unidades_curriculares_obrigatorias)) {
-                $set .= "{$gruda}outras_unidades_curriculares_obrigatorias = '{$this->outras_unidades_curriculares_obrigatorias}'";
-                $gruda = ', ';
-            } else {
-                $set .= "{$gruda}outras_unidades_curriculares_obrigatorias = NULL";
                 $gruda = ', ';
             }
 

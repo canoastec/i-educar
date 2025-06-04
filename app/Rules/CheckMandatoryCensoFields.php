@@ -115,9 +115,6 @@ class CheckMandatoryCensoFields implements Rule
             if (!$this->validaCampoFormasOrganizacaoTurma($params)) {
                 return false;
             }
-            if (!$this->validaCampoUnidadeCurricular($params)) {
-                return false;
-            }
             if (!$this->validaCampoTipoAtendimento($params)) {
                 return false;
             }
@@ -429,33 +426,6 @@ class CheckMandatoryCensoFields implements Rule
         ) {
             $todasEtapasEducacenso = loadJson(__DIR__ . '/../../ieducar/intranet/educacenso_json/etapas_ensino.json');
             $this->message = "Não é possível selecionar a opção: <b>{$validOption[(int) $params->formas_organizacao_turma]}</b>, no campo: <b>Formas de organização da turma</b> quando o campo: Etapa de ensino for: {$todasEtapasEducacenso[$params->etapa_educacenso]}.";
-
-            return false;
-        }
-
-        return true;
-    }
-
-    private function validaCampoUnidadeCurricular(mixed $params): bool
-    {
-        $estruturaCurricular = $this->getEstruturaCurricularValues($params);
-
-        if (empty($estruturaCurricular)) {
-            return true;
-        }
-
-        if (empty($params->unidade_curricular) && !in_array(2, $estruturaCurricular, true)) {
-            return true;
-        }
-
-        if (empty($params->unidade_curricular) && in_array(2, $estruturaCurricular, true)) {
-            $this->message = 'Campo: <b>Unidade curricular</b> é obrigatório quando o campo: <b>Estrutura Curricular contém: Itinerário formativo</b>';
-
-            return false;
-        }
-
-        if (!empty($params->unidade_curricular) && !in_array(2, $estruturaCurricular, true)) {
-            $this->message = 'Campo: <b>Unidade curricular</b> não pode ser preenchido quando o campo: <b>Estrutura Curricular não contém: Itinerário formativo</b>';
 
             return false;
         }
