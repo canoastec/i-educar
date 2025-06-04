@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::table('pmieducar.turma', function (Blueprint $table) {
             $table->smallInteger('etapa_agregada')->nullable();
+            $table->smallInteger('classe_especial')->nullable();
         });
     }
 
@@ -17,6 +18,7 @@ return new class extends Migration
     {
         Schema::table('pmieducar.turma', function (Blueprint $table) {
             $table->dropColumn('etapa_agregada');
+            $table->dropColumn('classe_especial');
         });
     }
 };

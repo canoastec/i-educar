@@ -1079,7 +1079,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if(is_null($turma->etapaAgregada)) {
+            if ($turma->tipoAtendimento === TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO && is_null($turma->etapaAgregada)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se a etapa agregada da turma {$nomeTurma} foi informada.",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Etapa agregada)',
@@ -1100,6 +1100,15 @@ class EducacensoAnaliseController extends ApiCoreController
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se a etapa de ensino da turma {$nomeTurma} foi informada de forma condizente com a etapa agregada.",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Etapa de ensino)',
+                    'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
+                    'fail' => true,
+                ];
+            }
+
+            if($turma->tipoAtendimento === TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO && is_null($turma->classeEspecial)) {
+                $mensagem[] = [
+                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o campo 'Turma de Educação Especial (classe especial)' na turma {$nomeTurma} foi informada.",
+                    'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Turma de Educação Especial (classe especial))',
                     'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
                     'fail' => true,
                 ];
