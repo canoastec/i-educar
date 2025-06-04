@@ -79,6 +79,9 @@ class Registro20 implements RegistroEducacenso
      */
     public $etapaEducacenso;
 
+
+    public $etapaAgregada;
+
     /**
      * @var array
      */
@@ -213,6 +216,8 @@ class Registro20 implements RegistroEducacenso
     public $tipoAtividadeComplementar6;
 
     public $classeComLinguaBrasileiraSinais;
+
+    public $classeEspecial;
 
     public $outrasUnidadesCurricularesObrigatorias;
 

@@ -47,6 +47,24 @@ let verificaEtapaEducacenso = ()=>{
   }
 }
 
+let verificaEtapaAgregada = ()=>{
+  $j('#etapa_agregada').makeUnrequired();
+
+  if ($j('#tipo_atendimento').val() === '0' &&
+    obrigarCamposCenso) {
+    $j('#etapa_agregada').makeRequired();
+  }
+}
+
+let verificaClasseEspecial = ()=>{
+  $j('#classe_especial').makeUnrequired();
+
+  if ($j('#tipo_atendimento').val() === '0' &&
+    obrigarCamposCenso) {
+    $j('#classe_especial').makeRequired();
+  }
+}
+
 let verificaHorariosTurnoParcial = ()=>{
   if (!obrigarCamposCenso) {
     return true;
@@ -121,6 +139,10 @@ $j('#tipo_atendimento').change(function() {
   mostraAtividadesComplementares();
   verificaEstruturacurricular();
   verificaFormaOrganizacaoTurma();
+  verificaEtapaAgregada();
+  habilitaEtapaAgregada();
+  verificaClasseEspecial();
+  habilitaClasseEspecial();
 });
 $j('#estrutura_curricular').change(function() {
   verificaEtapaEducacenso();
@@ -257,6 +279,25 @@ function habilitaEtapaEducacenso() {
   if (notContainData || (!$j('#estrutura_curricular').val().include('1') &&
       !$j('#estrutura_curricular').val().include('3'))) {
     $j("#etapa_educacenso").prop('disabled', true).val('');
+  }
+}
+
+function habilitaEtapaAgregada() {
+  $j("#etapa_agregada").prop('disabled', true);
+
+  if ($j('#tipo_atendimento').val() === '0') {
+    $j("#etapa_agregada").prop('disabled', false);
+  } else {
+    $j("#etapa_agregada").val('');
+  }
+}
+
+function habilitaClasseEspecial() {
+  $j("#classe_especial").prop('disabled', true);
+  if ($j('#tipo_atendimento').val() === '0') {
+    $j("#classe_especial").prop('disabled', false);
+  } else {
+    $j("#classe_especial").val('');
   }
 }
 
@@ -474,6 +515,10 @@ $j(document).ready(function() {
       mostraCursoTecnico();
       habilitaEtapaEducacenso();
       verificaEtapaEducacenso();
+      verificaEtapaAgregada();
+      habilitaEtapaAgregada();
+      verificaClasseEspecial();
+      habilitaClasseEspecial();
       verificaFormaOrganizacaoTurma();
     });
 

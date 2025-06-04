@@ -77,6 +77,8 @@ return new class extends clsCadastro
 
     public $cod_curso_profissional;
 
+    public $etapa_agregada;
+
     public $etapa_educacenso;
 
     public $formas_organizacao_turma;
@@ -139,6 +141,8 @@ return new class extends clsCadastro
     public $ano;
 
     public $classe_com_lingua_brasileira_sinais;
+
+    public $classe_especial;
 
     public $horario_funcionamento_turno_matutino;
 
@@ -570,7 +574,7 @@ return new class extends clsCadastro
             null => 'Selecione',
             0 => 'Curricular (etapa de ensino)',
             4 => 'Atividade complementar',
-            5 => 'Atendimento educacional especializado (AEE)'
+            5 => 'Atendimento educacional especializado (AEE)',
         ];
 
         $options = ['label' => 'Tipo de turma', 'resources' => $resources, 'value' => $this->tipo_atendimento, 'required' => $obrigarCamposCenso, 'size' => 70];
@@ -606,8 +610,20 @@ return new class extends clsCadastro
         $resources = Portabilis_Array_Utils::setAsIdValue(arrays: $resources, keyAttr: 'id', valueAtt: 'nome');
         $resources = Portabilis_Array_Utils::merge(array: $resources, defaultArray: ['null' => 'Selecione']);
 
+        $etapas_agregada = loadJson(file: 'educacenso_json/etapas_agregada.json');
+        $etapas_agregada = array_replace([
+            null => 'Selecione',
+        ], $etapas_agregada
+        );
+
+        $options = ['label' => 'Etapa Agregada', 'resources' => $etapas_agregada, 'value' => $this->etapa_agregada, 'required' => false, 'size' => 70];
+        $this->inputsHelper()->select(attrName: 'etapa_agregada', inputOptions: $options);
+
         $etapas_educacenso = loadJson(file: 'educacenso_json/etapas_ensino.json');
-        $etapas_educacenso = array_replace([null => 'Selecione'], $etapas_educacenso);
+        $etapas_educacenso = array_replace([
+            null => 'Selecione',
+        ], $etapas_educacenso
+        );
 
         $options = ['label' => 'Etapa de ensino', 'resources' => $etapas_educacenso, 'value' => $this->etapa_educacenso, 'required' => false, 'size' => 70];
         $this->inputsHelper()->select(attrName: 'etapa_educacenso', inputOptions: $options);
@@ -650,6 +666,21 @@ return new class extends clsCadastro
         $resources = [
             null => 'Selecione',
             1 => 'Sim',
+            0 => 'Não',
+        ];
+
+        $options = [
+            'label' => 'Turma de Educação Especial (classe especial)',
+            'resources' => $resources,
+            'value' => (string) $this->classe_especial,
+            'required' => false,
+            'size' => 70,
+        ];
+        $this->inputsHelper()->select(attrName: 'classe_especial', inputOptions: $options);
+
+        $resources = [
+            null => 'Selecione',
+            1 => 'Sim',
             2 => 'Não',
         ];
 
@@ -658,7 +689,7 @@ return new class extends clsCadastro
             'resources' => $resources,
             'value' => $this->classe_com_lingua_brasileira_sinais,
             'required' => $obrigarCamposCenso,
-            'size' => 70
+            'size' => 70,
         ];
         $this->inputsHelper()->select(attrName: 'classe_com_lingua_brasileira_sinais', inputOptions: $options);
 
