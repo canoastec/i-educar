@@ -74,6 +74,20 @@ class Registro30 implements RegistroEducacenso
 
     public $deficienciaVisaoMonocular;
 
+    public $transtorno;
+
+    public $transtornoDiscalculia;
+
+    public $transtornoDisgrafia;
+
+    public $transtornoDislalia;
+
+    public $transtornoDislexia;
+
+    public $transtornoTdah;
+
+    public $transtornoTpac;
+
     public $inepAluno;
 
     public $recursoLedor;
@@ -97,6 +111,10 @@ class Registro30 implements RegistroEducacenso
     public $recursoVideoLibras;
 
     public $recursoBraile;
+
+    public $provaBraile;
+
+    public $recursoTempoAdicional;
 
     public $recursoNenhum;
 
@@ -164,7 +182,7 @@ class Registro30 implements RegistroEducacenso
 
     public $formacaoContinuadaEducacaoBilingueSurdos;
 
-    public $formacaoContinuadaEducacaoTecnologiaInformaçãoComunicacao;
+    public $formacaoContinuadaEducacaoTecnologiaInformacaoComunicacao;
 
     public $email;
 
