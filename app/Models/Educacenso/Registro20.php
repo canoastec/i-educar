@@ -79,6 +79,9 @@ class Registro20 implements RegistroEducacenso
      */
     public $etapaEducacenso;
 
+
+    public $etapaAgregada;
+
     /**
      * @var array
      */

@@ -151,6 +151,7 @@ class LegacySchoolClass extends Model
         'hora_inicio_intervalo_vespertino',
         'hora_fim_intervalo_vespertino',
         'hora_final_vespertino',
+        'etapa_agregada',
     ];
 
     protected function id(): Attribute

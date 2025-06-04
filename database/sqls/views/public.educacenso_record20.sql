@@ -12,6 +12,7 @@ SELECT
     turma.dias_semana AS "diasSemana",
     turma.tipo_atendimento AS "tipoAtendimento",
     turma.atividades_complementares AS "atividadesComplementares",
+    turma.etapa_agregada AS "etapaAgregada",
     turma.etapa_educacenso AS "etapaEducacenso",
     juridica.fantasia AS "nomeEscola",
     turma.tipo_mediacao_didatico_pedagogico AS "tipoMediacaoDidaticoPedagogico",
