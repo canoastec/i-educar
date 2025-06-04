@@ -101,10 +101,6 @@ let verificaHorariosTurnoParcial = ()=>{
   }
 }
 
-let verificaOutrasUnidadesCurricularesObrigatorias = ()=> {
-  $j("#outras_unidades_curriculares_obrigatorias").prop('disabled', !$j('#estrutura_curricular').val() || ! $j('#estrutura_curricular').val().includes("2"));
-}
-
 let verificaFormaOrganizacaoTurma = ()=> {
   const etapasInvalidas = ['1', '2', '3', '24', '62'];
   const tipoAtendimento = $j('#tipo_atendimento').val() || [];
@@ -127,14 +123,6 @@ let verificaFormaOrganizacaoTurma = ()=> {
   }
 }
 
-let verificaUnidadeCurricular = ()=> {
-  $j('#unidade_curricular').makeUnrequired();
-  if (obrigarCamposCenso &&
-    $j('#estrutura_curricular').val() &&
-    $j('#estrutura_curricular').val().includes("2")) {
-    $j('#unidade_curricular').makeRequired();
-  }
-}
 
 let verificaLocalFuncionamentoDiferenciado = () => {
   $j('#local_funcionamento_diferenciado').makeUnrequired();
@@ -202,12 +190,9 @@ $j('#tipo_atendimento').change(function() {
   habilitaClasseEspecial();
 });
 $j('#estrutura_curricular').change(function() {
-  verificaUnidadeCurricular();
-  habilitaUnidadeCurricular();
   verificaEtapaEducacenso();
   habilitaEtapaEducacenso();
   verificaFormaOrganizacaoTurma();
-  verificaOutrasUnidadesCurricularesObrigatorias();
 });
 
 verificaLocalFuncionamentoDiferenciado();
@@ -363,19 +348,6 @@ function habilitaClasseEspecial() {
   } else {
     $j("#classe_especial").val('');
   }
-}
-
-function habilitaUnidadeCurricular() {
-
-  const estruturaCurricular = $j('#estrutura_curricular').val();
-  const itinerarioFormativo = estruturaCurricular && estruturaCurricular.includes("2");
-
-  if (itinerarioFormativo) {
-    $j("#unidade_curricular").prop('disabled', false).trigger('chosen:updated');
-    return;
-  }
-
-  $j("#unidade_curricular").prop('disabled', true).val([]).trigger('chosen:updated');
 }
 
 $j('#tipo_mediacao_didatico_pedagogico').on('change', function(){
@@ -598,9 +570,6 @@ $j(document).ready(function() {
       verificaClasseEspecial();
       habilitaClasseEspecial();
       verificaFormaOrganizacaoTurma();
-      verificaUnidadeCurricular();
-      habilitaUnidadeCurricular();
-      verificaOutrasUnidadesCurricularesObrigatorias();
     });
 
   // Turmas Parciais
@@ -643,14 +612,6 @@ $j(document).ready(function() {
       valida();
     }
   }
-  $j('#outras_unidades_curriculares_obrigatorias').on('change', function(){
-    if ($j('#outras_unidades_curriculares_obrigatorias').val().length > 0 && $j('#outras_unidades_curriculares_obrigatorias').val().length < 4) {
-      alert('O campo Outras Unidades Curriculares deve conter no mínimo 4 caracteres.');
-      $j('#btn_enviar').hide();
-    } else {
-      $j('#btn_enviar').show();
-    }
-  });
 
   $j('#ano').on('change', function(){
     $j('#ano_letivo').val($j('#ano').val());

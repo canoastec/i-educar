@@ -140,8 +140,6 @@ class LegacySchoolClass extends Model
         'local_funcionamento_diferenciado',
         'estrutura_curricular',
         'formas_organizacao_turma',
-        'unidade_curricular',
-        'outras_unidades_curriculares_obrigatorias',
         'classe_com_lingua_brasileira_sinais',
         'hora_inicial_matutino',
         'hora_inicio_intervalo_matutino',
