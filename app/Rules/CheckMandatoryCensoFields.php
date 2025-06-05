@@ -109,7 +109,7 @@ class CheckMandatoryCensoFields implements Rule
             if (!$this->validaCampoEstruturaCurricular($params)) {
                 return false;
             }
-            if (!$this->validaCampoEtapaEnsino($params['tipo_atendimento'])) {
+            if (!$this->validaCampoEtapaEnsino($params)) {
                 return false;
             }
             if (!$this->validaCampoFormasOrganizacaoTurma($params)) {
@@ -249,7 +249,9 @@ class CheckMandatoryCensoFields implements Rule
 
     protected function validaCampoAtividadesComplementares($params)
     {
-        if ($params->tipo_atendimento && in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $params->tipo_atendimento)
+        $tipoAtendimento = $this->getTipoAtendimentoValues($params);
+
+        if (is_array($tipoAtendimento) && in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimento)
             && empty($params->atividades_complementares)
         ) {
             $this->message = 'Campo atividades complementares é obrigatório.';
@@ -260,20 +262,22 @@ class CheckMandatoryCensoFields implements Rule
         return true;
     }
 
-    protected function validaCampoEtapaEnsino($tipoAtendimento)
+    protected function validaCampoEtapaEnsino($params)
     {
-        if (!empty($tipoAtendimento) && !in_array($tipoAtendimento, [-1, 4, 5])) {
-            $this->message = 'Campo etapa de ensino é obrigatório';
+        $tipoAtendimento = $this->getTipoAtendimentoValues($params);
 
+        if (is_array($tipoAtendimento)  && !empty($tipoAtendimento) && count(array_diff($tipoAtendimento, [-1, 4, 5])) > 0) {
+            $this->message = 'Campo etapa de ensino é obrigatório';
             return false;
         }
-
         return true;
     }
 
     protected function validaCampoTipoAtendimento($params)
     {
-        if ($params->tipo_atendimento && !in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $params->tipo_atendimento) && in_array(
+        $tipoAtendimento = $this->getTipoAtendimentoValues($params);
+
+        if (is_array($tipoAtendimento) && !in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimento) && in_array(
             $params->tipo_mediacao_didatico_pedagogico,
             [
                 App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA,
@@ -285,7 +289,7 @@ class CheckMandatoryCensoFields implements Rule
         }
 
         $course = LegacyCourse::find($params->ref_cod_curso);
-        if ($params->tipo_atendimento && in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $params->tipo_atendimento) && (int) $course->modalidade_curso === ModalidadeCurso::EJA) {
+        if (is_array($tipoAtendimento) && in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimento) && (int) $course->modalidade_curso === ModalidadeCurso::EJA) {
             $this->message = 'Quando a modalidade do curso é: <b>Educação de Jovens e Adultos (EJA)</b>, o campo <b>Tipo de atendimento</b> não pode ser <b>Atividade complementar</b>';
 
             return false;
@@ -328,12 +332,13 @@ class CheckMandatoryCensoFields implements Rule
     public function validaCampoEstruturaCurricular(mixed $params)
     {
         $estruturaCurricular = $this->getEstruturaCurricularValues($params);
+        $tipoAtendimento = $this->getTipoAtendimentoValues($params);
 
         if (is_array($estruturaCurricular) && in_array(2, $estruturaCurricular, true) && count($estruturaCurricular) === 1) {
             $params->etapa_educacenso = null;
         }
 
-        if ($params->tipo_atendimento && in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $params->tipo_atendimento) && empty($estruturaCurricular)) {
+        if (is_array($tipoAtendimento) && in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimento) && empty($estruturaCurricular)) {
             $this->message = 'Campo "Estrutura Curricular" é obrigatório quando o campo tipo de turma é "Curricular (etapa de ensino)".';
 
             return false;
@@ -452,6 +457,19 @@ class CheckMandatoryCensoFields implements Rule
         return array_map(
             'intval',
             explode(',', str_replace(['{', '}'], '', $params->estrutura_curricular))
+                ?: []
+        );
+    }
+
+    private function getTipoAtendimentoValues(mixed $params): ?array
+    {
+        if ($params->tipo_atendimento === null) {
+            return null;
+        }
+
+        return array_map(
+            'intval',
+            explode(',', str_replace(['{', '}'], '', $params->tipo_atendimento))
                 ?: []
         );
     }
