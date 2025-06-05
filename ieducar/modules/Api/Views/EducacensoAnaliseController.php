@@ -38,7 +38,6 @@ use iEducar\Modules\Educacenso\Model\SchoolManagerAccessCriteria;
 use iEducar\Modules\Educacenso\Model\SchoolManagerRole;
 use iEducar\Modules\Educacenso\Model\SituacaoFuncionamento;
 use iEducar\Modules\Educacenso\Model\TipoAtendimentoTurma;
-use iEducar\Modules\Educacenso\Model\TipoMediacaoDidaticoPedagogico;
 use iEducar\Modules\Educacenso\Model\UnidadeVinculadaComOutraInstituicao;
 use iEducar\Modules\Educacenso\Validator\AdministrativeDomainValidator;
 use iEducar\Modules\Educacenso\Validator\CnpjMantenedoraPrivada;
@@ -1603,17 +1602,10 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            $tipoAtendimentoTurmaArray = transformStringFromDBInArray($docente->tipoAtendimentoTurma) ?? [];
-
-            // Verificações de tipo de atendimento
-            $docenteCurricularEtapaEnsino = in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimentoTurmaArray);
-            $docenteAtividadeComplementar = in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimentoTurmaArray);
-
-            // Construir descrição para múltiplos tipos de atendimento
-            $tipoAtendimentoDesc = collect($tipoAtendimentoTurmaArray)
-                ->map(fn($tipo) => TipoAtendimentoTurma::getDescriptiveValues()[$tipo] ?? null)
-                ->filter()
-                ->implode(', ');
+            $tipoAtendimentoTurma = transformStringFromDBInArray($docente->tipoAtendimentoTurma) ?? [];
+            $docenteCurricularEtapaEnsino = in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimentoTurma);
+            $docenteAtividadeComplementar = in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimentoTurma);
+            $tipoAtendimentoDesc = TipoAtendimentoTurma::getDescription($tipoAtendimentoTurma);
 
             if ($docente->funcaoDocente == FuncaoExercida::AUXILIAR_EDUCACIONAL && !$docenteCurricularEtapaEnsino) {
                 $mensagem[] = [
@@ -1714,6 +1706,8 @@ class EducacensoAnaliseController extends ApiCoreController
             $codigoTurma = $aluno->codigoTurma;
             $codigoMatricula = $aluno->codigoMatricula;
 
+            $tipoAtendimentoTurma = transformStringFromDBInArray($aluno->tipoAtendimentoTurma) ?? [];
+
             if (!$avaliableTimeService->isAvailable($codigoAluno, $codigoTurma, $aluno->turnoId)) {
                 $notAvaliableTime[$codigoAluno] = [
                     'text' => "Dados para formular o registro 60 da escola {$nomeEscola} possui valor inválido. Verificamos que o(a) aluno(a) {$nomeAluno} possui mais de um vínculo em diferentes turmas presenciais com horário e dias coincidentes.",
@@ -1740,7 +1734,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if (isArrayEmpty($aluno->tipoAtendimentoMatricula) && $aluno->tipoAtendimentoTurma == TipoAtendimentoTurma::AEE) {
+            if (isArrayEmpty($aluno->tipoAtendimentoMatricula) && in_array(TipoAtendimentoTurma::AEE, $tipoAtendimentoTurma)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 60 da escola {$nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} é de atendimento educacional especializado, portanto é necessário informar qual a tipo de atendimento do(a) aluno(a) {$nomeAluno}.",
                     'path' => '(Escola > Cadastros > Alunos > Visualizar > Tipo do AEE do aluno > Campo: Tipo de Atendimento Educacional Especializado do aluno na turma)',
