@@ -206,15 +206,18 @@ class AvailableTimeService
      */
     private function hasEscolarizacaoAndAee(LegacySchoolClass $schoolClass, LegacySchoolClass $otherSchoolClass)
     {
-        if ($schoolClass->tipo_atendimento && $otherSchoolClass->tipo_atendimento &&
-            in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $schoolClass->tipo_atendimento) &&
-            in_array(TipoAtendimentoTurma::AEE, $otherSchoolClass->tipo_atendimento)) {
+        $tipoAtendimento = transformStringFromDBInArray($schoolClass->tipo_atendimento);
+        $otherTipoAtendimento = transformStringFromDBInArray($otherSchoolClass->tipo_atendimento);
+
+        if (is_array($tipoAtendimento) && is_array($otherTipoAtendimento) &&
+            in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimento) &&
+            in_array(TipoAtendimentoTurma::AEE, $otherTipoAtendimento)) {
             return true;
         }
 
-        if ($schoolClass->tipo_atendimento && $otherSchoolClass->tipo_atendimento &&
-            in_array(TipoAtendimentoTurma::AEE, $schoolClass->tipo_atendimento) &&
-            in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $otherSchoolClass->tipo_atendimento)) {
+        if (is_array($tipoAtendimento) && is_array($otherTipoAtendimento) &&
+            in_array(TipoAtendimentoTurma::AEE, $tipoAtendimento) &&
+            in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $otherTipoAtendimento)) {
             return true;
         }
 

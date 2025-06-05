@@ -130,8 +130,9 @@ return new class extends clsCadastro
         foreach ($enturmacoes as $enturmacao) {
             $turma = new clsPmieducarTurma(cod_turma: $enturmacao['ref_cod_turma']);
             $turma = $turma->detalhe();
+            $tipoAtendimento = transformStringFromDBInArray(string: $turma['tipo_atendimento']);
 
-            if (in_array(TipoAtendimentoTurma::AEE, $turma['tipo_atendimento'])) {
+            if (is_array($tipoAtendimento) && in_array(TipoAtendimentoTurma::AEE, $tipoAtendimento)) {
                 $arrayEnturmacoes[] = $enturmacao;
             }
         }
