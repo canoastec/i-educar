@@ -109,9 +109,6 @@ class CheckMandatoryCensoFields implements Rule
             if (!$this->validaCampoEstruturaCurricular($params)) {
                 return false;
             }
-            if (!$this->validaCampoEtapaEnsino($params)) {
-                return false;
-            }
             if (!$this->validaCampoFormasOrganizacaoTurma($params)) {
                 return false;
             }
@@ -259,17 +256,6 @@ class CheckMandatoryCensoFields implements Rule
             return false;
         }
 
-        return true;
-    }
-
-    protected function validaCampoEtapaEnsino($params)
-    {
-        $tipoAtendimento = $this->getTipoAtendimentoValues($params);
-
-        if (is_array($tipoAtendimento)  && !empty($tipoAtendimento) && count(array_diff($tipoAtendimento, [-1, 4, 5])) > 0) {
-            $this->message = 'Campo etapa de ensino é obrigatório';
-            return false;
-        }
         return true;
     }
 
