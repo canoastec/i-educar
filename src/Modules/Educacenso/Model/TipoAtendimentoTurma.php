@@ -27,4 +27,12 @@ class TipoAtendimentoTurma
             self::AEE => 'Atendimento educacional especializado (AEE)',
         ];
     }
+
+    public static function getDescription($types)
+    {
+        return collect($types)
+            ->map(fn ($type) => self::getDescriptiveValues()[$type] ?? null)
+            ->filter()
+            ->implode(', ');
+    }
 }

@@ -379,9 +379,9 @@ class clsPmieducarTurma extends Model
                 $gruda = ', ';
             }
 
-            if (is_numeric($this->tipo_atendimento)) {
+            if (is_array($this->tipo_atendimento)) {
                 $campos .= "{$gruda}tipo_atendimento";
-                $valores .= "{$gruda}'{$this->tipo_atendimento}'";
+                $valores .= "{$gruda}'{" . implode(',', $this->tipo_atendimento) . "}'";
                 $gruda = ', ';
             }
 
@@ -673,12 +673,12 @@ class clsPmieducarTurma extends Model
                 $gruda = ', ';
             }
 
-            if (is_numeric($this->tipo_atendimento)) {
-                $set .= "{$gruda}tipo_atendimento = '{$this->tipo_atendimento}'";
-                $gruda = ', ';
+            if (is_array($this->tipo_atendimento)) {
+                $set .= "{$gruda}tipo_atendimento = '{' . implode(',', $this->tipo_atendimento) . '}'";
+                $gruda = ", ";
             } elseif ($this->tipo_atendimento !== false) {
                 $set .= "{$gruda}tipo_atendimento = NULL";
-                $gruda = ', ';
+                $gruda = ", ";
             }
 
             if (is_numeric($this->cod_curso)) {

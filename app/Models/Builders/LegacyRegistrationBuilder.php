@@ -72,7 +72,7 @@ class LegacyRegistrationBuilder extends LegacyBuilder
     {
         return $this->whereHas('schoolClasses', static fn (
             $q
-        ) => $q->where('turma.tipo_atendimento', '<>', TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR)->orWhereNull('turma.tipo_atendimento'));
+        ) => $q->whereRaw('(NOT (4 = ANY(turma.tipo_atendimento)) OR turma.tipo_atendimento IS NULL OR turma.tipo_atendimento = ARRAY[]::integer[])'));
     }
 
     /**
