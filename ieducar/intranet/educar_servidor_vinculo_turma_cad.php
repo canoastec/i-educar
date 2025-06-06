@@ -5,10 +5,10 @@ use App\Models\LegacyInstitution;
 use App\Models\LegacySchoolClass;
 use App\Models\LegacySchoolClassTeacher;
 use App\Services\iDiarioService;
+use Carbon\Carbon;
 use iEducar\Modules\Educacenso\Model\ModalidadeCurso;
 use iEducar\Modules\Educacenso\Model\TipoAtendimentoTurma;
 use iEducar\Modules\Educacenso\Model\TipoMediacaoDidaticoPedagogico;
-use iEducar\Modules\Educacenso\Model\UnidadesCurriculares;
 use iEducar\Modules\Servidores\Model\FuncaoExercida;
 use iEducar\Support\View\SelectOptions;
 
@@ -44,6 +44,10 @@ return new class extends clsCadastro
 
     public $copia = false;
 
+    public $data_inicial;
+
+    public $data_fim;
+
     public function Inicializar()
     {
         $this->id = $this->getQueryString(name: 'id');
@@ -76,6 +80,8 @@ return new class extends clsCadastro
                 $this->permite_lancar_faltas_componente = $registro['permite_lancar_faltas_componente'];
                 $this->turma_turno_id = $registro['turno_id'];
                 $this->nm_turma = $registro['nm_turma'];
+                $this->data_inicial = $registro['data_inicial'];
+                $this->data_fim = $registro['data_fim'];
 
                 $obj_turma = new clsPmieducarTurma(cod_turma: $this->ref_cod_turma);
                 $obj_turma = $obj_turma->detalhe();
@@ -198,6 +204,26 @@ return new class extends clsCadastro
             'required' => false
         ], helperOptions: ['searchForArea' => true, 'allDisciplinesMulti' => true]);
 
+        $options = [
+            'label' => 'Data inicial do vínculo',
+            'placeholder' => 'dd/mm/yyyy',
+            'hint' => 'Este campo é utilizado exclusivamente para definir a exportação do servidor no Censo Escolar.',
+            'value' => $this->data_inicial,
+            'required' => false,
+        ];
+
+        $this->inputsHelper()->date('data_inicial', $options);
+
+        $options = [
+            'label' => 'Data final do vínculo',
+            'placeholder' => 'dd/mm/yyyy',
+            'hint' => 'Este campo é utilizado exclusivamente para definir a exportação do servidor no Censo Escolar.',
+            'value' => $this->data_fim,
+            'required' => false,
+        ];
+
+        $this->inputsHelper()->date('data_fim', $options);
+
         $scripts = [
             '/vendor/legacy/Cadastro/Assets/Javascripts/ServidorVinculoTurma.js',
         ];
@@ -230,6 +256,9 @@ return new class extends clsCadastro
             return false;
         }
 
+        $dataInicial = $this->data_inicial ? Carbon::createFromFormat('d/m/Y', $this->data_inicial)->format('Y-m-d') : null;
+        $dataFim = $this->data_fim ? Carbon::createFromFormat('d/m/Y', $this->data_fim)->format('Y-m-d') : null;
+
         $professorTurma = new clsModulesProfessorTurma(
             id: null,
             ano: $this->ano,
@@ -240,6 +269,8 @@ return new class extends clsCadastro
             tipo_vinculo: $this->tipo_vinculo,
             permite_lancar_faltas_componente: $this->permite_lancar_faltas_componente,
             turno_id: $this->turma_turno_id,
+            data_inicial: $dataInicial,
+            data_fim: $dataFim
         );
         $id = $professorTurma->existe2();
         if ($id) {
@@ -256,6 +287,154 @@ return new class extends clsCadastro
         $this->simpleRedirect(url: $backUrl);
     }
 
+    private function validaDatas()
+    {
+        if (!$this->data_inicial && !$this->data_fim) {
+            return true;
+        }
+
+        return $this->validaDataBasica()
+            && $this->validaAnoLetivo()
+            && $this->validaPeriodoEtapas()
+            && $this->validaVinculoServidorEscola();
+    }
+
+    private function validaDataBasica()
+    {
+        if (!$this->data_inicial || !$this->data_fim) {
+            return true;
+        }
+
+        $dataInicial = Carbon::createFromFormat('d/m/Y', $this->data_inicial)->format('Y-m-d');
+        $dataFim = Carbon::createFromFormat('d/m/Y', $this->data_fim)->format('Y-m-d');
+
+        if ($dataInicial > $dataFim) {
+            $this->mensagem = 'A data inicial do vínculo não pode ser posterior à data final do vínculo.';
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validaAnoLetivo()
+    {
+        if ($this->data_inicial) {
+            $anoDataInicial = Carbon::createFromFormat('d/m/Y', $this->data_inicial)->year;
+            if ($anoDataInicial != $this->ano) {
+                $this->mensagem = "A data inicial do vínculo deve estar dentro do ano letivo {$this->ano}.";
+                return false;
+            }
+        }
+
+        if ($this->data_fim) {
+            $anoDataFim = Carbon::createFromFormat('d/m/Y', $this->data_fim)->year;
+            if ($anoDataFim != $this->ano) {
+                $this->mensagem = "A data final do vínculo deve estar dentro do ano letivo {$this->ano}.";
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function validaPeriodoEtapas()
+    {
+        $schoolClass = LegacySchoolClass::query()->find($this->ref_cod_turma);
+
+        if (!$schoolClass) {
+            return true;
+        }
+
+        return $this->validaDataInicioEtapas($schoolClass->beginAcademicYear)
+            && $this->validaDataFimEtapas($schoolClass->endAcademicYear);
+    }
+
+    private function validaDataInicioEtapas($inicioAnoLetivo)
+    {
+        if (!$this->data_inicial || !$inicioAnoLetivo) {
+            return true;
+        }
+
+        $dataInicialVinculo = Carbon::createFromFormat('d/m/Y', $this->data_inicial);
+
+        if ($dataInicialVinculo->lt($inicioAnoLetivo)) {
+            $inicioFormatado = $inicioAnoLetivo->format('d/m/Y');
+            $this->mensagem = "A data inicial do vínculo ({$this->data_inicial}) não pode ser anterior ao início do ano letivo ({$inicioFormatado}).";
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validaDataFimEtapas($fimAnoLetivo)
+    {
+        if (!$this->data_fim || !$fimAnoLetivo) {
+            return true;
+        }
+
+        $dataFinalVinculo = Carbon::createFromFormat('d/m/Y', $this->data_fim);
+
+        if ($dataFinalVinculo->gt($fimAnoLetivo)) {
+            $fimFormatado = $fimAnoLetivo->format('d/m/Y');
+            $this->mensagem = "A data final do vínculo ({$this->data_fim}) não pode ser posterior ao fim do ano letivo ({$fimFormatado}).";
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validaVinculoServidorEscola()
+    {
+        /** @var Employee $servidor */
+        $servidor = Employee::findOrFail(id: $this->servidor_id);
+
+        $vinculoEscola = $servidor->schools()
+            ->where(column: 'ref_cod_escola', operator: $this->ref_cod_escola)
+            ->withPivotValue(column: 'ano', value: $this->ano)
+            ->first(['data_admissao', 'data_saida']);
+
+        if (!$vinculoEscola) {
+            return true;
+        }
+
+        return $this->validaDataAdmissao($vinculoEscola->data_admissao)
+            && $this->validaDataSaida($vinculoEscola->data_saida);
+    }
+
+    private function validaDataAdmissao($dataAdmissao)
+    {
+        if (!$dataAdmissao || !$this->data_inicial) {
+            return true;
+        }
+
+        $dataInicialVinculo = Carbon::createFromFormat('d/m/Y', $this->data_inicial)->format('Y-m-d');
+
+        if ($dataInicialVinculo < $dataAdmissao) {
+            $dataAdmissaoFormatada = Carbon::parse($dataAdmissao)->format('d/m/Y');
+            $this->mensagem = "Não é possível cadastrar o vínculo pois a data inicial do vínculo ({$this->data_inicial}) é anterior à data de admissão na escola ({$dataAdmissaoFormatada}).";
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validaDataSaida($dataSaida)
+    {
+        if (!$dataSaida || !$this->data_fim) {
+            return true;
+        }
+
+        $dataFinalVinculo = Carbon::createFromFormat('d/m/Y', $this->data_fim)->format('Y-m-d');
+
+        if ($dataFinalVinculo > $dataSaida) {
+            $dataSaidaFormatada = Carbon::parse($dataSaida)->format('d/m/Y');
+            $this->mensagem = "Não é possível cadastrar o vínculo pois a data final do vínculo ({$this->data_fim}) é posterior à data de saída da escola ({$dataSaidaFormatada}).";
+            return false;
+        }
+
+        return true;
+    }
+
     public function Editar()
     {
         $backUrl = sprintf(
@@ -267,6 +446,9 @@ return new class extends clsCadastro
         $obj_permissoes = new clsPermissoes;
         $obj_permissoes->permissao_cadastra(int_processo_ap: 635, int_idpes_usuario: $this->pessoa_logada, int_soma_nivel_acesso: 7, str_pagina_redirecionar: $backUrl);
 
+        $dataInicial = $this->data_inicial ? Carbon::createFromFormat('d/m/Y', $this->data_inicial)->format('Y-m-d') : null;
+        $dataFim = $this->data_fim ? Carbon::createFromFormat('d/m/Y', $this->data_fim)->format('Y-m-d') : null;
+
         $professorTurma = new clsModulesProfessorTurma(
             id: $this->id,
             ano: $this->ano,
@@ -277,6 +459,8 @@ return new class extends clsCadastro
             tipo_vinculo: $this->tipo_vinculo,
             permite_lancar_faltas_componente: $this->permite_lancar_faltas_componente,
             turno_id: $this->turma_turno_id,
+            data_inicial: $dataInicial,
+            data_fim: $dataFim
         );
 
         if (!$this->validaCamposCenso()) {
@@ -284,6 +468,10 @@ return new class extends clsCadastro
         }
 
         if (!$this->validaVinculoEscola()) {
+            return false;
+        }
+
+        if (!$this->validaDatas()) {
             return false;
         }
 
