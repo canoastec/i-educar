@@ -63,7 +63,8 @@ class Register30StudentDataAnalysis implements AnalysisInterface
             ];
         }
 
-        if (!$arrayDeficiencias && $data->dadosAluno->turmaClasseEspecial == 1) {
+        $arrayTranstornos = $this->data::removeTranstornosArrayDeficiencias($arrayDeficiencias);
+        if (!$arrayTranstornos && $data->dadosAluno->turmaClasseEspecial == 1) {
             $this->messages[] = [
                 'text' => "Dados para formular o registro 30 da escola {$data->nomeEscola} não encontrados. Verificamos que a turma do(a) aluno(a) {$data->nomePessoa} é uma Turma de Educação Especial, portanto é necessário informar qual a sua deficiência ou transtorno.",
                 'path' => '(Escola > Cadastros > Alunos > Editar > Aba: Dados pessoais > Campo: Deficiências / Transtornos)',

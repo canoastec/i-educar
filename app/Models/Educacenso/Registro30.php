@@ -3,6 +3,7 @@
 namespace App\Models\Educacenso;
 
 use iEducar\Modules\Educacenso\Model\Deficiencias;
+use iEducar\Modules\Educacenso\Model\Transtornos;
 
 class Registro30 implements RegistroEducacenso
 {
@@ -304,5 +305,23 @@ class Registro30 implements RegistroEducacenso
         }
 
         return $arrayDeficiencias;
+    }
+
+    /**
+     * Remove "Transtornos" do array de deficiências informado
+     *
+     *
+     * @return array
+     */
+    public static function removeTranstornosArrayDeficiencias($arrayDeficiencias)
+    {
+        return array_diff($arrayDeficiencias, [
+            Transtornos::DISCALCULIA,
+            Transtornos::DISGRAFIA,
+            Transtornos::DISLALIA,
+            Transtornos::DISLEXIA,
+            Transtornos::TDAH,
+            Transtornos::TPAC,
+        ]);
     }
 }
