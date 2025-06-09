@@ -917,6 +917,15 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
+            if (is_null($turma->formacaoAlternancia)) {
+                $mensagem[] = [
+                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Informe se a turma {$nomeTurma} é Formação por Alternância (proposta pedagógica de formação por alternância: tempo-escola e tempo-comunidade)",
+                    'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Formação por Alternância (proposta pedagógica de formação por alternância: tempo-escola e tempo-comunidade)',
+                    'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
+                    'fail' => true,
+                ];
+            }
+
             if ((empty($turma->horaInicial) || empty($turma->horaFinal)) && $turma->tipoMediacaoDidaticoPedagogico == App_Model_TipoMediacaoDidaticoPedagogico::PRESENCIAL) {
                 $service = new SchoolClassService;
                 $hasStudentsPartials = $service->hasStudentsPartials($turma->codTurma);

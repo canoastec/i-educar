@@ -219,6 +219,8 @@ class Registro20 implements RegistroEducacenso
 
     public $classeEspecial;
 
+    public $formacaoAlternancia;
+
     public $outrasUnidadesCurricularesObrigatorias;
 
     public $turmaTurnoId;
