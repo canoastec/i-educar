@@ -221,6 +221,16 @@ class SchoolClassController extends Controller
             $params['formas_organizacao_turma'] = null;
         }
 
+        if (isset($params['tipo_atendimento']) && !in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $params['tipo_atendimento'])) {
+            $params['atividades_complementares'] = '{}';
+        }
+
+        if (isset($params['tipo_atendimento'])) {
+            $params['tipo_atendimento'] = '{' . implode(',', $params['tipo_atendimento']) . '}';
+        } else {
+            $params['tipo_atendimento'] = null;
+        }
+
         if (isset($params['cod_curso_profissional'])) {
             $params['cod_curso_profissional'] = $params['cod_curso_profissional'][0];
         } else {

@@ -834,7 +834,9 @@ class EducacensoAnaliseController extends ApiCoreController
 
             $nomeEscola = mb_strtoupper($turma->nomeEscola);
             $nomeTurma = mb_strtoupper($turma->nomeTurma);
-            $atividadeComplementar = ($turma->tipoAtendimento == 4); // Código 4 fixo no cadastro de turma
+            $tipoAtendimento = transformStringFromDBInArray($turma->tipoAtendimento) ?? [];
+            $atividadeComplementar = in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimento); // Código 4 fixo no cadastro de turma
+            $curricularEtapaEnsino = in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimento);
             $existeAtividadeComplementar = !empty(array_filter($turma->atividadesComplementares));
 
             $chaveTurma = "{$nomeTurma}|{$turma->tipoMediacaoDidaticoPedagogico}|{$turma->horaInicial}|{$turma->horaFinal}|{$turma->tipoAtendimento}|{$turma->localFuncionamentoDiferenciado}|{$turma->modalidadeCurso}|{$turma->etapaEducacenso}";
@@ -850,25 +852,6 @@ class EducacensoAnaliseController extends ApiCoreController
                 break;
             } else {
                 $chavesTurmas[$chaveTurma] = true;
-            }
-
-            switch ($turma->tipoAtendimento) {
-                case 0:
-                    $nomeAtendimento = 'Não se aplica';
-
-                    break;
-                case 1:
-                    $nomeAtendimento = 'Classe hospitalar';
-
-                    break;
-                case 2:
-                    $nomeAtendimento = 'Unidade de internação socioeducativa';
-
-                    break;
-                case 3:
-                    $nomeAtendimento = 'Unidade prisional';
-
-                    break;
             }
 
             if (!$turma->possuiServidor) {
@@ -987,7 +970,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if (is_null($turma->tipoAtendimento) || $turma->tipoAtendimento < 0) {
+            if (empty($tipoAtendimento) || !array_filter($tipoAtendimento, fn($tipo) => $tipo >= 0)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o tipo da turma {$nomeTurma} foi informado.",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Tipo de turma)',
@@ -996,7 +979,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if ($turma->tipoAtendimento != 0 && in_array($turma->tipoMediacaoDidaticoPedagogico, [App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA, App_Model_TipoMediacaoDidaticoPedagogico::SEMIPRESENCIAL])) {
+            if (!$curricularEtapaEnsino && in_array($turma->tipoMediacaoDidaticoPedagogico, [App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA, App_Model_TipoMediacaoDidaticoPedagogico::SEMIPRESENCIAL])) {
                 $descricaoTipoMediacao = (App_Model_TipoMediacaoDidaticoPedagogico::getInstance()->getEnums())[$turma->tipoMediacaoDidaticoPedagogico];
 
                 $mensagem[] = [
@@ -1007,7 +990,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if ($turma->tipoAtendimento == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO && count(array_filter($turma->estruturaCurricular)) == 0) {
+            if ($curricularEtapaEnsino && count(array_filter($turma->estruturaCurricular)) == 0) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se a estrutura curricular da turma {$nomeTurma} foi informada.",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Estrutura curricular)',
@@ -1038,7 +1021,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if ($turma->modalidadeCurso == ModalidadeCurso::EJA && $turma->tipoAtendimento == TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR) {
+            if ($turma->modalidadeCurso == ModalidadeCurso::EJA && $atividadeComplementar) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} possui valor inválido. Verificamos que a modalidade do curso da turma {$nomeTurma} é Educação de Jovens e Adultos (EJA), portanto o tipo da turma não pode ser atividade complementar.",
                     'path' => '(Escola > Cadastros > Cursos > Editar > Campo: Modalidade do curso)',
@@ -1079,7 +1062,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if ($turma->tipoAtendimento === TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO && is_null($turma->etapaAgregada)) {
+            if ($curricularEtapaEnsino && is_null($turma->etapaAgregada)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se a etapa agregada da turma {$nomeTurma} foi informada.",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Etapa agregada)',
@@ -1105,7 +1088,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if($turma->tipoAtendimento === TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO && is_null($turma->classeEspecial)) {
+            if($curricularEtapaEnsino && is_null($turma->classeEspecial)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o campo 'Turma de Educação Especial (classe especial)' na turma {$nomeTurma} foi informada.",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Turma de Educação Especial (classe especial))',
@@ -1262,16 +1245,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if ($turma->itinerarioFormativo() && count(array_filter($turma->unidadesCurriculares)) == 0) {
-                $mensagem[] = [
-                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se as unidades curriculares da turma {$nomeTurma} foram informadas.",
-                    'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Unidade curricular)',
-                    'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
-                    'fail' => true,
-                ];
-            }
-
-            if (empty($turma->codCursoProfissional) && in_array($turma->etapaEducacenso, [39, 40, 64])) {
+            if (empty($turma->codCursoProfissional) && in_array($turma->etapaEducacenso, [30, 31, 32, 33, 34, 39, 40, 64, 74])) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o código do curso da turma {$nomeTurma} foi informado",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Código do curso)',
@@ -1629,9 +1603,12 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            $tipoAtendimentoDesc = TipoAtendimentoTurma::getDescriptiveValues()[$docente->tipoAtendimentoTurma];
+            $tipoAtendimentoTurma = transformStringFromDBInArray($docente->tipoAtendimentoTurma) ?? [];
+            $docenteCurricularEtapaEnsino = in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimentoTurma);
+            $docenteAtividadeComplementar = in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimentoTurma);
+            $tipoAtendimentoDesc = TipoAtendimentoTurma::getDescription($tipoAtendimentoTurma);
 
-            if ($docente->funcaoDocente == FuncaoExercida::AUXILIAR_EDUCACIONAL && $docente->tipoAtendimentoTurma != TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO) {
+            if ($docente->funcaoDocente == FuncaoExercida::AUXILIAR_EDUCACIONAL && !$docenteCurricularEtapaEnsino) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 50 da escola {$docente->nomeEscola} possui valor inválido. Verificamos que o tipo da turma {$docente->nomeTurma} é {$tipoAtendimentoDesc}, portanto a função exercida do(a) docente {$docente->nomeDocente} não pode ser auxiliar/assistente educacional.",
                     'path' => '(Servidores > Cadastros > Servidores > Vincular professor a turmas > Editar > Campo: Função exercida)',
@@ -1640,7 +1617,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if ($docente->funcaoDocente == FuncaoExercida::MONITOR_ATIVIDADE_COMPLEMENTAR && $docente->tipoAtendimentoTurma != TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR) {
+            if ($docente->funcaoDocente == FuncaoExercida::MONITOR_ATIVIDADE_COMPLEMENTAR && !$docenteAtividadeComplementar) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 50 da escola {$docente->nomeEscola} possui valor inválido. Verificamos que o tipo da turma {$docente->nomeTurma} é {$tipoAtendimentoDesc}, portanto a função exercida do(a) docente {$docente->nomeDocente} não pode ser profissional/monitor de atividade complementar.",
                     'path' => '(Servidores > Cadastros > Servidores > Vincular professor a turmas > Editar > Campo: Função exercida)',
@@ -1730,6 +1707,8 @@ class EducacensoAnaliseController extends ApiCoreController
             $codigoTurma = $aluno->codigoTurma;
             $codigoMatricula = $aluno->codigoMatricula;
 
+            $tipoAtendimentoTurma = transformStringFromDBInArray($aluno->tipoAtendimentoTurma) ?? [];
+
             if (!$avaliableTimeService->isAvailable($codigoAluno, $codigoTurma, $aluno->turnoId)) {
                 $notAvaliableTime[$codigoAluno] = [
                     'text' => "Dados para formular o registro 60 da escola {$nomeEscola} possui valor inválido. Verificamos que o(a) aluno(a) {$nomeAluno} possui mais de um vínculo em diferentes turmas presenciais com horário e dias coincidentes.",
@@ -1756,7 +1735,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if (isArrayEmpty($aluno->tipoAtendimentoMatricula) && $aluno->tipoAtendimentoTurma == TipoAtendimentoTurma::AEE) {
+            if (isArrayEmpty($aluno->tipoAtendimentoMatricula) && in_array(TipoAtendimentoTurma::AEE, $tipoAtendimentoTurma)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 60 da escola {$nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} é de atendimento educacional especializado, portanto é necessário informar qual a tipo de atendimento do(a) aluno(a) {$nomeAluno}.",
                     'path' => '(Escola > Cadastros > Alunos > Visualizar > Tipo do AEE do aluno > Campo: Tipo de Atendimento Educacional Especializado do aluno na turma)',

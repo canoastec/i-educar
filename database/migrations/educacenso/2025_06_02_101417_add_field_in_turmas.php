@@ -8,10 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('pmieducar.turma', function (Blueprint $table) {
-            $table->smallInteger('etapa_agregada')->nullable();
-            $table->smallInteger('classe_especial')->nullable();
-        });
+        if (!Schema::hasColumn('pmieducar.turma', 'etapa_agregada')) {
+            Schema::table('pmieducar.turma', function (Blueprint $table) {
+                $table->smallInteger('etapa_agregada')->nullable();
+            });
+        }
+
+        if (!Schema::hasColumn('pmieducar.turma', 'classe_especial')) {
+            Schema::table('pmieducar.turma', function (Blueprint $table) {
+                $table->smallInteger('classe_especial')->nullable();
+            });
+        }
     }
 
     public function down(): void
