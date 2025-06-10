@@ -109,13 +109,7 @@ class CheckMandatoryCensoFields implements Rule
             if (!$this->validaCampoEstruturaCurricular($params)) {
                 return false;
             }
-            if (!$this->validaCampoEtapaEnsino($params['tipo_atendimento'])) {
-                return false;
-            }
             if (!$this->validaCampoFormasOrganizacaoTurma($params)) {
-                return false;
-            }
-            if (!$this->validaCampoUnidadeCurricular($params)) {
                 return false;
             }
             if (!$this->validaCampoTipoAtendimento($params)) {
@@ -252,7 +246,9 @@ class CheckMandatoryCensoFields implements Rule
 
     protected function validaCampoAtividadesComplementares($params)
     {
-        if ($params->tipo_atendimento == TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR
+        $tipoAtendimento = $this->getTipoAtendimentoValues($params);
+
+        if (is_array($tipoAtendimento) && in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimento)
             && empty($params->atividades_complementares)
         ) {
             $this->message = 'Campo atividades complementares é obrigatório.';
@@ -263,33 +259,24 @@ class CheckMandatoryCensoFields implements Rule
         return true;
     }
 
-    protected function validaCampoEtapaEnsino($tipoAtendimento)
-    {
-        if (!empty($tipoAtendimento) && !in_array($tipoAtendimento, [-1, 4, 5])) {
-            $this->message = 'Campo etapa de ensino é obrigatório';
-
-            return false;
-        }
-
-        return true;
-    }
-
     protected function validaCampoTipoAtendimento($params)
     {
-        if ($params->tipo_atendimento != TipoAtendimentoTurma::ESCOLARIZACAO && in_array(
+        $tipoAtendimento = $this->getTipoAtendimentoValues($params);
+
+        if (is_array($tipoAtendimento) && !in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimento) && in_array(
             $params->tipo_mediacao_didatico_pedagogico,
             [
                 App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA,
             ]
         )) {
-            $this->message = 'O campo: Tipo de atendimento deve ser: Escolarização quando o campo: Tipo de mediação didático-pedagógica for: Educação a Distância.';
+            $this->message = 'O campo: Tipo de Turma deve ser: Curricular (etapa de ensino) quando o campo: Tipo de mediação didático-pedagógica for: Educação a Distância.';
 
             return false;
         }
 
         $course = LegacyCourse::find($params->ref_cod_curso);
-        if ((int) $params->tipo_atendimento === TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR && (int) $course->modalidade_curso === ModalidadeCurso::EJA) {
-            $this->message = 'Quando a modalidade do curso é: <b>Educação de Jovens e Adultos (EJA)</b>, o campo <b>Tipo de atendimento</b> não pode ser <b>Atividade complementar</b>';
+        if (is_array($tipoAtendimento) && in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimento) && (int) $course->modalidade_curso === ModalidadeCurso::EJA) {
+            $this->message = 'Quando a modalidade do curso é: <b>Educação de Jovens e Adultos (EJA)</b>, o campo <b>Tipo de turma</b> não pode ser <b>Atividade complementar</b>';
 
             return false;
         }
@@ -331,13 +318,14 @@ class CheckMandatoryCensoFields implements Rule
     public function validaCampoEstruturaCurricular(mixed $params)
     {
         $estruturaCurricular = $this->getEstruturaCurricularValues($params);
+        $tipoAtendimento = $this->getTipoAtendimentoValues($params);
 
         if (is_array($estruturaCurricular) && in_array(2, $estruturaCurricular, true) && count($estruturaCurricular) === 1) {
             $params->etapa_educacenso = null;
         }
 
-        if ($params->tipo_atendimento == TipoAtendimentoTurma::ESCOLARIZACAO && empty($estruturaCurricular)) {
-            $this->message = 'Campo "Estrutura Curricular" é obrigatório quando o campo tipo de atentimento é "Escolarização".';
+        if (is_array($tipoAtendimento) && in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimento) && empty($estruturaCurricular)) {
+            $this->message = 'Campo "Estrutura Curricular" é obrigatório quando o campo tipo de turma é "Curricular (etapa de ensino)".';
 
             return false;
         }
@@ -436,33 +424,6 @@ class CheckMandatoryCensoFields implements Rule
         return true;
     }
 
-    private function validaCampoUnidadeCurricular(mixed $params): bool
-    {
-        $estruturaCurricular = $this->getEstruturaCurricularValues($params);
-
-        if (empty($estruturaCurricular)) {
-            return true;
-        }
-
-        if (empty($params->unidade_curricular) && !in_array(2, $estruturaCurricular, true)) {
-            return true;
-        }
-
-        if (empty($params->unidade_curricular) && in_array(2, $estruturaCurricular, true)) {
-            $this->message = 'Campo: <b>Unidade curricular</b> é obrigatório quando o campo: <b>Estrutura Curricular contém: Itinerário formativo</b>';
-
-            return false;
-        }
-
-        if (!empty($params->unidade_curricular) && !in_array(2, $estruturaCurricular, true)) {
-            $this->message = 'Campo: <b>Unidade curricular</b> não pode ser preenchido quando o campo: <b>Estrutura Curricular não contém: Itinerário formativo</b>';
-
-            return false;
-        }
-
-        return true;
-    }
-
     /**
      * Get the validation error message.
      *
@@ -482,6 +443,19 @@ class CheckMandatoryCensoFields implements Rule
         return array_map(
             'intval',
             explode(',', str_replace(['{', '}'], '', $params->estrutura_curricular))
+                ?: []
+        );
+    }
+
+    private function getTipoAtendimentoValues(mixed $params): ?array
+    {
+        if ($params->tipo_atendimento === null) {
+            return null;
+        }
+
+        return array_map(
+            'intval',
+            explode(',', str_replace(['{', '}'], '', $params->tipo_atendimento))
                 ?: []
         );
     }

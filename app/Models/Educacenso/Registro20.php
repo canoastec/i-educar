@@ -79,6 +79,9 @@ class Registro20 implements RegistroEducacenso
      */
     public $etapaEducacenso;
 
+
+    public $etapaAgregada;
+
     /**
      * @var array
      */
@@ -213,6 +216,8 @@ class Registro20 implements RegistroEducacenso
     public $tipoAtividadeComplementar6;
 
     public $classeComLinguaBrasileiraSinais;
+
+    public $classeEspecial;
 
     public $outrasUnidadesCurricularesObrigatorias;
 
@@ -375,7 +380,7 @@ class Registro20 implements RegistroEducacenso
      */
     public function escolarizacao()
     {
-        return $this->tipoAtendimento == TipoAtendimentoTurma::ESCOLARIZACAO;
+        return $this->tipoAtendimento == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO;
     }
 
     /**

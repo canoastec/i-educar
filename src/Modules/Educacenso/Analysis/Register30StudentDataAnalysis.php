@@ -66,7 +66,7 @@ class Register30StudentDataAnalysis implements AnalysisInterface
         $arrayDeficiencias = $this->data::removeAltasHabilidadesArrayDeficiencias($arrayDeficiencias);
         if (empty($arrayRecursos) && $arrayDeficiencias) {
             $this->messages[] = [
-                'text' => "Dados para formular o registro 30 da escola {$data->nomeEscola} não encontrados. Verificamos que o(a) aluno(a)  {$data->nomePessoa} possui deficiência, portanto é necessário informar qual o recurso para a realização de provas o(a) mesmo(a) necessita ou já recebe.",
+                'text' => "Dados para formular o registro 30 da escola {$data->nomeEscola} não encontrados. Verificamos que o(a) aluno(a) {$data->nomePessoa} possui deficiência ou transtorno, portanto é necessário informar qual o recurso para a realização de provas o(a) mesmo(a) necessita ou já recebe.",
                 'path' => '(Escola > Cadastros > Alunos > Editar > Aba: Dados educacenso > Campo: Recursos necessários para realização de provas)',
                 'linkPath' => "/module/Cadastro/aluno?id={$data->codigoAluno}",
                 'fail' => true,
