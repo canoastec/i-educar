@@ -67,6 +67,14 @@ let verificaClasseEspecial = ()=>{
   }
 }
 
+let verificaFormacaoAlternancia = ()=>{
+  $j('#formacao_alternancia').makeUnrequired();
+
+  if (obrigarCamposCenso) {
+    $j('#formacao_alternancia').makeRequired();
+  }
+}
+
 let verificaHorariosTurnoParcial = ()=>{
   if (!obrigarCamposCenso) {
     return true;
@@ -570,6 +578,7 @@ $j(document).ready(function() {
       verificaClasseEspecial();
       habilitaClasseEspecial();
       verificaFormaOrganizacaoTurma();
+      verificaFormacaoAlternancia();
     });
 
   // Turmas Parciais

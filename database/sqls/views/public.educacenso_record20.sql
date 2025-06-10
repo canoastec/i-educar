@@ -144,7 +144,8 @@ SELECT
     turma.local_funcionamento_diferenciado as "localFuncionamentoDiferenciado",
     escola.local_funcionamento as "localFuncionamento",
     curso.modalidade_curso as "modalidadeCurso",
-    turma.cod_curso_profissional as "codCursoProfissional"
+    turma.cod_curso_profissional as "codCursoProfissional",
+    turma.formacao_alternancia as "formacaoAlternancia"
 
 FROM pmieducar.escola
 LEFT JOIN modules.educacenso_cod_escola ON (escola.cod_escola = educacenso_cod_escola.cod_escola)
