@@ -189,7 +189,6 @@ function atualizaOpcoesTipoAtendimento() {
 $j('#tipo_atendimento').change(function() {
   atualizaOpcoesTipoAtendimento();
   mostraAtividadesComplementares();
-  verificaOrganizacaoCurricular();
   verificaFormaOrganizacaoTurma();
   verificaEtapaAgregada();
   habilitaEtapaAgregada();
@@ -227,24 +226,6 @@ function mostraAtividadesComplementares(){
   } else {
     $j('#atividades_complementares').attr('disabled', 'disabled');
     $j('#atividades_complementares').val([]).trigger('chosen:updated');
-  }
-}
-
-function verificaOrganizacaoCurricular() {
-  const tipoAtendimento = $j('#tipo_atendimento').val() || [];
-  const mostraCampo = tipoAtendimento.includes('0');
-  const organizacaoCurricularField = $j('#organizacao_curricular');
-
-  organizacaoCurricularField.makeUnrequired();
-  if (mostraCampo) {
-    organizacaoCurricularField.removeAttr('disabled');
-    organizacaoCurricularField.trigger('chosen:updated');
-    if (obrigarCamposCenso) {
-      organizacaoCurricularField.makeRequired();
-    }
-  } else {
-    organizacaoCurricularField.attr('disabled', 'disabled');
-    organizacaoCurricularField.val([]).trigger('chosen:updated');
   }
 }
 
@@ -605,7 +586,6 @@ $j(document).ready(function() {
       });
       atualizaOpcoesTipoAtendimento();
       mostraAtividadesComplementares();
-      verificaOrganizacaoCurricular();
       mostraCursoTecnico();
       habilitaEtapaEducacenso();
       verificaEtapaEducacenso();
