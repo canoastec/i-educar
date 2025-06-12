@@ -1596,9 +1596,9 @@ class EducacensoAnaliseController extends ApiCoreController
 
             if ($exists) {
                 $mensagem[] = [
-                    'text' => "Dados para formular o registro 50 da escola {$docente->nomeEscola} não encontrados. Verifique o cadastro do servidor {$docente->nomeDocente} pois ele possui vínculo de aluno na turma {$docente->nomeTurma}.",
-                    'path' => '(Servidores > Cadastros > Servidores)',
-                    'linkPath' => "/intranet/educar_servidor_cad.php?cod_servidor={$docente->idServidor}&ref_cod_instituicao={$docente->idInstituicao}",
+                    'text' => "Dados para formular o registro 50 da escola {$docente->nomeEscola} não encontrados. Verifique o cadastro do servidor {$docente->nomeDocente}, pois ele está vinculado como professor à turma {$docente->nomeTurma}, na qual também consta como aluno.",
+                    'path' => '(Servidores > Cadastros > Servidores > Vincular professor a turmas > Editar)',
+                    'linkPath' => "/intranet/educar_servidor_vinculo_turma_cad.php?id={$docente->idAlocacao}&ref_cod_instituicao={$docente->idInstituicao}&ref_cod_servidor={$docente->idServidor}",
                     'fail' => true,
                 ];
             }
