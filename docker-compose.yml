@@ -2,10 +2,9 @@ x-php: &php
   build:
     context: docker/php
     args:
-      PHP_VERSION: 8.3
+      PHP_VERSION: 8.4
       COMPOSER_VERSION: 2.7
-  image: php:8.3-ieducar
-  pull_policy: never
+  image: php:8.4-ieducar
   working_dir: /var/www/ieducar
   volumes:
     - ./:/var/www/ieducar
