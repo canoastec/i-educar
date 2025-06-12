@@ -359,12 +359,6 @@ return new class extends clsDetalhe
                 $this->array_botao_url_script[] = "go(\"educar_matricula_turma_turno_cad.php?ref_cod_matricula={$registro['cod_matricula']}&ref_cod_aluno={$registro['ref_cod_aluno']}\")";
             }
 
-            if ($this->permissaoItinerarioFormativo()) {
-                $this->array_botao[] = 'Itinerário formativo';
-                $link = route(name: 'registration.formative-itinerary.index', parameters: $registro['cod_matricula']);
-                $this->array_botao_url_script[] = "go(\"{$link}\")";
-            }
-
             if ($registro['aprovado'] != 4 && $registro['aprovado'] != 6) {
                 if ($this->permissaoSolicitarTransferencia()) {
                     if (is_array(value: $lst_transferencia) && isset($data_transferencia)) {
@@ -540,11 +534,6 @@ return new class extends clsDetalhe
     public function permissaoTurno()
     {
         return $this->getPermissaoVisualizar(689);
-    }
-
-    public function permissaoItinerarioFormativo()
-    {
-        return $this->getPermissaoVisualizar(690);
     }
 
     public function permissaoSolicitarTransferencia()
