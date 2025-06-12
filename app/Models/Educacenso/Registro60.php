@@ -105,6 +105,11 @@ class Registro60 implements ItemOfRegistro30, RegistroEducacenso
     public $turnoId;
 
     /**
+     * @var ?int Campo usado somente na análise
+     */
+    public $turmaClasseEspecial;
+
+    /**
      * @var string Campo usado somente na análise
      */
     public $nomeEscola;
@@ -189,7 +194,7 @@ class Registro60 implements ItemOfRegistro30, RegistroEducacenso
             TipoMediacaoDidaticoPedagogico::SEMIPRESENCIAL,
         ];
 
-        return $this->tipoAtendimentoTurma == TipoAtendimentoTurma::ESCOLARIZACAO
+        return $this->tipoAtendimentoTurma == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO
             && in_array($this->tipoMediacaoTurma, $tiposMediacaoPresencial)
             && $this->paisResidenciaAluno == PaisResidencia::BRASIL;
     }
@@ -218,7 +223,7 @@ class Registro60 implements ItemOfRegistro30, RegistroEducacenso
      */
     public function recebeEscolarizacaoOutroEspacoIsRequired()
     {
-        return $this->tipoAtendimentoTurma == TipoAtendimentoTurma::ESCOLARIZACAO &&
+        return $this->tipoAtendimentoTurma == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO &&
             $this->tipoMediacaoTurma == TipoMediacaoDidaticoPedagogico::PRESENCIAL &&
             $this->localFuncionamentoDiferenciadoTurma == \App_Model_LocalFuncionamentoDiferenciado::NAO_ESTA &&
             $this->localFuncionamentoDiferenciadoTurma == \App_Model_LocalFuncionamentoDiferenciado::SALA_ANEXA;

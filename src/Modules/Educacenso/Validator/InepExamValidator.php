@@ -4,6 +4,7 @@ namespace iEducar\Modules\Educacenso\Validator;
 
 use iEducar\Modules\Educacenso\Model\Deficiencias;
 use iEducar\Modules\Educacenso\Model\RecursosRealizacaoProvas;
+use iEducar\Modules\Educacenso\Model\Transtornos;
 
 class InepExamValidator implements EducacensoValidator
 {
@@ -33,7 +34,8 @@ class InepExamValidator implements EducacensoValidator
             && $this->validateCdAudioDeficienteVisual()
             && $this->validateProvaLinguaPortuguesaSegundaLingua()
             && $this->validateVideoLibras()
-            && $this->validateMaterialDidaticoProvaBraille();
+            && $this->validateMaterialDidaticoBraille()
+            && $this->validateProvaBraille();
     }
 
     /**
@@ -75,7 +77,7 @@ class InepExamValidator implements EducacensoValidator
         $values = [
             RecursosRealizacaoProvas::PROVA_AMPLIADA_FONTE_18,
             RecursosRealizacaoProvas::PROVA_SUPERAMPLIADA_FONTE_24,
-            RecursosRealizacaoProvas::MATERIAL_DIDATICO_E_PROVA_EM_BRAILLE,
+            RecursosRealizacaoProvas::PROVA_EM_BRAILLE,
         ];
 
         if (count(array_intersect($values, $this->resources)) > 1) {
@@ -102,6 +104,12 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::DEFICIENCIA_FISICA,
                 Deficiencias::DEFICIENCIA_INTELECTUAL,
                 Deficiencias::TRANSTORNO_ESPECTRO_AUTISTA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
             ],
             [
                 Deficiencias::SURDEZ,
@@ -131,6 +139,12 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::DEFICIENCIA_FISICA,
                 Deficiencias::DEFICIENCIA_INTELECTUAL,
                 Deficiencias::TRANSTORNO_ESPECTRO_AUTISTA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
             ],
             [
             ]
@@ -180,6 +194,12 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::SURDEZ,
                 Deficiencias::DEFICIENCIA_AUDITIVA,
                 Deficiencias::SURDOCEGUEIRA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -204,6 +224,12 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::SURDEZ,
                 Deficiencias::DEFICIENCIA_AUDITIVA,
                 Deficiencias::SURDOCEGUEIRA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -227,6 +253,12 @@ class InepExamValidator implements EducacensoValidator
             [
                 Deficiencias::BAIXA_VISAO,
                 Deficiencias::SURDOCEGUEIRA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -251,6 +283,12 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::BAIXA_VISAO,
                 Deficiencias::VISAO_MONOCULAR,
                 Deficiencias::SURDOCEGUEIRA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -279,6 +317,12 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::DEFICIENCIA_FISICA,
                 Deficiencias::DEFICIENCIA_INTELECTUAL,
                 Deficiencias::TRANSTORNO_ESPECTRO_AUTISTA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
             ],
             [
                 Deficiencias::SURDEZ,
@@ -303,6 +347,12 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::SURDEZ,
                 Deficiencias::DEFICIENCIA_AUDITIVA,
                 Deficiencias::SURDOCEGUEIRA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -327,6 +377,12 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::SURDEZ,
                 Deficiencias::DEFICIENCIA_AUDITIVA,
                 Deficiencias::SURDOCEGUEIRA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -343,13 +399,46 @@ class InepExamValidator implements EducacensoValidator
     /**
      * @return bool
      */
-    private function validateMaterialDidaticoProvaBraille()
+    private function validateMaterialDidaticoBraille()
     {
         if ($this->validateResource(
-            RecursosRealizacaoProvas::MATERIAL_DIDATICO_E_PROVA_EM_BRAILLE,
+            RecursosRealizacaoProvas::MATERIAL_DIDATICO_EM_BRAILLE,
             [
                 Deficiencias::CEGUEIRA,
                 Deficiencias::SURDOCEGUEIRA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
+            ],
+            []
+        )) {
+            return true;
+        }
+
+        $this->setDefaultErrorMessage();
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    private function validateProvaBraille()
+    {
+        if ($this->validateResource(
+            RecursosRealizacaoProvas::PROVA_EM_BRAILLE,
+            [
+                Deficiencias::CEGUEIRA,
+                Deficiencias::SURDOCEGUEIRA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
             ],
             []
         )) {

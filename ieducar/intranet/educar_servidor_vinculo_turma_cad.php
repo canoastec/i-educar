@@ -38,17 +38,11 @@ return new class extends clsCadastro
 
     public $ref_cod_turma;
 
-    public $unidades_curriculares;
-
     public $turma_estrutura_curricular;
 
     public $nm_turma;
 
     public $copia = false;
-
-    public $apresentar_outras_unidades_curriculares_obrigatorias = false;
-
-    public $outras_unidades_curriculares_obrigatorias;
 
     public function Inicializar()
     {
@@ -90,12 +84,6 @@ return new class extends clsCadastro
                 $this->ref_cod_curso = $obj_turma['ref_cod_curso'];
                 $this->ref_cod_serie = $obj_turma['ref_ref_cod_serie'];
                 $this->turma_estrutura_curricular = $obj_turma['estrutura_curricular'];
-                $this->apresentar_outras_unidades_curriculares_obrigatorias = $registro->schoolClass->outras_unidades_curriculares_obrigatorias ?? false;
-                $this->outras_unidades_curriculares_obrigatorias = $registro['outras_unidades_curriculares_obrigatorias'];
-
-                if (is_string(value: $registro['unidades_curriculares'])) {
-                    $this->unidades_curriculares = explode(separator: ',', string: str_replace(search: ['{', '}'], replace: '', subject: $registro['unidades_curriculares']));
-                }
 
                 if (!isset($_GET['copia'])) {
                     $retorno = 'Editar';
@@ -145,7 +133,6 @@ return new class extends clsCadastro
         $this->campoOculto(nome: 'id', valor: $this->id);
         $this->campoOculto(nome: 'servidor_id', valor: $this->servidor_id);
         $this->campoOculto(nome: 'copia', valor: (int) $this->copia);
-        $this->campoOculto(nome: 'apresentar_outras_unidades_curriculares_obrigatorias', valor: $this->apresentar_outras_unidades_curriculares_obrigatorias);
 
         $this->inputsHelper()->dynamic(helperNames: 'ano', inputOptions: ['value' => (is_null(value: $ano) ? date(format: 'Y') : $ano)]);
         $this->inputsHelper()->dynamic(helperNames: ['instituicao', 'escola', 'curso', 'serie', 'turma']);
@@ -160,30 +147,6 @@ return new class extends clsCadastro
             'value' => $this->funcao_exercida,
         ];
         $this->inputsHelper()->select(attrName: 'funcao_exercida', inputOptions: $options);
-
-        $helperOptions = ['objectName' => 'unidades_curriculares'];
-        $options = [
-            'label' => 'Unidade(s) curricular(es) que leciona',
-            'label_hint' => 'Campo referente a unidade(s) curricular(es) da turma',
-            'size' => 50,
-            'required' => false,
-            'options' => [
-                'values' => $this->unidades_curriculares,
-                'all_values' => UnidadesCurriculares::getDescriptiveValues(),
-            ],
-        ];
-        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
-
-        $this->inputsHelper()->select(attrName: 'outras_unidades_curriculares_obrigatorias', inputOptions: [
-            'label' => 'Outra(s) unidade(s) curricular(es) obrigatória(s);',
-            'resources' => [
-                '' => 'Selecione',
-                0 => 'Não',
-                1 => 'Sim',
-            ],
-            'value' => $this->outras_unidades_curriculares_obrigatorias,
-            'required' => false,
-        ]);
 
         $resources = SelectOptions::tiposVinculoServidor();
         $options = [
@@ -230,7 +193,10 @@ return new class extends clsCadastro
 
         $this->inputsHelper()->checkbox(attrName: 'permite_lancar_faltas_componente', inputOptions: $options);
         $this->inputsHelper()->checkbox(attrName: 'selecionar_todos', inputOptions: ['label' => 'Selecionar/remover todos']);
-        $this->inputsHelper()->multipleSearchComponenteCurricular(attrName: null, inputOptions: ['label' => 'Componentes lecionados', 'required' => false], helperOptions: ['searchForArea' => true, 'allDisciplinesMulti' => true]);
+        $this->inputsHelper()->multipleSearchComponenteCurricular(attrName: null, inputOptions: [
+            'label' => 'Áreas do conhecimento/componentes curriculares que leciona',
+            'required' => false
+        ], helperOptions: ['searchForArea' => true, 'allDisciplinesMulti' => true]);
 
         $scripts = [
             '/vendor/legacy/Cadastro/Assets/Javascripts/ServidorVinculoTurma.js',
@@ -274,7 +240,6 @@ return new class extends clsCadastro
             tipo_vinculo: $this->tipo_vinculo,
             permite_lancar_faltas_componente: $this->permite_lancar_faltas_componente,
             turno_id: $this->turma_turno_id,
-            outras_unidades_curriculares_obrigatorias: $this->outras_unidades_curriculares_obrigatorias
         );
         $id = $professorTurma->existe2();
         if ($id) {
@@ -302,8 +267,6 @@ return new class extends clsCadastro
         $obj_permissoes = new clsPermissoes;
         $obj_permissoes->permissao_cadastra(int_processo_ap: 635, int_idpes_usuario: $this->pessoa_logada, int_soma_nivel_acesso: 7, str_pagina_redirecionar: $backUrl);
 
-        $this->unidades_curriculares = $this->transformArrayInString(value: $this->unidades_curriculares);
-
         $professorTurma = new clsModulesProfessorTurma(
             id: $this->id,
             ano: $this->ano,
@@ -314,8 +277,6 @@ return new class extends clsCadastro
             tipo_vinculo: $this->tipo_vinculo,
             permite_lancar_faltas_componente: $this->permite_lancar_faltas_componente,
             turno_id: $this->turma_turno_id,
-            unidades_curriculares: $this->unidades_curriculares,
-            outras_unidades_curriculares_obrigatorias: $this->outras_unidades_curriculares_obrigatorias
         );
 
         if (!$this->validaCamposCenso()) {
@@ -408,6 +369,7 @@ return new class extends clsCadastro
     {
         $obj_turma = new clsPmieducarTurma(cod_turma: $this->ref_cod_turma);
         $turma = $obj_turma->detalhe();
+        $tipoAtendimento = transformStringFromDBInArray($turma['tipo_atendimento']);
 
         if (empty($turma)) {
             return true;
@@ -433,14 +395,14 @@ return new class extends clsCadastro
             return false;
         }
 
-        if ($turma['tipo_atendimento'] != TipoAtendimentoTurma::ESCOLARIZACAO && $this->funcao_exercida == FuncaoExercida::AUXILIAR_EDUCACIONAL) {
-            $this->mensagem = 'O campo: <b>Função exercida</b> não pode ser: <b>Auxiliar/Assistente Educacional</b> quando o tipo de atendimento da turma for: <b>' . TipoAtendimentoTurma::getDescriptiveValues()[$turma['tipo_atendimento']] . '</b>';
+        if (is_array($tipoAtendimento) && !in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimento) && $this->funcao_exercida == FuncaoExercida::AUXILIAR_EDUCACIONAL) {
+            $this->mensagem = 'O campo: <b>Função exercida</b> não pode ser: <b>Auxiliar/Assistente Educacional</b> quando o tipo da turma for: <b>' . TipoAtendimentoTurma::getDescription($tipoAtendimento) . '</b>';
 
             return false;
         }
 
-        if ($turma['tipo_atendimento'] != TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR && $this->funcao_exercida == FuncaoExercida::MONITOR_ATIVIDADE_COMPLEMENTAR) {
-            $this->mensagem = 'O campo: <b>Função exercida</b> não pode ser: <b> Profissional/Monitor de Atividade Complementar </b> quando o tipo de atendimento da turma for: <b>' . TipoAtendimentoTurma::getDescriptiveValues()[$turma['tipo_atendimento']] . '</b>';
+        if (is_array($tipoAtendimento) && !in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimento) && $this->funcao_exercida == FuncaoExercida::MONITOR_ATIVIDADE_COMPLEMENTAR) {
+            $this->mensagem = 'O campo: <b>Função exercida</b> não pode ser: <b> Profissional/Monitor de Atividade Complementar </b> quando o tipo da turma for: <b>' . TipoAtendimentoTurma::getDescription($tipoAtendimento) . '</b>';
 
             return false;
         }

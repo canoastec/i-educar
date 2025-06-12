@@ -61,40 +61,6 @@ $j(document).ready(function() {
     getTurnoTurma();
   });
 
-  const unidadesCurriculares = (data) => {
-
-    const unidadesCurriculares = $j('#tr_unidades_curriculares');
-    const funcaoExercida = $j('#funcao_exercida').val();
-
-    unidadesCurriculares.hide();
-    if (!!data && 'estrutura_curricular' in data &&
-      data.estrutura_curricular.length > 0 &&
-      data.estrutura_curricular.includes("2") &&
-      funcaoExercida &&
-      $j.inArray($j('#funcao_exercida').val(),["1", "5"]) > -1
-    ) {
-      filtraUnidadesCurricularesDaTurma(data);
-      unidadesCurriculares.show();
-    }
-
-    function filtraUnidadesCurricularesDaTurma(data) {
-      $j("#unidades_curriculares option").each(function() {
-        $j(this).prop('disabled', true)}
-      ).trigger('chosen:updated');
-
-      if ('unidade_curricular' in data && !!data.unidade_curricular) {
-        let unidadesCurricularesDaTurma = data.unidade_curricular.slice(1,-1).split(',');
-        $j("#unidades_curriculares option").each(function()  {
-            if(unidadesCurricularesDaTurma.includes($j(this).val())){
-              $j(this).prop('disabled', false)
-            }
-          }).trigger('chosen:updated');
-      }
-    }
-  }
-
-  unidadesCurriculares();
-
   const getComponenteCurricular = function () {
     const $id = $j('#id');
     if ($id.val() != '') {
@@ -157,19 +123,6 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
     }
 });
 
-  function verificaUnidadesCurricularesObrigatorias() {
-      if ($j('#apresentar_outras_unidades_curriculares_obrigatorias').val() != 0 &&
-          $j('#apresentar_outras_unidades_curriculares_obrigatorias').val() != '' &&
-          $j('#apresentar_outras_unidades_curriculares_obrigatorias').val() != null &&
-          ($j('#funcao_exercida').val() == '1' || $j('#funcao_exercida').val() == '5')) {
-          $j('#outras_unidades_curriculares_obrigatorias').closest('tr').show();
-      } else {
-          $j('#outras_unidades_curriculares_obrigatorias').closest('tr').hide();
-          $j('#outras_unidades_curriculares_obrigatorias').val('');
-      }
-  }
-  verificaUnidadesCurricularesObrigatorias();
-
   $j('#ref_cod_escola').on('change', getDependenciaAdministrativaEscola);
   getDependenciaAdministrativaEscola();
 
@@ -179,7 +132,6 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
   });
 
   $j('#funcao_exercida').on('change', verificaObrigatoriedadeTipoVinculo);
-  $j('#funcao_exercida').on('change', verificaUnidadesCurricularesObrigatorias());
 
   let toggleProfessorAreaEspecifica = function (tipoPresenca) {
     //se o tipo de presença for falta global
@@ -216,10 +168,6 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
 
   function handleGetTurnoTurma(dataResponse) {
     toggleTurno(dataResponse['turma_turno_id']);
-    if (dataResponse['outras_unidades_curriculares_obrigatorias']) {
-        $j('#apresentar_outras_unidades_curriculares_obrigatorias').val(1);
-        verificaUnidadesCurricularesObrigatorias();
-    }
     unidadesCurriculares(dataResponse);
   }
 
