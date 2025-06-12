@@ -172,7 +172,7 @@ class CheckMandatoryCensoFields implements Rule
 
         if (empty($params->etapa_educacenso) &&
             is_array($organizacaoCurricular) &&
-            in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular, true)) {
+            in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular)) {
             $this->message = 'O campo <b>"Etapa de ensino"</b> deve ser obrigatório quando o campo "Organização Curricular da Turma" for preenchido com "Formação geral básica"';
 
             return false;
@@ -320,7 +320,7 @@ class CheckMandatoryCensoFields implements Rule
     {
         $organizacaoCurricular = $this->getOrganizacaoCurricularValues($params);
 
-        if (!is_array($organizacaoCurricular) || !in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular, true)) {
+        if (!is_array($organizacaoCurricular) || !in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular)) {
             $params->etapa_educacenso = null;
         }
 
@@ -347,7 +347,7 @@ class CheckMandatoryCensoFields implements Rule
 
         $etapaEnsinoCanContainsWithEnsinoMedioEFormacaoGeralBasica = [25, 26, 27, 28, 29];
         if (is_array($organizacaoCurricular) &&
-            in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular, true) &&
+            in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular) &&
             $params->etapa_agregada &&
             ((int)$params->etapa_agregada !== EtapaAgregada::ENSINO_MEDIO) &&
             isset($params->etapa_educacenso) &&
@@ -359,7 +359,7 @@ class CheckMandatoryCensoFields implements Rule
 
         $etapaEnsinoCanContainsWithEnsinoMedioEFormacaoGeralBasica = [35, 36, 37, 38];
         if (is_array($organizacaoCurricular) &&
-            in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular, true) &&
+            in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular) &&
             $params->etapa_agregada &&
             ((int)$params->etapa_agregada !== EtapaAgregada::ENSINO_MEDIO_NORMAL_MAGISTERIO) &&
             isset($params->etapa_educacenso) &&
