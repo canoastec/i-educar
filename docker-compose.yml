@@ -43,7 +43,7 @@ services:
 
   nginx:
     container_name: ieducar-nginx
-    image: nginx:1.26-alpine
+    image: nginx:1.28-alpine
     links:
       - fpm
     working_dir: /var/www/ieducar
