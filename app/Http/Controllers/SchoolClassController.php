@@ -221,20 +221,20 @@ class SchoolClassController extends Controller
             $params['formas_organizacao_turma'] = null;
         }
 
-        if (isset($params['unidade_curricular'])) {
-            $params['unidade_curricular'] = '{' . implode(',', $params['unidade_curricular']) . '}';
+        if (isset($params['tipo_atendimento']) && !in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $params['tipo_atendimento'])) {
+            $params['atividades_complementares'] = '{}';
+        }
+
+        if (isset($params['tipo_atendimento'])) {
+            $params['tipo_atendimento'] = '{' . implode(',', $params['tipo_atendimento']) . '}';
         } else {
-            $params['unidade_curricular'] = null;
+            $params['tipo_atendimento'] = null;
         }
 
         if (isset($params['cod_curso_profissional'])) {
             $params['cod_curso_profissional'] = $params['cod_curso_profissional'][0];
         } else {
             $params['cod_curso_profissional'] = null;
-        }
-
-        if ($params['tipo_atendimento'] != TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR) {
-            $params['atividades_complementares'] = '{}';
         }
 
         $etapasCursoTecnico = [30, 31, 32, 33, 34, 39, 40, 64, 74];

@@ -43,20 +43,6 @@ SELECT
     matricula.cod_matricula "codigoMatricula",
     turma.nm_turma "nomeTurma",
     matricula_turma.tipo_atendimento "tipoAtendimentoMatricula",
-    (ARRAY[1::smallint] <@ matricula_turma.tipo_itinerario)::INT "tipoItinerarioLinguagens",
-    (ARRAY[2::smallint] <@ matricula_turma.tipo_itinerario)::INT "tipoItinerarioMatematica",
-    (ARRAY[3::smallint] <@ matricula_turma.tipo_itinerario)::INT "tipoItinerarioCienciasNatureza",
-    (ARRAY[4::smallint] <@ matricula_turma.tipo_itinerario)::INT "tipoItinerarioCienciasHumanas",
-    (ARRAY[5::smallint] <@ matricula_turma.tipo_itinerario)::INT "tipoItinerarioFormacaoTecnica",
-    (ARRAY[6::smallint] <@ matricula_turma.tipo_itinerario)::INT "tipoItinerarioIntegrado",
-    (ARRAY[1::smallint] <@ matricula_turma.composicao_itinerario)::INT "composicaoItinerarioLinguagens",
-    (ARRAY[2::smallint] <@ matricula_turma.composicao_itinerario)::INT "composicaoItinerarioMatematica",
-    (ARRAY[3::smallint] <@ matricula_turma.composicao_itinerario)::INT "composicaoItinerarioCienciasNatureza",
-    (ARRAY[4::smallint] <@ matricula_turma.composicao_itinerario)::INT "composicaoItinerarioCienciasHumanas",
-    (ARRAY[5::smallint] <@ matricula_turma.composicao_itinerario)::INT "composicaoItinerarioFormacaoTecnica",
-    matricula_turma.cod_curso_profissional "codCursoProfissional",
-    matricula_turma.curso_itinerario "cursoItinerario",
-    matricula_turma.itinerario_concomitante "itinerarioConcomitante",
     matricula_turma.id "enturmacaoId",
     turma.tipo_mediacao_didatico_pedagogico "tipoMediacaoTurma",
     aluno.veiculo_transporte_escolar "veiculoTransporteEscolar",
@@ -66,7 +52,8 @@ SELECT
     matricula.ano AS "anoTurma",
     escola.cod_escola AS "codEscola",
     turma.turma_turno_id AS "turmaTurnoId",
-    COALESCE(matricula_turma.turno_id, turma.turma_turno_id) AS "turnoId"
+    COALESCE(matricula_turma.turno_id, turma.turma_turno_id) AS "turnoId",
+    turma.classe_especial AS "turmaClasseEspecial"
 FROM pmieducar.aluno
          JOIN pmieducar.matricula ON matricula.ref_cod_aluno = aluno.cod_aluno
          JOIN pmieducar.escola ON escola.cod_escola = matricula.ref_ref_cod_escola

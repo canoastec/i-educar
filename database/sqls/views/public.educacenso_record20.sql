@@ -12,6 +12,7 @@ SELECT
     turma.dias_semana AS "diasSemana",
     turma.tipo_atendimento AS "tipoAtendimento",
     turma.atividades_complementares AS "atividadesComplementares",
+    turma.etapa_agregada AS "etapaAgregada",
     turma.etapa_educacenso AS "etapaEducacenso",
     juridica.fantasia AS "nomeEscola",
     turma.tipo_mediacao_didatico_pedagogico AS "tipoMediacaoDidaticoPedagogico",
@@ -19,6 +20,7 @@ SELECT
     turma.formas_organizacao_turma AS "formasOrganizacaoTurma",
     turma.unidade_curricular AS "unidadesCurriculares",
     turma.classe_com_lingua_brasileira_sinais AS "classeComLinguaBrasileiraSinais",
+    turma.classe_especial AS "classeEspecial",
     turma.outras_unidades_curriculares_obrigatorias AS "outrasUnidadesCurricularesObrigatorias",
     turma.turma_turno_id AS "turmaTurnoId",
     turma.hora_inicial_matutino AS "horaInicialMatutino",
@@ -142,7 +144,8 @@ SELECT
     turma.local_funcionamento_diferenciado as "localFuncionamentoDiferenciado",
     escola.local_funcionamento as "localFuncionamento",
     curso.modalidade_curso as "modalidadeCurso",
-    turma.cod_curso_profissional as "codCursoProfissional"
+    turma.cod_curso_profissional as "codCursoProfissional",
+    turma.formacao_alternancia as "formacaoAlternancia"
 
 FROM pmieducar.escola
 LEFT JOIN modules.educacenso_cod_escola ON (escola.cod_escola = educacenso_cod_escola.cod_escola)
