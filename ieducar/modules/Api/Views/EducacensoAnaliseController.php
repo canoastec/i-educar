@@ -979,7 +979,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if (empty($tipoAtendimento) || !array_filter($tipoAtendimento, fn($tipo) => $tipo >= 0)) {
+            if (empty($tipoAtendimento) || !array_filter($tipoAtendimento, fn ($tipo) => $tipo >= 0)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o tipo da turma {$nomeTurma} foi informado.",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Tipo de turma)',
@@ -1097,7 +1097,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if($curricularEtapaEnsino && is_null($turma->classeEspecial)) {
+            if ($curricularEtapaEnsino && is_null($turma->classeEspecial)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o campo 'Turma de Educação Especial (classe especial)' na turma {$nomeTurma} foi informada.",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Turma de Educação Especial (classe especial))',
@@ -1586,6 +1586,10 @@ class EducacensoAnaliseController extends ApiCoreController
         $registro50 = new Registro50Data($educacensoRepository, $registro50Model);
         $docentes = $registro50->getData($escolaId, $ano);
 
+        $registro60Model = new Registro60;
+        $registro60 = new Registro60Data($educacensoRepository, $registro60Model);
+        $alunos = $registro60->getData($escolaId, $ano);
+
         if (empty($docentes)) {
             $this->messenger->append('Nenhum docente encontrado.');
 
@@ -1594,6 +1598,20 @@ class EducacensoAnaliseController extends ApiCoreController
 
         $mensagem = [];
         foreach ($docentes as $docente) {
+            $exists = !empty(array_filter($alunos, function ($aluno) use ($docente) {
+                return $aluno->codigoPessoa == $docente->codigoPessoa &&
+                    $aluno->codigoTurma == $docente->codigoTurma;
+            }));
+
+            if ($exists) {
+                $mensagem[] = [
+                    'text' => "Dados para formular o registro 50 da escola {$docente->nomeEscola} não encontrados. Verifique o cadastro do servidor {$docente->nomeDocente}, pois ele está vinculado como professor à turma {$docente->nomeTurma}, na qual também consta como aluno.",
+                    'path' => '(Servidores > Cadastros > Servidores > Vincular professor a turmas > Editar)',
+                    'linkPath' => "/intranet/educar_servidor_vinculo_turma_cad.php?id={$docente->idAlocacao}&ref_cod_instituicao={$docente->idInstituicao}&ref_cod_servidor={$docente->idServidor}",
+                    'fail' => true,
+                ];
+            }
+
             if (!$docente->funcaoDocente) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 50 da escola {$docente->nomeEscola} não encontrados. Verifique se a função do(a) docente {$docente->nomeDocente} foi informada.",
