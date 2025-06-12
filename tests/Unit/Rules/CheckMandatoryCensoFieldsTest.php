@@ -24,7 +24,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO;
         $params->organizacao_curricular = null;
         $params->etapa_educacenso = null;
-        
+
         return $params;
     }
 
@@ -180,7 +180,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params = $this->createDefaultParams();
         $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
-        $params->etapa_educacenso = 35;
+        $params->etapa_educacenso = 25;
 
         $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
 
@@ -197,7 +197,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
 
         $this->assertFalse($result);
-        $this->assertStringContainsString('35, 36, 37 ou 38', $this->rule->message());
+        $this->assertStringContainsString('25, 26, 27, 28 ou 29', $this->rule->message());
     }
 
     public function test_etapa_ensino_valida_com_formacao_geral_basica_normal_magisterio()
@@ -205,7 +205,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params = $this->createDefaultParams();
         $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO_NORMAL_MAGISTERIO;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
-        $params->etapa_educacenso = 25;
+        $params->etapa_educacenso = 35;
 
         $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
 
@@ -222,7 +222,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
 
         $this->assertFalse($result);
-        $this->assertStringContainsString('25, 26, 27, 28 ou 29', $this->rule->message());
+        $this->assertStringContainsString('35, 36, 37 ou 38', $this->rule->message());
     }
 
     public function test_etapa_educacenso_limpa_quando_nao_ha_formacao_geral_basica()
@@ -243,7 +243,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params = $this->createDefaultParams();
         $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
-        $params->etapa_educacenso = 35;
+        $params->etapa_educacenso = 25;
 
         $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
 

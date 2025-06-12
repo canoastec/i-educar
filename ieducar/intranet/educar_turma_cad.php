@@ -587,19 +587,6 @@ return new class extends clsCadastro
 
         $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
 
-        $helperOptions = ['objectName' => 'organizacao_curricular'];
-        $options = [
-            'label' => 'Organização curricular da turma',
-            'required' => false,
-            'size' => 70,
-            'options' => [
-                'values' => $this->organizacao_curricular,
-                'all_values' => OrganizacaoCurricular::getDescriptiveValues(),
-            ],
-        ];
-
-        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
-
         $atividadesComplementares = loadJson(file: 'educacenso_json/atividades_complementares.json');
         $helperOptions = ['objectName' => 'atividades_complementares'];
         $options = ['label' => 'Tipos de atividades complementares',
@@ -621,6 +608,20 @@ return new class extends clsCadastro
 
         $options = ['label' => 'Etapa Agregada', 'resources' => $etapas_agregada, 'value' => $this->etapa_agregada, 'required' => false, 'size' => 70];
         $this->inputsHelper()->select(attrName: 'etapa_agregada', inputOptions: $options);
+
+        $helperOptions = ['objectName' => 'organizacao_curricular'];
+        $options = [
+            'label' => 'Organização curricular da turma',
+            'required' => false,
+            'disabled' => true,
+            'size' => 70,
+            'options' => [
+                'values' => $this->organizacao_curricular,
+                'all_values' => OrganizacaoCurricular::getDescriptiveValues(),
+            ],
+        ];
+
+        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
 
         $etapas_educacenso = loadJson(file: 'educacenso_json/etapas_ensino.json');
         $etapas_educacenso = array_replace([

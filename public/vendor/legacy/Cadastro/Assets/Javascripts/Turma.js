@@ -199,7 +199,6 @@ $j('#organizacao_curricular').change(function() {
   verificaEtapaEducacenso();
   habilitaEtapaEducacenso();
   verificaFormaOrganizacaoTurma();
-  verificaOpcoesEtapaAgregada();
 });
 
 $j('#etapa_agregada').change(function() {
@@ -332,37 +331,21 @@ function habilitaEtapaAgregada() {
   }
 }
 
-function verificaOpcoesEtapaAgregada() {
-  const organizacaoCurricular = $j('#organizacao_curricular').val() || [];
-  const temOrganizacaoCurricular = organizacaoCurricular.length > 0;
-
-  $j('#etapa_agregada option').show();
-
-  if (temOrganizacaoCurricular) {
-    $j('#etapa_agregada option').each(function() {
-      const valor = $j(this).val();
-      if (valor !== '' && valor !== '304' && valor !== '305') {
-        $j(this).hide();
-      }
-    });
-
-    const valorAtual = $j('#etapa_agregada').val();
-    if (valorAtual && valorAtual !== '304' && valorAtual !== '305') {
-      $j('#etapa_agregada').val('');
-    }
-  }
-
-  $j('#etapa_agregada').trigger('chosen:updated');
-}
-
 function verificaObrigatoriedadeOrganizacaoCurricular() {
   const etapaAgregada = $j('#etapa_agregada').val();
 
+  $j('#organizacao_curricular').prop('disabled', true);
   $j('#organizacao_curricular').makeUnrequired();
 
-  if (obrigarCamposCenso && (etapaAgregada === '304' || etapaAgregada === '305')) {
+  if (etapaAgregada === '304' || etapaAgregada === '305') {
+    $j('#organizacao_curricular').prop('disabled', false);
     $j('#organizacao_curricular').makeRequired();
+    $j('#organizacao_curricular').trigger('chosen:updated');
+  } else {
+    $j('#organizacao_curricular').val([]).trigger('chosen:updated');
   }
+  habilitaEtapaEducacenso();
+  verificaEtapaEducacenso();
 }
 
 function habilitaClasseEspecial() {
@@ -595,7 +578,6 @@ $j(document).ready(function() {
       habilitaClasseEspecial();
       verificaFormaOrganizacaoTurma();
       verificaFormacaoAlternancia();
-      verificaOpcoesEtapaAgregada();
       verificaObrigatoriedadeOrganizacaoCurricular();
     });
 
@@ -678,6 +660,7 @@ $j(document).ready(function() {
   // Executa também após um delay para garantir
   setTimeout(function() {
     atualizaOpcoesTipoAtendimento();
+    verificaObrigatoriedadeOrganizacaoCurricular();
   }, 500);
 
 });

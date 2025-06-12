@@ -349,7 +349,7 @@ class CheckMandatoryCensoFields implements Rule
         if (is_array($organizacaoCurricular) &&
             in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular) &&
             $params->etapa_agregada &&
-            ((int)$params->etapa_agregada !== EtapaAgregada::ENSINO_MEDIO) &&
+            ((int)$params->etapa_agregada === EtapaAgregada::ENSINO_MEDIO) &&
             isset($params->etapa_educacenso) &&
             !in_array((int) $params->etapa_educacenso, $etapaEnsinoCanContainsWithEnsinoMedioEFormacaoGeralBasica)) {
             $this->message = 'Quando o campo: <b>Organização Curricular da Turma</b> for preenchido com: <b>Formação geral básica</b> e o campo: <b>Etapa agregada</b> for preenchido com: <b>Ensino Médio</b> deve ser uma das seguintes opções: 25, 26, 27, 28 ou 29';
@@ -361,7 +361,7 @@ class CheckMandatoryCensoFields implements Rule
         if (is_array($organizacaoCurricular) &&
             in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular) &&
             $params->etapa_agregada &&
-            ((int)$params->etapa_agregada !== EtapaAgregada::ENSINO_MEDIO_NORMAL_MAGISTERIO) &&
+            ((int)$params->etapa_agregada === EtapaAgregada::ENSINO_MEDIO_NORMAL_MAGISTERIO) &&
             isset($params->etapa_educacenso) &&
             !in_array((int) $params->etapa_educacenso, $etapaEnsinoCanContainsWithEnsinoMedioEFormacaoGeralBasica)) {
             $this->message = 'Quando o campo: <b>Organização Curricular da Turma</b> for preenchido com: <b>Formação geral básica</b> e o campo: <b>Etapa agregada</b> for preenchido com: <b>Ensino Médio - Normal/ Magistério</b> deve ser uma das seguintes opções: 35, 36, 37 ou 38';
