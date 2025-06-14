@@ -152,6 +152,9 @@ class LegacySchoolClass extends Model
         'etapa_agregada',
         'classe_especial',
         'formacao_alternancia',
+        'area_itinerario',
+        'tipo_curso_intinerario',
+        'cod_curso_profissional_intinerario',
     ];
 
     protected function id(): Attribute

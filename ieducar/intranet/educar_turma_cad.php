@@ -9,6 +9,7 @@ use App\Models\LegacyStageType;
 use App\Services\SchoolClass\SchoolClassService;
 use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
 use iEducar\Modules\Educacenso\Model\TipoAtendimentoTurma;
+use iEducar\Modules\Educacenso\Model\TipoItinerarioFormativo;
 use iEducar\Modules\SchoolClass\Period;
 use iEducar\Support\View\SelectOptions;
 
@@ -173,6 +174,13 @@ return new class extends clsCadastro
 
     private $hasStudentsPartials;
 
+    private $area_itinerario;
+
+    private $tipo_curso_intinerario;
+
+    private $cod_curso_profissional_intinerario;
+
+
     public function Inicializar()
     {
         $retorno = 'Novo';
@@ -263,6 +271,7 @@ return new class extends clsCadastro
         $this->organizacao_curricular = transformStringFromDBInArray(string: $this->organizacao_curricular);
         $this->cod_curso_profissional = transformStringFromDBInArray(string: $this->cod_curso_profissional);
         $this->tipo_atendimento = transformStringFromDBInArray(string: $this->tipo_atendimento);
+        $this->area_itinerario = transformStringFromDBInArray(string: $this->area_itinerario);
 
         $this->url_cancelar = $retorno == 'Editar' ?
             'educar_turma_det.php?cod_turma=' . $registro['cod_turma'] : 'educar_turma_lst.php';
@@ -704,6 +713,50 @@ return new class extends clsCadastro
             'size' => 70,
         ];
         $this->inputsHelper()->select(attrName: 'classe_com_lingua_brasileira_sinais', inputOptions: $options);
+
+        $options = [
+            'label' => 'Área(s) do itinerário formativo',
+            'required' => false,
+            'disabled' => true,
+            'size' => 70,
+            'options' => [
+                'values' => $this->area_itinerario,
+                'all_values' => TipoItinerarioFormativo::getDescriptiveValues(),
+            ],
+        ];
+
+        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: [
+            'objectName' => 'area_itinerario',
+        ]);
+
+        $resources = [
+            null => 'Selecione',
+            1 => 'Curso Técnico',
+            2 => 'Qualificação Profissional Técnica',
+        ];
+
+        $options = [
+            'label' => 'Tipo do curso do itinerário de formação técnica e profissional',
+            'resources' => $resources,
+            'required' => false,
+            'value' => (int) $this->tipo_curso_intinerario,
+            'size' => 70,
+        ];
+        $this->inputsHelper()->select(attrName: 'tipo_curso_intinerario', inputOptions: $options);
+
+        $options = [
+            'label' => 'Código do curso técnico',
+            'size' => 50,
+            'required' => false,
+            'options' => [
+                'values' => $this->cod_curso_profissional_intinerario,
+                'all_values' => $cursos,
+            ],
+        ];
+        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: [
+            'objectName' => 'cod_curso_profissional_intinerario',
+            'type' => 'single']
+        );
 
         $options = ['label' => 'Não informar esta turma no Censo escolar',
             'value' => $this->nao_informar_educacenso,

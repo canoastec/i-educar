@@ -199,6 +199,12 @@ $j('#organizacao_curricular').change(function() {
   verificaEtapaEducacenso();
   habilitaEtapaEducacenso();
   verificaFormaOrganizacaoTurma();
+  habilitaAreasIntinerarioFormativo();
+  habilitaTipoCursoIntinerario();
+});
+
+$j('#tipo_curso_intinerario').change(function() {
+  habilitaCodigoCursoTecnico();
 });
 
 $j('#etapa_agregada').change(function() {
@@ -229,7 +235,7 @@ function mostraAtividadesComplementares(){
 }
 
 function mostraCursoTecnico() {
-  var etapasEnsinoTecnico = ['30', '31', '32', '33', '34', '39', '40', '64', '74'];
+  var etapasEnsinoTecnico = ['39', '40', '64'];
   var mostraCampo = $j.inArray($j('#etapa_educacenso').val(),etapasEnsinoTecnico) != -1;
   if (mostraCampo) {
     $j('#cod_curso_profissional').prop('disabled', false);
@@ -318,6 +324,38 @@ function habilitaEtapaEducacenso() {
   if (notContainData || !$j('#organizacao_curricular').val().include('1')) {
     $j("#etapa_educacenso").prop('disabled', true).val('');
   }
+}
+
+function habilitaAreasIntinerarioFormativo() {
+  $j("#area_itinerario").prop('disabled', true);
+  const notContainData = $j('#organizacao_curricular').val() === null;
+
+  if (!notContainData && $j('#organizacao_curricular').val().include('4')) {
+    $j("#area_itinerario").prop('disabled', false);
+  }
+  $j('#area_itinerario').trigger('chosen:updated');
+}
+
+function habilitaTipoCursoIntinerario() {
+  $j("#tipo_curso_intinerario").prop('disabled', true);
+  const notContainData = $j('#organizacao_curricular').val() === null;
+  $j('#tipo_curso_intinerario').makeUnrequired();
+
+  if (!notContainData && $j('#organizacao_curricular').val().include('5')) {
+    $j("#tipo_curso_intinerario").prop('disabled', false);
+    $j('#tipo_curso_intinerario').makeRequired();
+  }
+}
+
+function habilitaCodigoCursoTecnico() {
+  $j("#cod_curso_profissional_intinerario").prop('disabled', true);
+  $j('#cod_curso_profissional_intinerario').makeUnrequired();
+
+  if ($j('#tipo_curso_intinerario').val() === '1') {
+    $j("#cod_curso_profissional_intinerario").prop('disabled', false);
+    $j('#cod_curso_profissional_intinerario').makeRequired();
+  }
+  $j('#cod_curso_profissional_intinerario').trigger('chosen:updated');
 }
 
 function habilitaEtapaAgregada() {
@@ -579,6 +617,9 @@ $j(document).ready(function() {
       verificaFormaOrganizacaoTurma();
       verificaFormacaoAlternancia();
       verificaObrigatoriedadeOrganizacaoCurricular();
+      habilitaAreasIntinerarioFormativo();
+      habilitaTipoCursoIntinerario();
+      habilitaCodigoCursoTecnico();
     });
 
   // Turmas Parciais
