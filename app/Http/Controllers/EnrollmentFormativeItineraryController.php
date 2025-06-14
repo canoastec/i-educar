@@ -9,6 +9,14 @@ use iEducar\Modules\Educacenso\Model\TipoCursoItinerario;
 use iEducar\Modules\Educacenso\Model\TipoItinerarioFormativo;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Models\Educacenso\Registro30;
+use App\Models\LegacyDiscipline;
+use App\Models\LegacyPerson;
+use App\Models\LegacySchoolClass;
+use App\Models\LegacyStudent;
+use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
+use Illuminate\Http\Request;
 
 class EnrollmentFormativeItineraryController extends Controller
 {
@@ -45,7 +53,7 @@ class EnrollmentFormativeItineraryController extends Controller
             'itineraryComposition' => TipoItinerarioFormativo::getDescriptiveValuesOfItineraryComposition(),
             'itineraryCourse' => TipoCursoItinerario::getDescriptiveValues(),
             'technicalCourses' => json_decode($technicalCourses, true),
-            'showConcomitantItinerary' => !in_array(1, transformStringFromDBInArray($enrollment->schoolClass->estrutura_curricular)),
+            'showConcomitantItinerary' => !in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, transformStringFromDBInArray($enrollment->schoolClass->organizacao_curricular)),
         ]);
     }
 

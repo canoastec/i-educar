@@ -7,7 +7,8 @@ use App\Models\LegacySchoolClassType;
 use App\Models\LegacySchoolCourse;
 use App\Models\LegacyStageType;
 use App\Services\SchoolClass\SchoolClassService;
-use iEducar\Modules\Educacenso\Model\UnidadesCurriculares;
+use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
+use iEducar\Modules\Educacenso\Model\TipoAtendimentoTurma;
 use iEducar\Modules\SchoolClass\Period;
 use iEducar\Support\View\SelectOptions;
 
@@ -87,7 +88,7 @@ return new class extends clsCadastro
 
     public $codigo_inep_educacenso;
 
-    public $estrutura_curricular;
+    public $organizacao_curricular;
 
     public $tipo_mediacao_didatico_pedagogico;
 
@@ -259,7 +260,7 @@ return new class extends clsCadastro
 
         $this->dias_semana = transformStringFromDBInArray(string: $this->dias_semana);
         $this->atividades_complementares = transformStringFromDBInArray(string: $this->atividades_complementares);
-        $this->estrutura_curricular = transformStringFromDBInArray(string: $this->estrutura_curricular);
+        $this->organizacao_curricular = transformStringFromDBInArray(string: $this->organizacao_curricular);
         $this->cod_curso_profissional = transformStringFromDBInArray(string: $this->cod_curso_profissional);
         $this->tipo_atendimento = transformStringFromDBInArray(string: $this->tipo_atendimento);
 
@@ -573,13 +574,6 @@ return new class extends clsCadastro
             'max_length' => 14,
             'value' => $this->codigo_inep_educacenso]);
 
-        $resources = [
-            null => 'Selecione',
-            0 => 'Curricular (etapa de ensino)',
-            4 => 'Atividade complementar',
-            5 => 'Atendimento educacional especializado (AEE)',
-        ];
-
         $helperOptions = ['objectName' => 'tipo_atendimento'];
         $options = [
             'label' => 'Tipo de turma',
@@ -587,24 +581,7 @@ return new class extends clsCadastro
             'size' => 70,
             'options' => [
                 'values' => $this->tipo_atendimento,
-                'all_values' => $resources,
-            ],
-        ];
-
-        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
-
-        $helperOptions = ['objectName' => 'estrutura_curricular'];
-        $options = [
-            'label' => 'Estrutura curricular',
-            'required' => false,
-            'size' => 70,
-            'options' => [
-                'values' => $this->estrutura_curricular,
-                'all_values' => [
-                    1 => 'Formação geral básica',
-                    2 => 'Itinerário formativo',
-                    3 => 'Não se aplica',
-                ],
+                'all_values' => TipoAtendimentoTurma::getDescriptiveValues(),
             ],
         ];
 
@@ -631,6 +608,20 @@ return new class extends clsCadastro
 
         $options = ['label' => 'Etapa Agregada', 'resources' => $etapas_agregada, 'value' => $this->etapa_agregada, 'required' => false, 'size' => 70];
         $this->inputsHelper()->select(attrName: 'etapa_agregada', inputOptions: $options);
+
+        $helperOptions = ['objectName' => 'organizacao_curricular'];
+        $options = [
+            'label' => 'Organização curricular da turma',
+            'required' => false,
+            'disabled' => true,
+            'size' => 70,
+            'options' => [
+                'values' => $this->organizacao_curricular,
+                'all_values' => OrganizacaoCurricular::getDescriptiveValues(),
+            ],
+        ];
+
+        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
 
         $etapas_educacenso = loadJson(file: 'educacenso_json/etapas_ensino.json');
         $etapas_educacenso = array_replace([
