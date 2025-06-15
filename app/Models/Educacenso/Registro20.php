@@ -225,6 +225,12 @@ class Registro20 implements RegistroEducacenso
 
     public $turmaTurnoId;
 
+    public $areaItinerario;
+
+    public $tipoCursoIntinerario;
+
+    public $codCursoProfissionalIntinerario;
+
     /**
      * @return bool
      */
@@ -380,7 +386,7 @@ class Registro20 implements RegistroEducacenso
     /**
      * @return bool
      */
-    public function escolarizacao()
+    public function curricularEtapaDeEnsino()
     {
         return $this->tipoAtendimento == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO;
     }
@@ -503,7 +509,7 @@ class Registro20 implements RegistroEducacenso
 
     public function requereFormasOrganizacaoTurma()
     {
-        return $this->escolarizacao() && !in_array($this->etapaEducacenso, [1, 2, 3, 24]);
+        return $this->curricularEtapaDeEnsino() && !in_array($this->etapaEducacenso, [1, 2, 3, 24]);
     }
 
     public function requereEtapaEducacenso()
