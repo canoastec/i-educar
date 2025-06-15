@@ -1201,7 +1201,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if (empty($turma->codCursoProfissional) && in_array($turma->etapaEducacenso, [30, 31, 32, 33, 34, 39, 40, 64, 74])) {
+            if (empty($turma->codCursoProfissional) && in_array($turma->etapaEducacenso, [39, 40, 64])) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o código do curso da turma {$nomeTurma} foi informado",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Código do curso)',
