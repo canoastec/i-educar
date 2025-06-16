@@ -39,7 +39,7 @@ SELECT
     aluno.cod_aluno "codigoAluno",
     turma.tipo_atendimento "tipoAtendimentoTurma",
     turma.etapa_educacenso "etapaTurma",
-    turma.organizacao_curricular "organizacaoCurricularTurma",
+    turma.organizacao_curricular "estruturaCurricularTurma",
     matricula.cod_matricula "codigoMatricula",
     turma.nm_turma "nomeTurma",
     matricula_turma.tipo_atendimento "tipoAtendimentoMatricula",

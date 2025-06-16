@@ -5,7 +5,7 @@ namespace App\Models\Educacenso;
 use App\Models\LegacySchoolClass;
 use App_Model_LocalFuncionamentoDiferenciado;
 use App_Model_TipoMediacaoDidaticoPedagogico;
-use iEducar\Modules\Educacenso\Model\EstruturaCurricular;
+use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
 use iEducar\Modules\Educacenso\Model\FormaOrganizacaoTurma;
 use iEducar\Modules\Educacenso\Model\LocalFuncionamento;
 use iEducar\Modules\Educacenso\Model\ModalidadeCurso;
@@ -67,7 +67,7 @@ class Registro20 implements RegistroEducacenso
     /**
      * @var array
      */
-    public $estruturaCurricular;
+    public $organizacaoCurricular;
 
     /**
      * @var array
@@ -218,6 +218,8 @@ class Registro20 implements RegistroEducacenso
     public $classeComLinguaBrasileiraSinais;
 
     public $classeEspecial;
+
+    public $formacaoAlternancia;
 
     public $outrasUnidadesCurricularesObrigatorias;
 
@@ -484,19 +486,19 @@ class Registro20 implements RegistroEducacenso
         return $descriptiveValues[$this->formasOrganizacaoTurma];
     }
 
-    public function itinerarioFormativo()
+    public function itinerarioFormativoAprofundamento()
     {
-        return in_array(EstruturaCurricular::ITINERARIO_FORMATIVO, $this->estruturaCurricular);
+        return in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $this->organizacaoCurricular);
     }
 
     public function formacaoGeralBasica()
     {
-        return in_array(EstruturaCurricular::FORMACAO_GERAL_BASICA, $this->estruturaCurricular);
+        return in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $this->organizacaoCurricular);
     }
 
-    public function estruturaCurricularNaoSeAplica()
+    public function itinerarioFormacaoTecnicaProfissional()
     {
-        return in_array(EstruturaCurricular::NAO_SE_APLICA, $this->estruturaCurricular);
+        return in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $this->organizacaoCurricular);
     }
 
     public function requereFormasOrganizacaoTurma()
@@ -506,9 +508,8 @@ class Registro20 implements RegistroEducacenso
 
     public function requereEtapaEducacenso()
     {
-        return in_array($this->estruturaCurricular, [
-            EstruturaCurricular::FORMACAO_GERAL_BASICA,
-            EstruturaCurricular::NAO_SE_APLICA,
+        return in_array($this->organizacaoCurricular, [
+            OrganizacaoCurricular::FORMACAO_GERAL_BASICA,
         ]);
     }
 }

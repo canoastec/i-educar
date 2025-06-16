@@ -38,7 +38,7 @@ return new class extends clsCadastro
 
     public $ref_cod_turma;
 
-    public $turma_estrutura_curricular;
+    public $turma_organizacao_curricular;
 
     public $nm_turma;
 
@@ -89,7 +89,7 @@ return new class extends clsCadastro
 
                 $this->ref_cod_curso = $obj_turma['ref_cod_curso'];
                 $this->ref_cod_serie = $obj_turma['ref_ref_cod_serie'];
-                $this->turma_estrutura_curricular = $obj_turma['estrutura_curricular'];
+                $this->turma_organizacao_curricular = $obj_turma['organizacao_curricular'];
 
                 if (!isset($_GET['copia'])) {
                     $retorno = 'Editar';
@@ -570,9 +570,9 @@ return new class extends clsCadastro
 
         $etapas_instrutor_educacao_pŕofissional = [30, 31, 32, 33, 34, 39, 40, 73, 74, 64, 67, 68];
 
-        if ($this->funcao_exercida == FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL && (($turma['estrutura_curricular'] && !in_array(needle: '2', haystack: transformStringFromDBInArray(string: $turma['estrutura_curricular']), strict: true)) || !in_array(needle: $turma['etapa_educacenso'], haystack: $etapas_instrutor_educacao_pŕofissional, strict: true))) {
+        if ($this->funcao_exercida == FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL && (($turma['organizacao_curricular'] && !in_array(needle: '2', haystack: transformStringFromDBInArray(string: $turma['organizacao_curricular']), strict: true)) || !in_array(needle: $turma['etapa_educacenso'], haystack: $etapas_instrutor_educacao_pŕofissional, strict: true))) {
             $opcoes = \Str::replaceLast(search: ', ', replace: ' ou ', subject: implode(separator: ', ', array: $etapas_instrutor_educacao_pŕofissional));
-            $this->mensagem = "O campo: <b>Função exercida</b> pode ser <b>Instrutor da Educação Profissional</b> apenas quando o campo <b>Estrutura Curricular</b> da turma for: <b>Itinerário formativo</b> e o campo <b>Etapa de ensino</b> for uma das opções: {$opcoes}.";
+            $this->mensagem = "O campo: <b>Função exercida</b> pode ser <b>Instrutor da Educação Profissional</b> apenas quando o campo <b>Organização Curricular</b> da turma for: <b>Itinerário formativo</b> e o campo <b>Etapa de ensino</b> for uma das opções: {$opcoes}.";
 
             return false;
         }

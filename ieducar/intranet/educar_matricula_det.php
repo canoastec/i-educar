@@ -163,10 +163,7 @@ return new class extends clsDetalhe
                 $existeTurmaMulti = true;
             }
 
-            $estruturaCurricular = transformStringFromDBInArray(string: $turma['estrutura_curricular']) ?? [];
             $tipoAtendimento = transformStringFromDBInArray(string: $turma['tipo_atendimento']) ?? [];
-            $turmaItineraria = in_array(needle: 2, haystack: $estruturaCurricular);
-            $turmaFormacaoBasica = in_array(needle: 1, haystack: $estruturaCurricular);
             $etapasItinerario = [25, 26, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 67, 71, 74];
 
             $nomesTurmas[] = $turma['nm_turma'];

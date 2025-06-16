@@ -211,10 +211,10 @@ class SchoolClassController extends Controller
             $params['atividades_complementares'] = null;
         }
 
-        if (isset($params['estrutura_curricular'])) {
-            $params['estrutura_curricular'] = '{' . implode(',', $params['estrutura_curricular']) . '}';
+        if (isset($params['organizacao_curricular'])) {
+            $params['organizacao_curricular'] = '{' . implode(',', $params['organizacao_curricular']) . '}';
         } else {
-            $params['estrutura_curricular'] = null;
+            $params['organizacao_curricular'] = null;
         }
 
         if (empty($params['formas_organizacao_turma'])) {

@@ -63,6 +63,16 @@ class Register30StudentDataAnalysis implements AnalysisInterface
             ];
         }
 
+        $arrayTranstornos = $this->data::removeTranstornosArrayDeficiencias($arrayDeficiencias);
+        if (!$arrayTranstornos && $data->dadosAluno->turmaClasseEspecial == 1) {
+            $this->messages[] = [
+                'text' => "Dados para formular o registro 30 da escola {$data->nomeEscola} não encontrados. Verificamos que a turma do(a) aluno(a) {$data->nomePessoa} é uma Turma de Educação Especial, portanto é necessário informar qual a sua deficiência.",
+                'path' => '(Escola > Cadastros > Alunos > Editar > Aba: Dados pessoais > Campo: Deficiências)',
+                'linkPath' => "/module/Cadastro/aluno?id={$data->codigoAluno}",
+                'fail' => true,
+            ];
+        }
+
         $arrayDeficiencias = $this->data::removeAltasHabilidadesArrayDeficiencias($arrayDeficiencias);
         if (empty($arrayRecursos) && $arrayDeficiencias) {
             $this->messages[] = [
