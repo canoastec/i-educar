@@ -647,6 +647,12 @@ return new class extends clsCadastro
             'objectName' => 'area_itinerario',
         ]);
 
+        $resources = [
+            null => 'Selecione',
+            1 => 'Sim',
+            0 => 'Não',
+        ];
+
         $options = [
             'label' => 'Tipo do curso do itinerário de formação técnica e profissional',
             'resources' => $resources,
