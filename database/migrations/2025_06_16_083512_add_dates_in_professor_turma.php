@@ -15,12 +15,12 @@ return new class extends Migration {
             $table->date('data_fim')->nullable();
         });
 
-        $this->createView('public.educacenso_record50', '2025-06-05');
+        $this->createView('public.educacenso_record50', '2025-06-16');
     }
 
     public function down(): void
     {
-        $this->createView('public.educacenso_record50', '2024-05-23');
+        $this->createView('public.educacenso_record50', '2025-06-13');
 
         Schema::table('modules.professor_turma', function (Blueprint $table) {
             $table->dropColumn('data_inicial');

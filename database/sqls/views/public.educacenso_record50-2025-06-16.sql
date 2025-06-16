@@ -22,7 +22,7 @@ SELECT DISTINCT
     turma.etapa_educacenso AS "etapaEducacensoTurma",
     turma.ano AS "anoTurma",
     escola.cod_escola AS "codEscola",
-    turma.estrutura_curricular AS "estruturaCurricular",
+    turma.organizacao_curricular AS "organizacaoCurricular",
     professor_turma.outras_unidades_curriculares_obrigatorias AS "outrasUnidadesCurricularesObrigatorias",
     turma.turma_turno_id AS "turmaTurnoId"
 FROM pmieducar.servidor
