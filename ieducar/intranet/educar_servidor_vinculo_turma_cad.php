@@ -38,7 +38,7 @@ return new class extends clsCadastro
 
     public $ref_cod_turma;
 
-    public $turma_estrutura_curricular;
+    public $turma_organizacao_curricular;
 
     public $nm_turma;
 
@@ -83,7 +83,7 @@ return new class extends clsCadastro
 
                 $this->ref_cod_curso = $obj_turma['ref_cod_curso'];
                 $this->ref_cod_serie = $obj_turma['ref_ref_cod_serie'];
-                $this->turma_estrutura_curricular = $obj_turma['estrutura_curricular'];
+                $this->turma_organizacao_curricular = $obj_turma['organizacao_curricular'];
 
                 if (!isset($_GET['copia'])) {
                     $retorno = 'Editar';
@@ -142,7 +142,7 @@ return new class extends clsCadastro
 
         $resources = SelectOptions::funcoesExercidaServidor();
         $options = [
-            'label' => 'Função exercida',
+            'label' => 'Função que exerce na turma',
             'resources' => $resources,
             'value' => $this->funcao_exercida,
         ];
@@ -380,29 +380,29 @@ return new class extends clsCadastro
             FuncaoExercida::DOCENTE_TUTOR_EAD,
         ];
 
-        $etapas_instrutor_educacao_pŕofissional = [30, 31, 32, 33, 34, 39, 40, 73, 74, 64, 67, 68];
+        $etapas_instrutor_educacao_pŕofissional = [39, 40, 73, 74, 64, 67, 68];
 
-        if ($this->funcao_exercida == FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL && (($turma['estrutura_curricular'] && !in_array(needle: '2', haystack: transformStringFromDBInArray(string: $turma['estrutura_curricular']), strict: true)) || !in_array(needle: $turma['etapa_educacenso'], haystack: $etapas_instrutor_educacao_pŕofissional, strict: true))) {
+        if ($this->funcao_exercida == FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL && (($turma['organizacao_curricular'] && !in_array(needle: '2', haystack: transformStringFromDBInArray(string: $turma['organizacao_curricular']), strict: true)) || !in_array(needle: $turma['etapa_educacenso'], haystack: $etapas_instrutor_educacao_pŕofissional, strict: true))) {
             $opcoes = \Str::replaceLast(search: ', ', replace: ' ou ', subject: implode(separator: ', ', array: $etapas_instrutor_educacao_pŕofissional));
-            $this->mensagem = "O campo: <b>Função exercida</b> pode ser <b>Instrutor da Educação Profissional</b> apenas quando o campo <b>Estrutura Curricular</b> da turma for: <b>Itinerário formativo</b> e o campo <b>Etapa de ensino</b> for uma das opções: {$opcoes}.";
+            $this->mensagem = "O campo: <b>Função que exerce na turma</b> pode ser <b>Instrutor da Educação Profissional</b> apenas quando o campo <b>Organização Curricular</b> da turma for: <b>Itinerário formativo</b> e o campo <b>Etapa de ensino</b> for uma das opções: {$opcoes}.";
 
             return false;
         }
 
         if ($turma['tipo_mediacao_didatico_pedagogico'] == TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA && !in_array(needle: $this->funcao_exercida, haystack: $funcoesEad)) {
-            $this->mensagem = 'O campo: <b>Função exercida</b> deve ser <b>Docente titular</b> ou <b>Docente tutor</b>, quando o campo: <b>Tipo de mediação didático-pedagógica</b> da turma for: <b>Educação a Distância</b>.';
+            $this->mensagem = 'O campo: <b>Função que exerce na turma</b> deve ser <b>Docente titular</b> ou <b>Docente tutor</b>, quando o campo: <b>Tipo de mediação didático-pedagógica</b> da turma for: <b>Educação a Distância</b>.';
 
             return false;
         }
 
         if (is_array($tipoAtendimento) && !in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimento) && $this->funcao_exercida == FuncaoExercida::AUXILIAR_EDUCACIONAL) {
-            $this->mensagem = 'O campo: <b>Função exercida</b> não pode ser: <b>Auxiliar/Assistente Educacional</b> quando o tipo da turma for: <b>' . TipoAtendimentoTurma::getDescription($tipoAtendimento) . '</b>';
+            $this->mensagem = 'O campo: <b>Função que exerce na turma</b> não pode ser: <b>Auxiliar/Assistente Educacional</b> quando o tipo da turma for: <b>' . TipoAtendimentoTurma::getDescription($tipoAtendimento) . '</b>';
 
             return false;
         }
 
         if (is_array($tipoAtendimento) && !in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimento) && $this->funcao_exercida == FuncaoExercida::MONITOR_ATIVIDADE_COMPLEMENTAR) {
-            $this->mensagem = 'O campo: <b>Função exercida</b> não pode ser: <b> Profissional/Monitor de Atividade Complementar </b> quando o tipo da turma for: <b>' . TipoAtendimentoTurma::getDescription($tipoAtendimento) . '</b>';
+            $this->mensagem = 'O campo: <b>Função que exerce na turma</b> não pode ser: <b> Profissional/Monitor de Atividade Complementar </b> quando o tipo da turma for: <b>' . TipoAtendimentoTurma::getDescription($tipoAtendimento) . '</b>';
 
             return false;
         }

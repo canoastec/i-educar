@@ -16,7 +16,7 @@ SELECT
     turma.etapa_educacenso AS "etapaEducacenso",
     juridica.fantasia AS "nomeEscola",
     turma.tipo_mediacao_didatico_pedagogico AS "tipoMediacaoDidaticoPedagogico",
-    turma.organizacao_curricular AS "organizacaoCurricular",
+    turma.organizacao_curricular AS "estruturaCurricular",
     turma.formas_organizacao_turma AS "formasOrganizacaoTurma",
     turma.unidade_curricular AS "unidadesCurriculares",
     turma.classe_com_lingua_brasileira_sinais AS "classeComLinguaBrasileiraSinais",
