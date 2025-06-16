@@ -649,8 +649,8 @@ return new class extends clsCadastro
 
         $resources = [
             null => 'Selecione',
-            1 => 'Sim',
-            0 => 'Não',
+            1 => 'Curso Técnico',
+            2 => 'Qualificação Profissional Técnica',
         ];
 
         $options = [
@@ -758,12 +758,6 @@ return new class extends clsCadastro
             'size' => 70,
         ];
         $this->inputsHelper()->select(attrName: 'classe_com_lingua_brasileira_sinais', inputOptions: $options);
-
-        $resources = [
-            null => 'Selecione',
-            1 => 'Curso Técnico',
-            2 => 'Qualificação Profissional Técnica',
-        ];
 
         $options = ['label' => 'Não informar esta turma no Censo escolar',
             'value' => $this->nao_informar_educacenso,
