@@ -329,9 +329,11 @@ function habilitaEtapaEducacenso() {
 function habilitaAreasIntinerarioFormativo() {
   $j("#area_itinerario").prop('disabled', true);
   const notContainData = $j('#organizacao_curricular').val() === null;
+  $j('#area_itinerario').makeUnrequired();
 
   if (!notContainData && $j('#organizacao_curricular').val().include('4')) {
     $j("#area_itinerario").prop('disabled', false);
+    $j('#area_itinerario').makeRequired();
   }
   $j('#area_itinerario').trigger('chosen:updated');
 }
