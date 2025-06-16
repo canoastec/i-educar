@@ -632,6 +632,46 @@ return new class extends clsCadastro
 
         $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
 
+        $options = [
+            'label' => 'Área(s) do itinerário formativo',
+            'required' => false,
+            'disabled' => true,
+            'size' => 70,
+            'options' => [
+                'values' => $this->area_itinerario,
+                'all_values' => TipoItinerarioFormativo::getDescriptiveValues(),
+            ],
+        ];
+
+        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: [
+            'objectName' => 'area_itinerario',
+        ]);
+
+        $options = [
+            'label' => 'Tipo do curso do itinerário de formação técnica e profissional',
+            'resources' => $resources,
+            'required' => false,
+            'value' => (int) $this->tipo_curso_intinerario,
+            'size' => 70,
+        ];
+        $this->inputsHelper()->select(attrName: 'tipo_curso_intinerario', inputOptions: $options);
+
+        $cursos = loadJson(file: 'educacenso_json/cursos_da_educacao_profissional.json');
+
+        $options = [
+            'label' => 'Código do curso técnico',
+            'size' => 50,
+            'required' => false,
+            'options' => [
+                'values' => $this->cod_curso_profissional_intinerario,
+                'all_values' => $cursos,
+            ],
+        ];
+        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: [
+            'objectName' => 'cod_curso_profissional_intinerario',
+            'type' => 'single']
+        );
+
         $etapas_educacenso = loadJson(file: 'educacenso_json/etapas_ensino.json');
         $etapas_educacenso = array_replace([
             null => 'Selecione',
@@ -653,7 +693,6 @@ return new class extends clsCadastro
         $options = ['label' => 'Formas de organização da turma', 'resources' => $resources, 'value' => $this->formas_organizacao_turma, 'required' => false, 'size' => 70];
         $this->inputsHelper()->select(attrName: 'formas_organizacao_turma', inputOptions: $options);
 
-        $cursos = loadJson(file: 'educacenso_json/cursos_da_educacao_profissional.json');
         $helperOptions = ['objectName' => 'cod_curso_profissional',
             'type' => 'single'];
 
@@ -714,49 +753,11 @@ return new class extends clsCadastro
         ];
         $this->inputsHelper()->select(attrName: 'classe_com_lingua_brasileira_sinais', inputOptions: $options);
 
-        $options = [
-            'label' => 'Área(s) do itinerário formativo',
-            'required' => false,
-            'disabled' => true,
-            'size' => 70,
-            'options' => [
-                'values' => $this->area_itinerario,
-                'all_values' => TipoItinerarioFormativo::getDescriptiveValues(),
-            ],
-        ];
-
-        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: [
-            'objectName' => 'area_itinerario',
-        ]);
-
         $resources = [
             null => 'Selecione',
             1 => 'Curso Técnico',
             2 => 'Qualificação Profissional Técnica',
         ];
-
-        $options = [
-            'label' => 'Tipo do curso do itinerário de formação técnica e profissional',
-            'resources' => $resources,
-            'required' => false,
-            'value' => (int) $this->tipo_curso_intinerario,
-            'size' => 70,
-        ];
-        $this->inputsHelper()->select(attrName: 'tipo_curso_intinerario', inputOptions: $options);
-
-        $options = [
-            'label' => 'Código do curso técnico',
-            'size' => 50,
-            'required' => false,
-            'options' => [
-                'values' => $this->cod_curso_profissional_intinerario,
-                'all_values' => $cursos,
-            ],
-        ];
-        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: [
-            'objectName' => 'cod_curso_profissional_intinerario',
-            'type' => 'single']
-        );
 
         $options = ['label' => 'Não informar esta turma no Censo escolar',
             'value' => $this->nao_informar_educacenso,
