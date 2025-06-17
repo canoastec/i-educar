@@ -1018,6 +1018,15 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
+            if ($atividadeComplementar && in_array($turma->etapaEducacenso, [1, 2, 3, 39, 40, 56, 64, 69, 70, 71, 72])) {
+                $mensagem[] = [
+                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que a etapa de ensino da turma {$nomeTurma} não pode ser informada devido ao tipo de turma for de Atividade Complementar.",
+                    'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Organização curricular da turma)',
+                    'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
+                    'fail' => true,
+                ];
+            }
+
             if ($atividadeComplementar && !$existeAtividadeComplementar) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} é de atividades complementares, portanto é necessário informar quais atividades complementares são trabalhadas.",
