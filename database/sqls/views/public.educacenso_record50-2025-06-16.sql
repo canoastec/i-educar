@@ -22,7 +22,7 @@ SELECT DISTINCT
     turma.etapa_educacenso AS "etapaEducacensoTurma",
     turma.ano AS "anoTurma",
     escola.cod_escola AS "codEscola",
-    turma.estrutura_curricular AS "estruturaCurricular",
+    turma.organizacao_curricular AS "organizacaoCurricular",
     professor_turma.outras_unidades_curriculares_obrigatorias AS "outrasUnidadesCurricularesObrigatorias",
     turma.turma_turno_id AS "turmaTurnoId"
 FROM pmieducar.servidor
@@ -54,6 +54,8 @@ WHERE true
   AND servidor.ativo = 1
   AND coalesce(servidor_alocacao.data_admissao, '1900-01-01'::date) <= instituicao.data_educacenso
   AND coalesce(servidor_alocacao.data_saida, '2999-01-01'::date) >= instituicao.data_educacenso
+  AND coalesce(professor_turma.data_inicial, '1900-01-01'::date) <= instituicao.data_educacenso
+  AND coalesce(professor_turma.data_fim, '2999-01-01'::date) >= instituicao.data_educacenso
   AND (
         exists(
             SELECT

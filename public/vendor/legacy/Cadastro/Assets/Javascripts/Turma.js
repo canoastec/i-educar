@@ -328,9 +328,13 @@ function habilitaEtapaEducacenso() {
 function habilitaAreasIntinerarioFormativo() {
   $j("#area_itinerario").prop('disabled', true);
   const notContainData = $j('#organizacao_curricular').val() === null;
+  $j('#area_itinerario').makeUnrequired();
 
   if (!notContainData && $j('#organizacao_curricular').val().include('4')) {
     $j("#area_itinerario").prop('disabled', false);
+    $j('#area_itinerario').makeRequired();
+  } else {
+    $j("#area_itinerario").val('');
   }
   $j('#area_itinerario').trigger('chosen:updated');
 }
@@ -343,6 +347,9 @@ function habilitaTipoCursoIntinerario() {
   if (!notContainData && $j('#organizacao_curricular').val().include('5')) {
     $j("#tipo_curso_intinerario").prop('disabled', false);
     $j('#tipo_curso_intinerario').makeRequired();
+  } else {
+    $j("#tipo_curso_intinerario").val('');
+    habilitaCodigoCursoTecnico();
   }
 }
 
@@ -353,6 +360,8 @@ function habilitaCodigoCursoTecnico() {
   if ($j('#tipo_curso_intinerario').val() === '1') {
     $j("#cod_curso_profissional_intinerario").prop('disabled', false);
     $j('#cod_curso_profissional_intinerario').makeRequired();
+  } else {
+    $j("#cod_curso_profissional_intinerario").val('');
   }
   $j('#cod_curso_profissional_intinerario').trigger('chosen:updated');
 }

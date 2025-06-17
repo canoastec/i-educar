@@ -24,6 +24,8 @@ class LegacySchoolClassTeacher extends Model
         'servidor_id',
         'funcao_exercida',
         'tipo_vinculo',
+        'data_inicial',
+        'data_fim'
     ];
 
     protected $table = 'modules.professor_turma';
