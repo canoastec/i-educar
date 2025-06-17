@@ -48,6 +48,7 @@ class SchoolClassController extends Controller
             DB::beginTransaction();
 
             $schoolClassToStore = $this->prepareSchoolClassDataToStore($request);
+            $schoolClassPeriodId = LegacySchoolClass::query()->whereKey($codTurmaRequest)->value('turma_turno_id');
             $schoolClass = $schoolClassService->storeSchoolClass($schoolClassToStore);
 
             $codTurma = $schoolClass->cod_turma;
@@ -96,7 +97,8 @@ class SchoolClassController extends Controller
                 if ($request->integer('turma_turno_id') === Period::FULLTIME) {
                     $turnoId = Period::FULLTIME;
                 } else {
-                    if ($schoolClassService->hasStudentsPartials($codTurma)) {
+                    //valida se o turno da turma está sendo alterado
+                    if ((int)$schoolClassPeriodId !== $request->integer('turma_turno_id') && $schoolClassService->hasStudentsPartials($codTurma)) {
                         DB::rollBack();
 
                         return response()->json([
