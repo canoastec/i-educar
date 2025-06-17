@@ -298,8 +298,7 @@ return new class extends clsCadastro
         }
 
         return $this->validaDataBasica()
-            && $this->validaAnoLetivo()
-            && $this->validaPeriodoEtapas();
+            && $this->validaAnoLetivo();
     }
 
     private function validaDataBasica()
@@ -335,52 +334,6 @@ return new class extends clsCadastro
                 $this->mensagem = "A data final do vínculo deve estar dentro do ano letivo {$this->ano}.";
                 return false;
             }
-        }
-
-        return true;
-    }
-
-    private function validaPeriodoEtapas()
-    {
-        $schoolClass = LegacySchoolClass::query()->find($this->ref_cod_turma);
-
-        if (!$schoolClass) {
-            return true;
-        }
-
-        return $this->validaDataInicioEtapas($schoolClass->beginAcademicYear)
-            && $this->validaDataFimEtapas($schoolClass->endAcademicYear);
-    }
-
-    private function validaDataInicioEtapas($inicioAnoLetivo)
-    {
-        if (!$this->data_inicial || !$inicioAnoLetivo) {
-            return true;
-        }
-
-        $dataInicialVinculo = Carbon::createFromFormat('d/m/Y', $this->data_inicial);
-
-        if ($dataInicialVinculo->lt($inicioAnoLetivo)) {
-            $inicioFormatado = $inicioAnoLetivo->format('d/m/Y');
-            $this->mensagem = "A data inicial do vínculo ({$this->data_inicial}) não pode ser anterior ao início do ano letivo ({$inicioFormatado}).";
-            return false;
-        }
-
-        return true;
-    }
-
-    private function validaDataFimEtapas($fimAnoLetivo)
-    {
-        if (!$this->data_fim || !$fimAnoLetivo) {
-            return true;
-        }
-
-        $dataFinalVinculo = Carbon::createFromFormat('d/m/Y', $this->data_fim);
-
-        if ($dataFinalVinculo->gt($fimAnoLetivo)) {
-            $fimFormatado = $fimAnoLetivo->format('d/m/Y');
-            $this->mensagem = "A data final do vínculo ({$this->data_fim}) não pode ser posterior ao fim do ano letivo ({$fimFormatado}).";
-            return false;
         }
 
         return true;
