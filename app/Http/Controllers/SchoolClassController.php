@@ -97,8 +97,8 @@ class SchoolClassController extends Controller
                 if ($request->integer('turma_turno_id') === Period::FULLTIME) {
                     $turnoId = Period::FULLTIME;
                 } else {
-                    //valida se o turno da turma está sendo alterado
-                    if ((int)$schoolClassPeriodId !== $request->integer('turma_turno_id') && $schoolClassService->hasStudentsPartials($codTurma)) {
+                    // valida se o turno da turma está sendo alterado
+                    if ((int) $schoolClassPeriodId !== $request->integer('turma_turno_id') && $schoolClassService->hasStudentsPartials($codTurma)) {
                         DB::rollBack();
 
                         return response()->json([

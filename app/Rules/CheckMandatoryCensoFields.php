@@ -7,10 +7,10 @@ use App\Models\LegacyInstitution;
 use App\Models\LegacySchool;
 use App_Model_LocalFuncionamentoDiferenciado;
 use App_Model_TipoMediacaoDidaticoPedagogico;
-use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
 use iEducar\Modules\Educacenso\Model\EtapaAgregada;
 use iEducar\Modules\Educacenso\Model\FormaOrganizacaoTurma;
 use iEducar\Modules\Educacenso\Model\ModalidadeCurso;
+use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
 use iEducar\Modules\Educacenso\Model\TipoAtendimentoTurma;
 use Illuminate\Contracts\Validation\Rule;
 
@@ -330,16 +330,19 @@ class CheckMandatoryCensoFields implements Rule
             if (!in_array((int) $params->etapa_agregada, $etapasAgregadaPermitidas)) {
                 if (in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular)) {
                     $this->message = 'A opção "Formação geral básica" só pode ser preenchida quando o campo 25 (Etapa agregada) for preenchido com 304 ou 305.';
+
                     return false;
                 }
 
                 if (in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $organizacaoCurricular)) {
                     $this->message = 'A opção "Itinerário formativo de aprofundamento" só pode ser preenchida quando o campo 25 (Etapa agregada) for preenchido com 304 ou 305.';
+
                     return false;
                 }
 
                 if (in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
                     $this->message = 'A opção "Itinerário de formação técnica e profissional" só pode ser preenchida quando o campo 25 (Etapa agregada) for preenchido com 304 ou 305.';
+
                     return false;
                 }
             }
@@ -349,7 +352,7 @@ class CheckMandatoryCensoFields implements Rule
         if (is_array($organizacaoCurricular) &&
             in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular) &&
             $params->etapa_agregada &&
-            ((int)$params->etapa_agregada === EtapaAgregada::ENSINO_MEDIO) &&
+            ((int) $params->etapa_agregada === EtapaAgregada::ENSINO_MEDIO) &&
             isset($params->etapa_educacenso) &&
             !in_array((int) $params->etapa_educacenso, $etapaEnsinoCanContainsWithEnsinoMedioEFormacaoGeralBasica)) {
             $this->message = 'Quando o campo: <b>Organização Curricular da Turma</b> for preenchido com: <b>Formação geral básica</b> e o campo: <b>Etapa agregada</b> for preenchido com: <b>Ensino Médio</b> deve ser uma das seguintes opções: 25, 26, 27, 28 ou 29';
@@ -361,7 +364,7 @@ class CheckMandatoryCensoFields implements Rule
         if (is_array($organizacaoCurricular) &&
             in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular) &&
             $params->etapa_agregada &&
-            ((int)$params->etapa_agregada === EtapaAgregada::ENSINO_MEDIO_NORMAL_MAGISTERIO) &&
+            ((int) $params->etapa_agregada === EtapaAgregada::ENSINO_MEDIO_NORMAL_MAGISTERIO) &&
             isset($params->etapa_educacenso) &&
             !in_array((int) $params->etapa_educacenso, $etapaEnsinoCanContainsWithEnsinoMedioEFormacaoGeralBasica)) {
             $this->message = 'Quando o campo: <b>Organização Curricular da Turma</b> for preenchido com: <b>Formação geral básica</b> e o campo: <b>Etapa agregada</b> for preenchido com: <b>Ensino Médio - Normal/ Magistério</b> deve ser uma das seguintes opções: 35, 36, 37 ou 38';

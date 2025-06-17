@@ -683,10 +683,10 @@ class clsPmieducarTurma extends Model
 
             if (is_array($this->tipo_atendimento)) {
                 $set .= "{$gruda}tipo_atendimento = '{' . implode(',', $this->tipo_atendimento) . '}'";
-                $gruda = ", ";
+                $gruda = ', ';
             } elseif ($this->tipo_atendimento !== false) {
                 $set .= "{$gruda}tipo_atendimento = NULL";
-                $gruda = ", ";
+                $gruda = ', ';
             }
 
             if (is_numeric($this->cod_curso)) {

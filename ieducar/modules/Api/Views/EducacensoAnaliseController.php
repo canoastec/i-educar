@@ -32,7 +32,6 @@ use iEducar\Modules\Educacenso\Model\LinguaMinistrada;
 use iEducar\Modules\Educacenso\Model\LocalFuncionamento;
 use iEducar\Modules\Educacenso\Model\LocalizacaoDiferenciadaEscola;
 use iEducar\Modules\Educacenso\Model\ModalidadeCurso;
-use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
 use iEducar\Modules\Educacenso\Model\PoderPublicoConveniado;
 use iEducar\Modules\Educacenso\Model\Regulamentacao;
 use iEducar\Modules\Educacenso\Model\SchoolManagerAccessCriteria;

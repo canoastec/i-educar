@@ -14,12 +14,12 @@ class CheckMandatoryCensoFieldsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->rule = new CheckMandatoryCensoFields();
+        $this->rule = new CheckMandatoryCensoFields;
     }
 
     private function createDefaultParams(): \stdClass
     {
-        $params = new \stdClass();
+        $params = new \stdClass;
         $params->ref_cod_instituicao = 1;
         $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO;
         $params->organizacao_curricular = null;

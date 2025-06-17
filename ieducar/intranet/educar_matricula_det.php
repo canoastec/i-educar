@@ -3,7 +3,6 @@
 use App\Models\LegacyAbandonmentType;
 use App\Process;
 use iEducar\Modules\Educacenso\Model\TipoAtendimentoTurma;
-use iEducar\Modules\Educacenso\Model\UnidadesCurriculares;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 

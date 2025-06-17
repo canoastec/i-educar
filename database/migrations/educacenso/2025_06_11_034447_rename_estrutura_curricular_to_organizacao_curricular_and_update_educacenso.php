@@ -24,7 +24,6 @@ return new class extends Migration
         $this->createView('public.educacenso_record60', '2025-06-11');
     }
 
-
     public function down(): void
     {
         $this->dropView('public.educacenso_record20');

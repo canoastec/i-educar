@@ -8,7 +8,6 @@ use App\Services\iDiarioService;
 use iEducar\Modules\Educacenso\Model\ModalidadeCurso;
 use iEducar\Modules\Educacenso\Model\TipoAtendimentoTurma;
 use iEducar\Modules\Educacenso\Model\TipoMediacaoDidaticoPedagogico;
-use iEducar\Modules\Educacenso\Model\UnidadesCurriculares;
 use iEducar\Modules\Servidores\Model\FuncaoExercida;
 use iEducar\Support\View\SelectOptions;
 
@@ -195,7 +194,7 @@ return new class extends clsCadastro
         $this->inputsHelper()->checkbox(attrName: 'selecionar_todos', inputOptions: ['label' => 'Selecionar/remover todos']);
         $this->inputsHelper()->multipleSearchComponenteCurricular(attrName: null, inputOptions: [
             'label' => 'Áreas do conhecimento/componentes curriculares que leciona',
-            'required' => false
+            'required' => false,
         ], helperOptions: ['searchForArea' => true, 'allDisciplinesMulti' => true]);
 
         $scripts = [
