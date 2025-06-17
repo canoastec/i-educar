@@ -334,6 +334,8 @@ function habilitaAreasIntinerarioFormativo() {
   if (!notContainData && $j('#organizacao_curricular').val().include('4')) {
     $j("#area_itinerario").prop('disabled', false);
     $j('#area_itinerario').makeRequired();
+  } else {
+    $j("#area_itinerario").val('');
   }
   $j('#area_itinerario').trigger('chosen:updated');
 }
