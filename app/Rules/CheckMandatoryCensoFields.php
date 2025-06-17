@@ -107,7 +107,7 @@ class CheckMandatoryCensoFields implements Rule
             if (!$this->validaCampoAtividadesComplementares($params)) {
                 return false;
             }
-            if (!$this->validaCampoOrganizaçãoCurricularDaTurma($params)) {
+            if (!$this->validaCampoOrganizacaoCurricularDaTurma($params)) {
                 return false;
             }
             if (!$this->validaCampoFormasOrganizacaoTurma($params)) {
@@ -316,7 +316,7 @@ class CheckMandatoryCensoFields implements Rule
         return true;
     }
 
-    public function validaCampoOrganizaçãoCurricularDaTurma(mixed $params)
+    public function validaCampoOrganizacaoCurricularDaTurma(mixed $params)
     {
         $organizacaoCurricular = $this->getOrganizacaoCurricularValues($params);
 
