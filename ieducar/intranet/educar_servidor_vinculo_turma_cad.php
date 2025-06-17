@@ -256,6 +256,10 @@ return new class extends clsCadastro
             return false;
         }
 
+        if (!$this->validaDatas()) {
+            return false;
+        }
+
         $dataInicial = $this->data_inicial ? Carbon::createFromFormat('d/m/Y', $this->data_inicial)->format('Y-m-d') : null;
         $dataFim = $this->data_fim ? Carbon::createFromFormat('d/m/Y', $this->data_fim)->format('Y-m-d') : null;
 
@@ -295,8 +299,7 @@ return new class extends clsCadastro
 
         return $this->validaDataBasica()
             && $this->validaAnoLetivo()
-            && $this->validaPeriodoEtapas()
-            && $this->validaVinculoServidorEscola();
+            && $this->validaPeriodoEtapas();
     }
 
     private function validaDataBasica()
@@ -381,24 +384,6 @@ return new class extends clsCadastro
         }
 
         return true;
-    }
-
-    private function validaVinculoServidorEscola()
-    {
-        /** @var Employee $servidor */
-        $servidor = Employee::findOrFail(id: $this->servidor_id);
-
-        $vinculoEscola = $servidor->schools()
-            ->where(column: 'ref_cod_escola', operator: $this->ref_cod_escola)
-            ->withPivotValue(column: 'ano', value: $this->ano)
-            ->first(['data_admissao', 'data_saida']);
-
-        if (!$vinculoEscola) {
-            return true;
-        }
-
-        return $this->validaDataAdmissao($vinculoEscola->data_admissao)
-            && $this->validaDataSaida($vinculoEscola->data_saida);
     }
 
     private function validaDataAdmissao($dataAdmissao)
