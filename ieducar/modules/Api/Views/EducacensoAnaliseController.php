@@ -32,7 +32,6 @@ use iEducar\Modules\Educacenso\Model\LinguaMinistrada;
 use iEducar\Modules\Educacenso\Model\LocalFuncionamento;
 use iEducar\Modules\Educacenso\Model\LocalizacaoDiferenciadaEscola;
 use iEducar\Modules\Educacenso\Model\ModalidadeCurso;
-use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
 use iEducar\Modules\Educacenso\Model\PoderPublicoConveniado;
 use iEducar\Modules\Educacenso\Model\Regulamentacao;
 use iEducar\Modules\Educacenso\Model\SchoolManagerAccessCriteria;
@@ -1093,6 +1092,35 @@ class EducacensoAnaliseController extends ApiCoreController
                     'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
                     'fail' => true,
                 ];
+            }
+
+            if ($turma->itinerarioFormativoAprofundamento() && is_null($turma->areaItinerario)) {
+                $mensagem[] = [
+                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o campo 'Área(s) do itinerário formativo' na turma {$nomeTurma} foi informado.",
+                    'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Área(s) do itinerário formativo)',
+                    'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
+                    'fail' => true,
+                ];
+            }
+
+            if ($turma->itinerarioFormacaoTecnicaProfissional()) {
+                if (is_null($turma->tipoCursoIntinerario)) {
+                    $mensagem[] = [
+                        'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o campo 'Tipo do curso do itinerário de formação técnica e profissional {$nomeTurma} foi informado.",
+                        'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Tipo do curso do itinerário de formação técnica e profissional)',
+                        'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
+                        'fail' => true,
+                    ];
+                }
+
+                if ($turma->tipoCursoIntinerario === 1 && is_null($turma->codCursoProfissionalIntinerario)) { // Curso Técnico
+                    $mensagem[] = [
+                        'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o campo 'Código do curso técnico {$nomeTurma} foi informado.",
+                        'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Código do curso técnico)',
+                        'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
+                        'fail' => true,
+                    ];
+                }
             }
 
             if ($curricularEtapaEnsino && is_null($turma->classeEspecial)) {
