@@ -37,15 +37,6 @@ $j('.tablecadastro >tbody  > tr').each(function(index, row) {
 var modoCadastro = $j('#retorno').val() == 'Novo';
 let obrigarCamposCenso = $j('#obrigar_campos_censo').val() == '1';
 
-let verificaEtapaEducacenso = ()=>{
-  $j('#etapa_educacenso').makeUnrequired();
-  if ($j('#organizacao_curricular').val() &&
-    $j('#organizacao_curricular').val().include('1') &&
-    obrigarCamposCenso) {
-      $j('#etapa_educacenso').makeRequired();
-  }
-}
-
 let verificaEtapaAgregada = ()=>{
   $j('#etapa_agregada').makeUnrequired();
 
@@ -196,7 +187,6 @@ $j('#tipo_atendimento').change(function() {
   habilitaClasseEspecial();
 });
 $j('#organizacao_curricular').change(function() {
-  verificaEtapaEducacenso();
   habilitaEtapaEducacenso();
   verificaFormaOrganizacaoTurma();
   habilitaAreasIntinerarioFormativo();
@@ -318,11 +308,20 @@ function validaAtividadesComplementares() {
 $j('#tipo_mediacao_didatico_pedagogico').on('change', verificaLocalFuncionamentoDiferenciado);
 
 function habilitaEtapaEducacenso() {
-  $j("#etapa_educacenso").prop('disabled', false);
+  $j("#etapa_educacenso").prop('disabled', true);
+  $j('#etapa_educacenso').makeUnrequired();
+
   const notContainData = $j('#organizacao_curricular').val() === null;
 
-  if (notContainData || !$j('#organizacao_curricular').val().include('1')) {
-    $j("#etapa_educacenso").prop('disabled', true).val('');
+  const etapasAgregadasNotFormacao = ['301', '302', '303', '306', '308'];
+  const etapasAgregadasFormacao = ['304', '305'];
+
+  if(
+    ((etapasAgregadasNotFormacao.includes($j('#etapa_agregada').val()) && notContainData) ||
+      (etapasAgregadasFormacao.includes($j('#etapa_agregada').val()) && !notContainData && $j('#organizacao_curricular').val().include('1'))) && obrigarCamposCenso
+  ) {
+    $j("#etapa_educacenso").prop('disabled', false).val('');
+    $j('#etapa_educacenso').makeRequired();
   }
 }
 
@@ -383,7 +382,6 @@ function verificaObrigatoriedadeOrganizacaoCurricular() {
     $j('#organizacao_curricular').val([]).trigger('chosen:updated');
   }
   habilitaEtapaEducacenso();
-  verificaEtapaEducacenso();
 }
 
 function habilitaClasseEspecial() {
@@ -609,7 +607,6 @@ $j(document).ready(function() {
       mostraAtividadesComplementares();
       mostraCursoTecnico();
       habilitaEtapaEducacenso();
-      verificaEtapaEducacenso();
       verificaEtapaAgregada();
       habilitaEtapaAgregada();
       verificaClasseEspecial();
