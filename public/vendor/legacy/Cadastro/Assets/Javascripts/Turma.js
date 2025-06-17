@@ -317,11 +317,13 @@ function habilitaEtapaEducacenso() {
   const etapasAgregadasFormacao = ['304', '305'];
 
   if(
-    ((etapasAgregadasNotFormacao.includes($j('#etapa_agregada').val()) && notContainData) ||
-      (etapasAgregadasFormacao.includes($j('#etapa_agregada').val()) && !notContainData && $j('#organizacao_curricular').val().include('1'))) && obrigarCamposCenso
+    (etapasAgregadasNotFormacao.includes($j('#etapa_agregada').val()) && notContainData) ||
+      (etapasAgregadasFormacao.includes($j('#etapa_agregada').val()) && !notContainData && $j('#organizacao_curricular').val().include('1'))
   ) {
     $j("#etapa_educacenso").prop('disabled', false);
-    $j('#etapa_educacenso').makeRequired();
+    if(obrigarCamposCenso) {
+      $j('#etapa_educacenso').makeRequired();
+    }
   }
 }
 
