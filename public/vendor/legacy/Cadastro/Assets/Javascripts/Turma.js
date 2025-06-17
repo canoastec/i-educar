@@ -320,7 +320,7 @@ function habilitaEtapaEducacenso() {
     ((etapasAgregadasNotFormacao.includes($j('#etapa_agregada').val()) && notContainData) ||
       (etapasAgregadasFormacao.includes($j('#etapa_agregada').val()) && !notContainData && $j('#organizacao_curricular').val().include('1'))) && obrigarCamposCenso
   ) {
-    $j("#etapa_educacenso").prop('disabled', false).val('');
+    $j("#etapa_educacenso").prop('disabled', false);
     $j('#etapa_educacenso').makeRequired();
   }
 }
