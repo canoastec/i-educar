@@ -1082,7 +1082,7 @@ class EducacensoAnaliseController extends ApiCoreController
                     ($turma->etapaAgregada === 302 && !in_array($turma->etapaEducacenso, [14, 15, 16, 17, 18, 19, 20, 21, 41])) ||
                         ($turma->etapaAgregada === 303 && !in_array($turma->etapaEducacenso, [22, 23, 56])) ||
                             ($turma->etapaAgregada === 304 && !in_array($turma->etapaEducacenso, [25, 26, 27, 28, 29])) ||
-                                ($turma->etapaAgregada === 305 && !in_array($turma->etapaEducacenso, [35, 36, 37, 38])) ||
+                                (($turma->etapaAgregada === 305 && !in_array($turma->etapaEducacenso, [35, 36, 37, 38])) || ($turma->etapaAgregada === 305 && $turma->formacaoGeralBasica())) ||
                                     ($turma->etapaAgregada === 306 && !in_array($turma->etapaEducacenso, [69, 70, 72, 71, 74, 73, 67])) ||
                                         ($turma->etapaAgregada === 308 && !in_array($turma->etapaEducacenso, [39, 40, 64, 68]))
             ) {
