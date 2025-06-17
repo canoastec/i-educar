@@ -320,10 +320,6 @@ class CheckMandatoryCensoFields implements Rule
     {
         $organizacaoCurricular = $this->getOrganizacaoCurricularValues($params);
 
-        if (!is_array($organizacaoCurricular) || !in_array(OrganizacaoCurricular::FORMACAO_GERAL_BASICA, $organizacaoCurricular)) {
-            $params->etapa_educacenso = null;
-        }
-
         if (!empty($organizacaoCurricular)) {
             $etapasAgregadaPermitidas = [EtapaAgregada::ENSINO_MEDIO, EtapaAgregada::ENSINO_MEDIO_NORMAL_MAGISTERIO];
 
