@@ -668,6 +668,7 @@ return new class extends clsCadastro
             'label' => 'Código do curso técnico',
             'size' => 50,
             'required' => false,
+            'label_hint' => 'Esse campo se refere ao código do curso de educação profissional para o itinerário formativo',
             'options' => [
                 'values' => $this->cod_curso_profissional_intinerario,
                 'all_values' => $cursos,
