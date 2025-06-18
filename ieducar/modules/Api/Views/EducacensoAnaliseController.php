@@ -1091,7 +1091,7 @@ class EducacensoAnaliseController extends ApiCoreController
                     ($turma->etapaAgregada === 302 && !in_array($turma->etapaEducacenso, [14, 15, 16, 17, 18, 19, 20, 21, 41])) ||
                         ($turma->etapaAgregada === 303 && !in_array($turma->etapaEducacenso, [22, 23, 56])) ||
                             ($turma->etapaAgregada === 304 && !in_array($turma->etapaEducacenso, [25, 26, 27, 28, 29])) ||
-                                ($turma->etapaAgregada === 305 && !in_array($turma->etapaEducacenso, [35, 36, 37, 38])) ||
+                                (($turma->etapaAgregada === 305 && !in_array($turma->etapaEducacenso, [35, 36, 37, 38])) || ($turma->etapaAgregada === 305 && $turma->formacaoGeralBasica())) ||
                                     ($turma->etapaAgregada === 306 && !in_array($turma->etapaEducacenso, [69, 70, 72, 71, 74, 73, 67])) ||
                                         ($turma->etapaAgregada === 308 && !in_array($turma->etapaEducacenso, [39, 40, 64, 68]))
             ) {
@@ -1152,50 +1152,6 @@ class EducacensoAnaliseController extends ApiCoreController
                 $valid = true;
                 $opcoesEtapaEducacenso = '';
 
-                switch ($turma->modalidadeCurso) {
-                    case ModalidadeCurso::ENSINO_REGULAR:
-                        if (!in_array($turma->etapaEducacenso, [1, 2, 3, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 35, 36, 37, 38, 41, 56])) {
-                            $opcoesEtapaEducacenso = '1, 2, 3, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 35, 36, 37, 38, 41 ou 56';
-                            $valid = false;
-                        }
-
-                        break;
-                    case ModalidadeCurso::EDUCACAO_ESPECIAL:
-                        if (!in_array($turma->etapaEducacenso, [1, 2, 3, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 41, 56, 39, 40, 69, 70, 71, 72, 73, 74, 64, 67, 68])) {
-                            $opcoesEtapaEducacenso = '1, 2, 3, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 41, 56, 39, 40, 69, 70, 71, 72, 73, 74, 64, 67 ou 68';
-                            $valid = false;
-                        }
-
-                        break;
-                    case ModalidadeCurso::EJA:
-                        if (!in_array($turma->etapaEducacenso, [69, 70, 71, 72])) {
-                            $opcoesEtapaEducacenso = '69, 70, 71 ou 72';
-                            $valid = false;
-                        }
-
-                        break;
-                    case ModalidadeCurso::EDUCACAO_PROFISSIONAL:
-                        if (!in_array($turma->etapaEducacenso, [30, 31, 32, 33, 34, 39, 40, 73, 74, 64, 67, 68])) {
-                            $opcoesEtapaEducacenso = '30, 31, 32, 33, 34, 39, 40, 73, 74, 64, 67 ou 68';
-                            $valid = false;
-                        }
-
-                        break;
-                }
-
-                if (!$valid) {
-                    $modalidadeCursoDescription = $turma->getModalidadeCursoDescriptiveValue();
-                    $mensagem[] = [
-                        'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} possui valor inválido. Verificamos que a modalidade do curso da turma {$nomeTurma} é {$modalidadeCursoDescription}, portanto a etapa de ensino deve ser uma das seguintes opções: {$opcoesEtapaEducacenso}.",
-                        'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Etapa de ensino)',
-                        'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
-                        'fail' => true,
-                    ];
-                }
-
-                $valid = true;
-                $opcoesEtapaEducacenso = '';
-
                 switch ($turma->tipoMediacaoDidaticoPedagogico) {
                     case App_Model_TipoMediacaoDidaticoPedagogico::SEMIPRESENCIAL:
                         if (!in_array($turma->etapaEducacenso, [69, 70, 71, 72])) {
@@ -1205,8 +1161,8 @@ class EducacensoAnaliseController extends ApiCoreController
 
                         break;
                     case App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA:
-                        if (!in_array($turma->etapaEducacenso, [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 70, 71, 73, 74, 64, 67, 68])) {
-                            $opcoesEtapaEducacenso = '25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 70, 71, 73, 74, 64, 67 ou 68';
+                        if (!in_array($turma->etapaEducacenso, [25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 70, 71, 64])) {
+                            $opcoesEtapaEducacenso = '25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 70, 71, 64';
                             $valid = false;
                         }
 
