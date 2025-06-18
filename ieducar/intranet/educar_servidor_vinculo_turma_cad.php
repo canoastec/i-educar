@@ -543,7 +543,8 @@ return new class extends clsCadastro
                 FuncaoExercida::DOCENTE_TITULAR_EAD,
                 FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
             ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
-            $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> deve ser obrigatório quando o campo: <b>Função que exerce na turma</b> for Docente, Docente titular ou Instrutor da Educação Profissional e o campo: <b>Organização Curricular</b> da turma for: Itinerário de formação técnica e profissional.";
+            $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
+            $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> deve ser obrigatório quando o campo: <b>Função que exerce na turma</b> for {$funcaoDesc} e o campo: <b>Organização Curricular</b> da turma for: Itinerário de formação técnica e profissional.";
 
             return false;
         }
@@ -553,7 +554,8 @@ return new class extends clsCadastro
                 FuncaoExercida::DOCENTE_TITULAR_EAD,
                 FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
             ])) {
-            $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> não pode ser preenchido quando o campo: <b>Função que exerce na turma</b> não for <b>Docente</b>, <b>Docente titular</b> ou <b>Instrutor da Educação Profissional</b>.";
+            $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
+            $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> não pode ser preenchido quando o campo: <b>Função que exerce na turma</b> for <b>{$funcaoDesc}</b>. Este campo só pode ser preenchido para as funções Docente, Docente titular - Coordenador de tutoria (de módulo ou disciplina) - EAD ou Instrutor da Educação Profissional.";
 
             return false;
         }
@@ -577,7 +579,8 @@ return new class extends clsCadastro
                 FuncaoExercida::DOCENTE,
                 FuncaoExercida::DOCENTE_TITULAR_EAD
             ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $organizacaoCurricular)) {
-            $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> deve ser obrigatório quando o campo: <b>Função que exerce na turma</b> for Docente ou Docente titular e o campo: <b>Organização Curricular</b> da turma for: Itinerário formativo de aprofundamento.";
+            $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
+            $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> deve ser obrigatório quando o campo: <b>Função que exerce na turma</b> for {$funcaoDesc} e o campo: <b>Organização Curricular</b> da turma for: Itinerário formativo de aprofundamento.";
 
             return false;
         }
@@ -586,7 +589,8 @@ return new class extends clsCadastro
                 FuncaoExercida::DOCENTE,
                 FuncaoExercida::DOCENTE_TITULAR_EAD
             ])) {
-            $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> não pode ser preenchido quando o campo: <b>Função que exerce na turma</b> não for <b>Docente</b> ou <b>Docente titular</b>.";
+            $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
+            $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> não pode ser preenchido quando o campo: <b>Função que exerce na turma</b> for <b>{$funcaoDesc}</b>. Este campo só pode ser preenchido para as funções Docente ou Docente titular - Coordenador de tutoria (de módulo ou disciplina) - EAD.";
 
             return false;
         }
