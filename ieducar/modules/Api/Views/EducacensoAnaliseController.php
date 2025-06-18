@@ -1645,8 +1645,8 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            $organizacaoCurricular = transformStringFromDBInArray($docente->organizacaoCurricular) ?? [];
-            $areaItinerario = transformStringFromDBInArray($docente->areaItinerario) ?? [];
+            $organizacaoCurricular = $docente->organizacaoCurricular ?? [];
+            $areaItinerario = $docente->areaItinerario ?? [];
 
             if (empty($areaItinerario) && in_array($docente->funcaoDocente, [
                     FuncaoExercida::DOCENTE,
