@@ -180,7 +180,6 @@ return new class extends clsCadastro
 
     private $cod_curso_profissional_intinerario;
 
-
     public function Inicializar()
     {
         $retorno = 'Novo';
@@ -618,6 +617,15 @@ return new class extends clsCadastro
         $options = ['label' => 'Etapa Agregada', 'resources' => $etapas_agregada, 'value' => $this->etapa_agregada, 'required' => false, 'size' => 70];
         $this->inputsHelper()->select(attrName: 'etapa_agregada', inputOptions: $options);
 
+        $etapas_educacenso = loadJson(file: 'educacenso_json/etapas_ensino.json');
+        $etapas_educacenso = array_replace([
+            null => 'Selecione',
+        ], $etapas_educacenso
+        );
+
+        $options = ['label' => 'Etapa de ensino', 'resources' => $etapas_educacenso, 'value' => $this->etapa_educacenso, 'required' => false, 'size' => 70];
+        $this->inputsHelper()->select(attrName: 'etapa_educacenso', inputOptions: $options);
+
         $helperOptions = ['objectName' => 'organizacao_curricular'];
         $options = [
             'label' => 'Organização curricular da turma',
@@ -631,6 +639,78 @@ return new class extends clsCadastro
         ];
 
         $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
+
+        $resources = [
+            null => 'Selecione',
+            1 => 'Série/ano (séries anuais)',
+            2 => 'Períodos semestrais',
+            3 => 'Ciclo(s)',
+            4 => 'Grupos não seriados com base na idade ou competência',
+            5 => 'Módulos',
+        ];
+
+        $options = ['label' => 'Formas de organização da turma', 'resources' => $resources, 'value' => $this->formas_organizacao_turma, 'required' => false, 'size' => 70];
+        $this->inputsHelper()->select(attrName: 'formas_organizacao_turma', inputOptions: $options);
+
+        $cursos = loadJson(file: 'educacenso_json/cursos_da_educacao_profissional.json');
+
+        $helperOptions = [
+            'objectName' => 'cod_curso_profissional',
+            'type' => 'single',
+        ];
+
+        $options = [
+            'label' => 'Código do curso',
+            'size' => 50,
+            'required' => false,
+            'label_hint' => 'Esse campo se refere ao código do curso de educação profissional',
+            'options' => [
+                'values' => $this->cod_curso_profissional,
+                'all_values' => $cursos,
+            ],
+        ];
+        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
+
+        $resources = App_Model_LocalFuncionamentoDiferenciado::getInstance()->getEnums();
+        $resources = array_replace([null => 'Selecione'], $resources);
+
+        $options = ['label' => 'Local de funcionamento diferenciado da turma', 'resources' => $resources, 'value' => $this->local_funcionamento_diferenciado, 'required' => false, 'size' => 70];
+        $this->inputsHelper()->select(attrName: 'local_funcionamento_diferenciado', inputOptions: $options);
+
+
+        $resources = [
+            null => 'Selecione',
+            1 => 'Sim',
+            0 => 'Não',
+        ];
+
+        $options = [
+            'label' => 'Turma de Educação Especial (classe especial)',
+            'resources' => $resources,
+            'value' => (string) $this->classe_especial,
+            'required' => false,
+            'size' => 70,
+        ];
+        $this->inputsHelper()->select(attrName: 'classe_especial', inputOptions: $options);
+
+        $options = [
+            'label' => 'Turma de Formação por Alternância (proposta pedagógica de formação por alternância: tempo-escola e tempo-comunidade',
+            'resources' => $resources,
+            'value' => (string) $this->formacao_alternancia,
+            'required' => false,
+            'size' => 70,
+        ];
+        $this->inputsHelper()->select(attrName: 'formacao_alternancia', inputOptions: $options);
+
+        $options = [
+            'label' => 'Turma de Educação Bilíngue de Surdos (classe bilíngue de surdos)',
+            'resources' => $resources,
+            'value' => $this->classe_com_lingua_brasileira_sinais,
+            'required' => $obrigarCamposCenso,
+            'size' => 70,
+        ];
+        $this->inputsHelper()->select(attrName: 'classe_com_lingua_brasileira_sinais', inputOptions: $options);
+
 
         $options = [
             'label' => 'Área(s) do itinerário formativo',
@@ -662,8 +742,6 @@ return new class extends clsCadastro
         ];
         $this->inputsHelper()->select(attrName: 'tipo_curso_intinerario', inputOptions: $options);
 
-        $cursos = loadJson(file: 'educacenso_json/cursos_da_educacao_profissional.json');
-
         $options = [
             'label' => 'Código do curso técnico',
             'size' => 50,
@@ -679,90 +757,11 @@ return new class extends clsCadastro
             'type' => 'single']
         );
 
-        $etapas_educacenso = loadJson(file: 'educacenso_json/etapas_ensino.json');
-        $etapas_educacenso = array_replace([
-            null => 'Selecione',
-        ], $etapas_educacenso
-        );
-
-        $options = ['label' => 'Etapa de ensino', 'resources' => $etapas_educacenso, 'value' => $this->etapa_educacenso, 'required' => false, 'size' => 70];
-        $this->inputsHelper()->select(attrName: 'etapa_educacenso', inputOptions: $options);
-
-        $resources = [
-            null => 'Selecione',
-            1 => 'Série/ano (séries anuais)',
-            2 => 'Períodos semestrais',
-            3 => 'Ciclo(s)',
-            4 => 'Grupos não seriados com base na idade ou competência',
-            5 => 'Módulos',
-        ];
-
-        $options = ['label' => 'Formas de organização da turma', 'resources' => $resources, 'value' => $this->formas_organizacao_turma, 'required' => false, 'size' => 70];
-        $this->inputsHelper()->select(attrName: 'formas_organizacao_turma', inputOptions: $options);
-
-        $helperOptions = ['objectName' => 'cod_curso_profissional',
-            'type' => 'single'];
-
         $options = [
-            'label' => 'Código do curso',
-            'size' => 50,
-            'required' => false,
-            'label_hint' => 'Esse campo se refere ao código do curso de educação profissional',
-            'options' => [
-                'values' => $this->cod_curso_profissional,
-                'all_values' => $cursos,
-            ],
-        ];
-        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: $helperOptions);
-
-        $resources = App_Model_LocalFuncionamentoDiferenciado::getInstance()->getEnums();
-        $resources = array_replace([null => 'Selecione'], $resources);
-
-        $options = ['label' => 'Local de funcionamento diferenciado da turma', 'resources' => $resources, 'value' => $this->local_funcionamento_diferenciado, 'required' => false, 'size' => 70];
-        $this->inputsHelper()->select(attrName: 'local_funcionamento_diferenciado', inputOptions: $options);
-
-        $resources = [
-            null => 'Selecione',
-            1 => 'Sim',
-            0 => 'Não',
-        ];
-
-        $options = [
-            'label' => 'Turma de Educação Especial (classe especial)',
-            'resources' => $resources,
-            'value' => (string) $this->classe_especial,
-            'required' => false,
-            'size' => 70,
-        ];
-        $this->inputsHelper()->select(attrName: 'classe_especial', inputOptions: $options);
-
-        $options = [
-            'label' => 'Turma de Formação por Alternância (proposta pedagógica de formação por alternância: tempo-escola e tempo-comunidade',
-            'resources' => $resources,
-            'value' => (string) $this->formacao_alternancia,
-            'required' => false,
-            'size' => 70,
-        ];
-        $this->inputsHelper()->select(attrName: 'formacao_alternancia', inputOptions: $options);
-
-        $resources = [
-            null => 'Selecione',
-            1 => 'Sim',
-            2 => 'Não',
-        ];
-
-        $options = [
-            'label' => 'Turma de Educação Bilíngue de Surdos (classe bilíngue de surdos)',
-            'resources' => $resources,
-            'value' => $this->classe_com_lingua_brasileira_sinais,
-            'required' => $obrigarCamposCenso,
-            'size' => 70,
-        ];
-        $this->inputsHelper()->select(attrName: 'classe_com_lingua_brasileira_sinais', inputOptions: $options);
-
-        $options = ['label' => 'Não informar esta turma no Censo escolar',
+            'label' => 'Não informar esta turma no Censo escolar',
             'value' => $this->nao_informar_educacenso,
-            'label_hint' => 'Caso marcado, esta turma e suas matrículas, não serão informadas no arquivo da 1° e 2° etapa do Censo escolar'];
+            'label_hint' => 'Caso marcado, esta turma e suas matrículas, não serão informadas no arquivo da 1° e 2° etapa do Censo escolar',
+        ];
         $this->inputsHelper()->checkbox(attrName: 'nao_informar_educacenso', inputOptions: $options);
 
         $this->campoOculto(
