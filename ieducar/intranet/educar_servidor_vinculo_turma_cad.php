@@ -110,8 +110,6 @@ return new class extends clsCadastro
             }
         }
 
-
-
         $this->url_cancelar = $retorno == 'Editar'
             ? 'educar_servidor_vinculo_turma_det.php?id=' . $this->id
             : $backUrl;
