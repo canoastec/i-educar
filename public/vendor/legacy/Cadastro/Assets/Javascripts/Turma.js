@@ -324,6 +324,8 @@ function habilitaEtapaEducacenso() {
     if(obrigarCamposCenso) {
       $j('#etapa_educacenso').makeRequired();
     }
+  } else {
+    $j("#etapa_educacenso").val('');
   }
 }
 
