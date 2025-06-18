@@ -25,10 +25,12 @@ $j(document).ready(function() {
   const turnoField = $j('#turma_turno_id');
   const professorAreaEspecificaField = $j('#permite_lancar_faltas_componente');
   const lecionaItinerarioField = $j('#leciona_itinerario_tecnico_profissional');
+  const areaItinerarioField = $j('#area_itinerario');
   const copiaDeVinculo = $j('#copia').val() == 1 ? true : false;
 
   getRegraAvaliacao();
   getTurnoTurma();
+  validaAreaItinerarioFormativo();
 
   const handleGetComponenteCurricular = function (dataResponse) {
 
@@ -57,6 +59,7 @@ $j(document).ready(function() {
   $j('#ref_cod_turma').change(function () {
     getTurnoTurma();
     validaLecionaItinerarioTecnicoProfissional();
+    validaAreaItinerarioFormativo();
   });
 
   $j('#funcao_exercida').change(function () {
@@ -122,6 +125,7 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
     }
 
     validaLecionaItinerarioTecnicoProfissional();
+    validaAreaItinerarioFormativo();
 });
 
   $j('#ref_cod_escola').on('change', getDependenciaAdministrativaEscola);
@@ -170,6 +174,7 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
   function handleGetTurnoTurma(dataResponse) {
     toggleTurno(dataResponse['turma_turno_id']);
     validaLecionaItinerarioTecnicoProfissional(dataResponse);
+    validaAreaItinerarioFormativo(dataResponse);
   }
 
   function toggleTurno (turno_id) {
@@ -287,6 +292,66 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
     } else {
       lecionaItinerarioField.prop('disabled', true);
       lecionaItinerarioField.val('');
+    }
+  }
+
+  function validaAreaItinerarioFormativo(turmaData = null) {
+    const funcaoExercida = $j('#funcao_exercida').val();
+    const turmaId = turmaField.val();
+    
+    const funcoesObrigatorias = ['1', '5']; // Docente, Docente titular
+    
+    if ($j.inArray(funcaoExercida, funcoesObrigatorias) === -1 || !turmaId) {
+      areaItinerarioField.prop('disabled', true);
+      areaItinerarioField.val([]);
+      areaItinerarioField.trigger('chosen:updated');
+      return;
+    }
+    
+    if (turmaData && turmaData.organizacao_curricular) {
+      handleValidacaoAreaItinerario(turmaData.organizacao_curricular);
+      return;
+    }
+    
+    const params = {id: turmaId};
+    const options = {
+      url: getResourceUrlBuilder.buildUrl('/module/Api/Turma', 'turma', params),
+      dataType: 'json',
+      data: {},
+      success: function(dataResponse) {
+        if (dataResponse && dataResponse.organizacao_curricular) {
+          handleValidacaoAreaItinerario(dataResponse.organizacao_curricular);
+        } else {
+          areaItinerarioField.prop('disabled', true);
+          areaItinerarioField.val([]);
+          areaItinerarioField.trigger('chosen:updated');
+        }
+      },
+    };
+    getResource(options);
+  }
+  
+  function handleValidacaoAreaItinerario(organizacaoCurricular) {
+    if (!organizacaoCurricular) {
+      areaItinerarioField.prop('disabled', true);
+      areaItinerarioField.val([]);
+      areaItinerarioField.trigger('chosen:updated');
+      return;
+    }
+    
+    let organizacaoString = organizacaoCurricular.toString();
+    organizacaoString = organizacaoString.replace(/[{}]/g, '');
+    const organizacaoArray = organizacaoString.split(',').map(item => item.trim());
+    
+    const temItinerarioAprofundamento = organizacaoArray.includes('4'); // Itinerário formativo de aprofundamento
+    
+    if (temItinerarioAprofundamento) {
+      areaItinerarioField.prop('disabled', false);
+      areaItinerarioField.trigger('chosen:updated');
+    } else {
+      areaItinerarioField.prop('disabled', true);
+      areaItinerarioField.val([]);
+      areaItinerarioField.trigger('chosen:updated');
     }
   }
 
