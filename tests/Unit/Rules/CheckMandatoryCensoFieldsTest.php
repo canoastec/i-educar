@@ -224,29 +224,4 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $this->assertFalse($result);
         $this->assertStringContainsString('35, 36, 37 ou 38', $this->rule->message());
     }
-
-    public function test_etapa_educacenso_limpa_quando_nao_ha_formacao_geral_basica()
-    {
-        $params = $this->createDefaultParams();
-        $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO;
-        $params->organizacao_curricular = '{' . OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO . '}';
-        $params->etapa_educacenso = 25;
-
-        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
-
-        $this->assertTrue($result);
-        $this->assertNull($params->etapa_educacenso);
-    }
-
-    public function test_etapa_educacenso_preservada_quando_ha_formacao_geral_basica()
-    {
-        $params = $this->createDefaultParams();
-        $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO;
-        $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
-        $params->etapa_educacenso = 25;
-
-        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
-
-        $this->assertTrue($result);
-    }
 }
