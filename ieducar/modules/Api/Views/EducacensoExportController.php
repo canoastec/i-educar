@@ -437,10 +437,10 @@ class EducacensoExportController extends ApiCoreController
                 $data[] = $docente->componentes[$count]; // 9 a 33 - Componentes curriculares
             }
 
-            $data[] = in_array(TipoItinerarioFormativo::LINGUANGENS, $docente->areaItinerario) ? 1 : 0; // 34 - Linguagens e suas tecnologias
-            $data[] = in_array(TipoItinerarioFormativo::MATEMATICA, $docente->areaItinerario) ? 1 : 0; // 35 - Matemática e suas tecnologias
-            $data[] = in_array(TipoItinerarioFormativo::CIENCIAS_NATUREZA, $docente->areaItinerario) ? 1 : 0; // 36 - Ciências da natureza e suas tecnologias
-            $data[] = in_array(TipoItinerarioFormativo::CIENCIAS_HUMANAS, $docente->areaItinerario) ? 1 : 0; // 37 - Ciências humanas e sociais aplicadas
+            $data[] = (is_array($docente->areaItinerario) && in_array(TipoItinerarioFormativo::LINGUANGENS, $docente->areaItinerario)) ? 1 : 0; // 34 - Linguagens e suas tecnologias
+            $data[] = (is_array($docente->areaItinerario) && in_array(TipoItinerarioFormativo::MATEMATICA, $docente->areaItinerario)) ? 1 : 0; // 35 - Matemática e suas tecnologias
+            $data[] = (is_array($docente->areaItinerario) && in_array(TipoItinerarioFormativo::CIENCIAS_NATUREZA, $docente->areaItinerario)) ? 1 : 0; // 36 - Ciências da natureza e suas tecnologias
+            $data[] = (is_array($docente->areaItinerario) && in_array(TipoItinerarioFormativo::CIENCIAS_HUMANAS, $docente->areaItinerario)) ? 1 : 0; // 37 - Ciências humanas e sociais aplicadas
             $data[] = $docente->lecionaItinerarioTecnicoProfissional; // 38 - Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)
 
             $stringCenso .= ArrayToCenso::format($data) . PHP_EOL;
