@@ -504,7 +504,7 @@ return new class extends clsCadastro
         }
 
         return $this->validaFuncaoExercida() &&
-            $this->validaÁreaItinerárioFormativo() &&
+            $this->validaAreaItinerárioFormativo() &&
             $this->validaLecionaItinerarioTecnicoProfissional();
     }
 
@@ -569,7 +569,7 @@ return new class extends clsCadastro
         return true;
     }
 
-    private function validaÁreaItinerárioFormativo()
+    private function validaAreaItinerárioFormativo()
     {
         $turma = LegacySchoolClass::query()->find($this->ref_cod_turma, ['organizacao_curricular']);
         $areaItinerario = $this->area_itinerario ?? [];
