@@ -7,7 +7,9 @@ use App\Models\LegacySchoolClassTeacher;
 use App\Services\iDiarioService;
 use Carbon\Carbon;
 use iEducar\Modules\Educacenso\Model\ModalidadeCurso;
+use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
 use iEducar\Modules\Educacenso\Model\TipoAtendimentoTurma;
+use iEducar\Modules\Educacenso\Model\TipoItinerarioFormativo;
 use iEducar\Modules\Educacenso\Model\TipoMediacaoDidaticoPedagogico;
 use iEducar\Modules\Servidores\Model\FuncaoExercida;
 use iEducar\Support\View\SelectOptions;
@@ -48,6 +50,10 @@ return new class extends clsCadastro
 
     public $data_fim;
 
+    public $area_itinerario;
+
+    public $leciona_itinerario_tecnico_profissional;
+
     public function Inicializar()
     {
         $this->id = $this->getQueryString(name: 'id');
@@ -82,6 +88,8 @@ return new class extends clsCadastro
                 $this->nm_turma = $registro['nm_turma'];
                 $this->data_inicial = $registro['data_inicial'];
                 $this->data_fim = $registro['data_fim'];
+                $this->leciona_itinerario_tecnico_profissional = $registro['leciona_itinerario_tecnico_profissional'];
+                $this->area_itinerario = transformStringFromDBInArray(string: $registro['area_itinerario']);
 
                 $obj_turma = new clsPmieducarTurma(cod_turma: $this->ref_cod_turma);
                 $obj_turma = $obj_turma->detalhe();
@@ -101,6 +109,8 @@ return new class extends clsCadastro
                 }
             }
         }
+
+
 
         $this->url_cancelar = $retorno == 'Editar'
             ? 'educar_servidor_vinculo_turma_det.php?id=' . $this->id
@@ -224,6 +234,34 @@ return new class extends clsCadastro
 
         $this->inputsHelper()->date('data_fim', $options);
 
+        $options = [
+            'label' => 'Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)',
+            'resources' => [
+                null => 'Selecione',
+                1 => 'Sim',
+                0 => 'Não'
+            ],
+            'value' => $this->leciona_itinerario_tecnico_profissional,
+            'required' => false,
+        ];
+        $this->inputsHelper()->select(attrName: 'leciona_itinerario_tecnico_profissional', inputOptions: $options);
+
+        $options = [
+            'label' => 'Área do itinerário formativo',
+            'required' => false,
+            'disabled' => false,
+            'size' => 70,
+            'options' => [
+                'values' => $this->area_itinerario,
+                'all_values' => TipoItinerarioFormativo::getDescriptiveValues(),
+            ],
+        ];
+
+        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: [
+            'objectName' => 'area_itinerario',
+        ]);
+
+
         $scripts = [
             '/vendor/legacy/Cadastro/Assets/Javascripts/ServidorVinculoTurma.js',
         ];
@@ -274,7 +312,9 @@ return new class extends clsCadastro
             permite_lancar_faltas_componente: $this->permite_lancar_faltas_componente,
             turno_id: $this->turma_turno_id,
             data_inicial: $dataInicial,
-            data_fim: $dataFim
+            data_fim: $dataFim,
+            leciona_itinerario_tecnico_profissional: $this->leciona_itinerario_tecnico_profissional,
+            area_itinerario: $this->area_itinerario
         );
         $id = $professorTurma->existe2();
         if ($id) {
@@ -398,7 +438,9 @@ return new class extends clsCadastro
             permite_lancar_faltas_componente: $this->permite_lancar_faltas_componente,
             turno_id: $this->turma_turno_id,
             data_inicial: $dataInicial,
-            data_fim: $dataFim
+            data_fim: $dataFim,
+            leciona_itinerario_tecnico_profissional: $this->leciona_itinerario_tecnico_profissional,
+            area_itinerario: $this->area_itinerario
         );
 
         if (!$this->validaCamposCenso()) {
@@ -463,7 +505,9 @@ return new class extends clsCadastro
             return true;
         }
 
-        return $this->validaFuncaoExercida();
+        return $this->validaFuncaoExercida() &&
+            $this->validaÁreaItinerárioFormativo() &&
+            $this->validaLecionaItinerarioTecnicoProfissional();
     }
 
     public function validaVinculoEscola()
@@ -489,6 +533,73 @@ return new class extends clsCadastro
         $this->mensagem = 'Não é possível cadastrar o vínculo pois o servidor não está alocado na escola selecionada.';
 
         return false;
+    }
+
+    private function validaLecionaItinerarioTecnicoProfissional()
+    {
+        $turma = LegacySchoolClass::query()->find($this->ref_cod_turma, ['organizacao_curricular']);
+        $organizacaoCurricular = transformStringFromDBInArray($turma->organizacao_curricular) ?? [];
+
+        if (is_null($this->leciona_itinerario_tecnico_profissional) && in_array($this->funcao_exercida, [
+                FuncaoExercida::DOCENTE,
+                FuncaoExercida::DOCENTE_TITULAR_EAD,
+                FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
+            ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
+            $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> deve ser obrigatório quando o campo: <b>Função que exerce na turma</b> for Docente, Docente titular ou Instrutor da Educação Profissional e o campo: <b>Organização Curricular</b> da turma for: Itinerário de formação técnica e profissional.";
+
+            return false;
+        }
+
+        if (!is_null($this->leciona_itinerario_tecnico_profissional) && !in_array($this->funcao_exercida, [
+                FuncaoExercida::DOCENTE,
+                FuncaoExercida::DOCENTE_TITULAR_EAD,
+                FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
+            ])) {
+            $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> não pode ser preenchido quando o campo: <b>Função que exerce na turma</b> não for <b>Docente</b>, <b>Docente titular</b> ou <b>Instrutor da Educação Profissional</b>.";
+
+            return false;
+        }
+
+        if (!is_null($this->leciona_itinerario_tecnico_profissional) && !in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
+            $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> não pode ser preenchido quando o campo: <b>Organização Curricular</b> não for <b>Itinerário de formação técnica e profissional</b>.";
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validaÁreaItinerárioFormativo()
+    {
+        $turma = LegacySchoolClass::query()->find($this->ref_cod_turma, ['organizacao_curricular']);
+        $areaItinerario = $this->area_itinerario ?? [];
+        $organizacaoCurricular = transformStringFromDBInArray($turma->organizacao_curricular) ?? [];
+
+        if (empty($areaItinerario) && in_array($this->funcao_exercida, [
+                FuncaoExercida::DOCENTE,
+                FuncaoExercida::DOCENTE_TITULAR_EAD
+            ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $organizacaoCurricular)) {
+            $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> deve ser obrigatório quando o campo: <b>Função que exerce na turma</b> for Docente ou Docente titular e o campo: <b>Organização Curricular</b> da turma for: Itinerário formativo de aprofundamento.";
+
+            return false;
+        }
+
+        if (!empty($areaItinerario) && !in_array($this->funcao_exercida, [
+                FuncaoExercida::DOCENTE,
+                FuncaoExercida::DOCENTE_TITULAR_EAD
+            ])) {
+            $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> não pode ser preenchido quando o campo: <b>Função que exerce na turma</b> não for <b>Docente</b> ou <b>Docente titular</b>.";
+
+            return false;
+        }
+
+        if (!empty($areaItinerario) && !in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $organizacaoCurricular)) {
+            $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> não pode ser preenchido quando o campo: <b>Organização Curricular</b> não for <b> Itinerário formativo de aprofundamento</b>.";
+
+            return false;
+        }
+
+        return true;
     }
 
     private function validaFuncaoExercida()

@@ -24,6 +24,7 @@ $j(document).ready(function() {
   const turmaField = $j('#ref_cod_turma');
   const turnoField = $j('#turma_turno_id');
   const professorAreaEspecificaField = $j('#permite_lancar_faltas_componente');
+  const lecionaItinerarioField = $j('#leciona_itinerario_tecnico_profissional');
   const copiaDeVinculo = $j('#copia').val() == 1 ? true : false;
 
   getRegraAvaliacao();
@@ -55,6 +56,7 @@ $j(document).ready(function() {
 
   $j('#ref_cod_turma').change(function () {
     getTurnoTurma();
+    validaLecionaItinerarioTecnicoProfissional();
   });
 
   $j('#funcao_exercida').change(function () {
@@ -115,12 +117,11 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
 
     if (value == '1' || value == '5') {
         $j('#componentecurricular').makeRequired();
-        console.log('aqui');
     } else {
         $j('#componentecurricular').makeUnrequired();
-
-        console.log('else');
     }
+
+    validaLecionaItinerarioTecnicoProfissional();
 });
 
   $j('#ref_cod_escola').on('change', getDependenciaAdministrativaEscola);
@@ -168,7 +169,7 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
 
   function handleGetTurnoTurma(dataResponse) {
     toggleTurno(dataResponse['turma_turno_id']);
-    unidadesCurriculares(dataResponse);
+    validaLecionaItinerarioTecnicoProfissional(dataResponse);
   }
 
   function toggleTurno (turno_id) {
@@ -223,6 +224,70 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
 
   function handleGetRegraAvaliacao(dataResponse){
     toggleProfessorAreaEspecifica(dataResponse["tipo_presenca"]);
+  }
+
+  function validaLecionaItinerarioTecnicoProfissional(turmaData = null) {
+    const funcaoExercida = $j('#funcao_exercida').val();
+    const turmaId = turmaField.val();
+    
+    // Verifica se a função exercida é uma das obrigatórias (1, 5, 9)
+    const funcoesObrigatorias = ['1', '5', '9']; // Docente, Docente titular, Instrutor da Educação Profissional
+    
+    if ($j.inArray(funcaoExercida, funcoesObrigatorias) === -1 || !turmaId) {
+      lecionaItinerarioField.prop('disabled', true);
+      lecionaItinerarioField.val('');
+      return;
+    }
+    
+    // Primeiro tenta usar os dados já carregados
+    if (turmaData && turmaData.organizacao_curricular) {
+      handleValidacaoItinerario(turmaData.organizacao_curricular);
+      return;
+    }
+    
+    // Se não tem os dados, busca via API
+    const params = {id: turmaId};
+    const options = {
+      url: getResourceUrlBuilder.buildUrl('/module/Api/Turma', 'turma', params),
+      dataType: 'json',
+      data: {},
+      success: function(dataResponse) {
+        if (dataResponse && dataResponse.organizacao_curricular) {
+          handleValidacaoItinerario(dataResponse.organizacao_curricular);
+        } else {
+          lecionaItinerarioField.prop('disabled', true);
+          lecionaItinerarioField.val('');
+        }
+      },
+    };
+    getResource(options);
+  }
+  
+  function handleValidacaoItinerario(organizacaoCurricular) {
+    if (!organizacaoCurricular) {
+      lecionaItinerarioField.prop('disabled', true);
+      lecionaItinerarioField.val('');
+      return;
+    }
+    
+    // Verifica se a organização curricular contém Itinerário de formação técnica e profissional
+    // Tratando o formato que vem do banco: "{5}" ou "{4,5}" etc
+    let organizacaoString = organizacaoCurricular.toString();
+    
+    // Remove as chaves { } se existirem
+    organizacaoString = organizacaoString.replace(/[{}]/g, '');
+    
+    // Faz o split por vírgula para criar o array
+    const organizacaoArray = organizacaoString.split(',').map(item => item.trim());
+    
+    const temItinerarioTecnico = organizacaoArray.includes('5'); // 5 é o valor para Itinerário de formação técnica e profissional
+    
+    if (temItinerarioTecnico) {
+      lecionaItinerarioField.prop('disabled', false);
+    } else {
+      lecionaItinerarioField.prop('disabled', true);
+      lecionaItinerarioField.val('');
+    }
   }
 
   const submitForm = function () {

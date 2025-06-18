@@ -682,8 +682,8 @@ class clsPmieducarTurma extends Model
             }
 
             if (is_array($this->tipo_atendimento)) {
-                $set .= "{$gruda}tipo_atendimento = '{' . implode(',', $this->tipo_atendimento) . '}'";
-                $gruda = ", ";
+                $set .= "{$gruda} tipo_atendimento = " . Portabilis_Utils_Database::arrayToPgArray($this->tipo_atendimento) . ' ';
+                $gruda = ', ';
             } elseif ($this->tipo_atendimento !== false) {
                 $set .= "{$gruda}tipo_atendimento = NULL";
                 $gruda = ", ";

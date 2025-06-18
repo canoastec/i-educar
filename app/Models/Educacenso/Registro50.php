@@ -134,6 +134,18 @@ class Registro50 implements ItemOfRegistro30, RegistroEducacenso
     public $organizacaoCurricular;
 
     /**
+     * @var array
+     *            Campo usado somente na análise
+     */
+    public $areaItinerario;
+
+    /**
+     * @var int
+     *            Campo usado somente na análise
+     */
+    public $lecionaItinerarioTecnicoProfissional;
+
+    /**
      * @var int
      *          Campo usado somente na análise
      */
