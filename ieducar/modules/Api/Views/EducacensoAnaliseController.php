@@ -1683,7 +1683,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if (is_null($docente->lecionaItinerarioTecnicoProfissional) && in_array($docente->funcaoDocente, [
+            if (empty($docente->lecionaItinerarioTecnicoProfissional) && in_array($docente->funcaoDocente, [
                     FuncaoExercida::DOCENTE,
                     FuncaoExercida::DOCENTE_TITULAR_EAD,
                     FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
@@ -1697,7 +1697,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if (!is_null($docente->lecionaItinerarioTecnicoProfissional) && !in_array($docente->funcaoDocente, [
+            if (!empty($docente->lecionaItinerarioTecnicoProfissional) && !in_array($docente->funcaoDocente, [
                     FuncaoExercida::DOCENTE,
                     FuncaoExercida::DOCENTE_TITULAR_EAD,
                     FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
@@ -1711,7 +1711,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if (!is_null($docente->lecionaItinerarioTecnicoProfissional) && !in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
+            if (!empty($docente->lecionaItinerarioTecnicoProfissional) && !in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 50 da escola {$docente->nomeEscola} possui valor inválido. Verificamos que o(a) docente {$docente->nomeDocente} possui informação sobre lecionar no Itinerário de formação técnica e profissional (IFTP), mas a turma {$docente->nomeTurma} não possui organização curricular Itinerário de formação técnica e profissional. Este campo só pode ser preenchido para esta organização curricular.",
                     'path' => '(Servidores > Cadastros > Servidores > Vincular professor a turmas > Editar > Campo: Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP))',

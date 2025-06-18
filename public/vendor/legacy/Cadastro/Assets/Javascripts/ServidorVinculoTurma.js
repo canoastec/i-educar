@@ -241,6 +241,7 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
     if ($j.inArray(funcaoExercida, funcoesObrigatorias) === -1 || !turmaId) {
       lecionaItinerarioField.prop('disabled', true);
       lecionaItinerarioField.val('');
+      lecionaItinerarioField.makeUnrequired();
       return;
     }
     
@@ -262,6 +263,7 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
         } else {
           lecionaItinerarioField.prop('disabled', true);
           lecionaItinerarioField.val('');
+          lecionaItinerarioField.makeUnrequired();
         }
       },
     };
@@ -272,6 +274,7 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
     if (!organizacaoCurricular) {
       lecionaItinerarioField.prop('disabled', true);
       lecionaItinerarioField.val('');
+      lecionaItinerarioField.makeUnrequired();
       return;
     }
     
@@ -289,9 +292,11 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
     
     if (temItinerarioTecnico) {
       lecionaItinerarioField.prop('disabled', false);
+      lecionaItinerarioField.makeRequired();
     } else {
       lecionaItinerarioField.prop('disabled', true);
       lecionaItinerarioField.val('');
+      lecionaItinerarioField.makeUnrequired();
     }
   }
 
@@ -305,6 +310,7 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
       areaItinerarioField.prop('disabled', true);
       areaItinerarioField.val([]);
       areaItinerarioField.trigger('chosen:updated');
+      areaItinerarioField.makeUnrequired();
       return;
     }
     
@@ -325,6 +331,7 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
           areaItinerarioField.prop('disabled', true);
           areaItinerarioField.val([]);
           areaItinerarioField.trigger('chosen:updated');
+          areaItinerarioField.makeUnrequired();
         }
       },
     };
@@ -336,6 +343,7 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
       areaItinerarioField.prop('disabled', true);
       areaItinerarioField.val([]);
       areaItinerarioField.trigger('chosen:updated');
+      areaItinerarioField.makeUnrequired();
       return;
     }
     
@@ -348,10 +356,12 @@ document.getElementById("funcao_exercida").addEventListener("change", (event) =>
     if (temItinerarioAprofundamento) {
       areaItinerarioField.prop('disabled', false);
       areaItinerarioField.trigger('chosen:updated');
+      areaItinerarioField.makeRequired();
     } else {
       areaItinerarioField.prop('disabled', true);
       areaItinerarioField.val([]);
       areaItinerarioField.trigger('chosen:updated');
+      areaItinerarioField.makeUnrequired();
     }
   }
 

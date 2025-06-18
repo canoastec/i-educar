@@ -538,7 +538,7 @@ return new class extends clsCadastro
         $turma = LegacySchoolClass::query()->find($this->ref_cod_turma, ['organizacao_curricular']);
         $organizacaoCurricular = transformStringFromDBInArray($turma->organizacao_curricular) ?? [];
 
-        if (is_null($this->leciona_itinerario_tecnico_profissional) && in_array($this->funcao_exercida, [
+        if (empty($this->leciona_itinerario_tecnico_profissional) && in_array($this->funcao_exercida, [
                 FuncaoExercida::DOCENTE,
                 FuncaoExercida::DOCENTE_TITULAR_EAD,
                 FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
@@ -549,7 +549,7 @@ return new class extends clsCadastro
             return false;
         }
 
-        if (!is_null($this->leciona_itinerario_tecnico_profissional) && !in_array($this->funcao_exercida, [
+        if (!empty($this->leciona_itinerario_tecnico_profissional) && !in_array($this->funcao_exercida, [
                 FuncaoExercida::DOCENTE,
                 FuncaoExercida::DOCENTE_TITULAR_EAD,
                 FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
@@ -560,7 +560,7 @@ return new class extends clsCadastro
             return false;
         }
 
-        if (!is_null($this->leciona_itinerario_tecnico_profissional) && !in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
+        if (!empty($this->leciona_itinerario_tecnico_profissional) && !in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
             $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> não pode ser preenchido quando o campo: <b>Organização Curricular</b> não for <b>Itinerário de formação técnica e profissional</b>.";
 
             return false;
