@@ -24,6 +24,10 @@ class clsModulesProfessorTurma extends Model
 
     public $codUsuario;
 
+    public $data_inicial;
+
+    public $data_fim;
+
     /**
      * Construtor.
      *
@@ -47,11 +51,13 @@ class clsModulesProfessorTurma extends Model
         $tipo_vinculo = null,
         $permite_lancar_faltas_componente = null,
         $turno_id = null,
+        $data_inicial = null,
+        $data_fim = null
     ) {
         $this->_schema = 'modules.';
         $this->_tabela = "{$this->_schema}professor_turma";
 
-        $this->_campos_lista = $this->_todos_campos = ' pt.id, pt.ano, pt.instituicao_id, pt.servidor_id, pt.turma_id, pt.funcao_exercida, pt.tipo_vinculo, pt.permite_lancar_faltas_componente, pt.turno_id';
+        $this->_campos_lista = $this->_todos_campos = ' pt.id, pt.ano, pt.instituicao_id, pt.servidor_id, pt.turma_id, pt.funcao_exercida, pt.tipo_vinculo, pt.permite_lancar_faltas_componente, pt.turno_id, pt.data_inicial, pt.data_fim';
 
         if (is_numeric($id)) {
             $this->id = $id;
@@ -89,6 +95,15 @@ class clsModulesProfessorTurma extends Model
             $this->permite_lancar_faltas_componente = '1';
         } else {
             $this->permite_lancar_faltas_componente = '0';
+        }
+
+
+        if (is_string($data_inicial)) {
+            $this->data_inicial = $data_inicial;
+        }
+
+        if (is_string($data_fim)) {
+            $this->data_fim = $data_fim;
         }
     }
 
@@ -158,6 +173,18 @@ class clsModulesProfessorTurma extends Model
             if (is_numeric($this->turno_id)) {
                 $campos .= "{$gruda}turno_id";
                 $valores .= "{$gruda}'{$this->turno_id}'";
+                $gruda = ', ';
+            }
+
+            if (is_string($this->data_inicial) && !empty($this->data_inicial)) {
+                $campos .= "{$gruda}data_inicial";
+                $valores .= "{$gruda}'{$this->data_inicial}'";
+                $gruda = ', ';
+            }
+
+            if (is_string($this->data_fim) && !empty($this->data_fim)) {
+                $campos .= "{$gruda}data_fim";
+                $valores .= "{$gruda}'{$this->data_fim}'";
                 $gruda = ', ';
             }
 
@@ -240,6 +267,18 @@ class clsModulesProfessorTurma extends Model
             } elseif (is_null($this->turno_id)) {
                 $set .= "{$gruda}turno_id = NULL";
                 $gruda = ', ';
+            }
+
+            if (is_string($this->data_inicial) && !empty($this->data_inicial)) {
+                $set .= "{$gruda}data_inicial = '{$this->data_inicial}'";
+            } else {
+                $set .= "{$gruda}data_inicial = NULL ";
+            }
+
+            if (is_string($this->data_fim) && !empty($this->data_fim)) {
+                $set .= "{$gruda}data_fim = '{$this->data_fim}'";
+            } else {
+                $set .= "{$gruda}data_fim = NULL ";
             }
 
             $set .= "{$gruda}updated_at = CURRENT_TIMESTAMP";

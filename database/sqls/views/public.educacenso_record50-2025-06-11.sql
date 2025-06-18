@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW public.educacenso_record50 AS
+CREATE VIEW public.educacenso_record50 AS
 SELECT DISTINCT
     '50' AS registro,
     educacenso_cod_escola.cod_escola_inep AS "inepEscola",
@@ -22,7 +22,7 @@ SELECT DISTINCT
     turma.etapa_educacenso AS "etapaEducacensoTurma",
     turma.ano AS "anoTurma",
     escola.cod_escola AS "codEscola",
-    turma.estrutura_curricular AS "estruturaCurricular",
+    turma.organizacao_curricular AS "estruturaCurricular",
     professor_turma.outras_unidades_curriculares_obrigatorias AS "outrasUnidadesCurricularesObrigatorias",
     turma.turma_turno_id AS "turmaTurnoId"
 FROM pmieducar.servidor
