@@ -309,6 +309,9 @@ class clsModulesProfessorTurma extends Model
             if (is_array($this->area_itinerario)) {
                 $set .= "{$gruda} area_itinerario = " . Portabilis_Utils_Database::arrayToPgArray($this->area_itinerario) . ' ';
                 $gruda = ', ';
+            } else {
+                $set .= "{$gruda} area_itinerario = NULL";
+                $gruda = ', ';
             }
 
             if (is_string($this->data_inicial) && !empty($this->data_inicial)) {
