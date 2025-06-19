@@ -178,6 +178,7 @@ class Registro20 extends AbstractRegistro
         $data->diasSemana = Portabilis_Utils_Database::pgArrayToArray($data->diasSemana);
         $data->atividadesComplementares = Portabilis_Utils_Database::pgArrayToArray($data->atividadesComplementares);
         $data->organizacaoCurricular = Portabilis_Utils_Database::pgArrayToArray($data->organizacaoCurricular);
+        $data->tipoAtendimento = Portabilis_Utils_Database::pgArrayToArray($data->tipoAtendimento);
         $data->unidadesCurriculares = Portabilis_Utils_Database::pgArrayToArray($data->unidadesCurriculares);
         $data->unidadesCurricularesSemDocenteVinculado = Portabilis_Utils_Database::pgArrayToArray($data->unidadesCurricularesSemDocenteVinculado);
         $data->disciplinasEducacensoComDocentes = Portabilis_Utils_Database::pgArrayToArray($data->disciplinasEducacensoComDocentes);

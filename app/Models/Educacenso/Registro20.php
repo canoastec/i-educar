@@ -388,7 +388,7 @@ class Registro20 implements RegistroEducacenso
      */
     public function curricularEtapaDeEnsino()
     {
-        return $this->tipoAtendimento == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO;
+        return in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $this->tipoAtendimento);
     }
 
     /**
@@ -396,7 +396,7 @@ class Registro20 implements RegistroEducacenso
      */
     public function atividadeComplementar()
     {
-        return $this->tipoAtendimento == TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR;
+        return in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $this->tipoAtendimento);
     }
 
     /**
@@ -404,7 +404,7 @@ class Registro20 implements RegistroEducacenso
      */
     public function atendimentoEducacionalEspecializado()
     {
-        return $this->tipoAtendimento == TipoAtendimentoTurma::AEE;
+        return in_array(TipoAtendimentoTurma::AEE, $this->tipoAtendimento);
     }
 
     /**
