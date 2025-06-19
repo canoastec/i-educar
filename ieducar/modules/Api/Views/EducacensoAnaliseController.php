@@ -1071,6 +1071,15 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
+            if(in_array($turma->etapaAgregada, [304, 305]) && (is_null($turma->organizacaoCurricular) || count($turma->organizacaoCurricular) === 0)) {
+                $mensagem[] = [
+                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se a Organização curricular da turma {$nomeTurma} foi informada.",
+                    'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Organização curricular)',
+                    'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
+                    'fail' => true,
+                ];
+        }
+
             if ($turma->itinerarioFormativoAprofundamento() && is_null($turma->areaItinerario)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o campo 'Área(s) do itinerário formativo' na turma {$nomeTurma} foi informado.",
