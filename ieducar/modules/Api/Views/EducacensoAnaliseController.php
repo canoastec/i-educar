@@ -31,7 +31,6 @@ use iEducar\Modules\Educacenso\Model\EtapaAgregada;
 use iEducar\Modules\Educacenso\Model\LinguaMinistrada;
 use iEducar\Modules\Educacenso\Model\LocalFuncionamento;
 use iEducar\Modules\Educacenso\Model\LocalizacaoDiferenciadaEscola;
-use iEducar\Modules\Educacenso\Model\ModalidadeCurso;
 use iEducar\Modules\Educacenso\Model\PoderPublicoConveniado;
 use iEducar\Modules\Educacenso\Model\Regulamentacao;
 use iEducar\Modules\Educacenso\Model\SchoolManagerAccessCriteria;
@@ -1027,15 +1026,6 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if ($turma->modalidadeCurso == ModalidadeCurso::EJA && $atividadeComplementar) {
-                $mensagem[] = [
-                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} possui valor inválido. Verificamos que a modalidade do curso da turma {$nomeTurma} é Educação de Jovens e Adultos (EJA), portanto o tipo da turma não pode ser atividade complementar.",
-                    'path' => '(Escola > Cadastros > Cursos > Editar > Campo: Modalidade do curso)',
-                    'linkPath' => "/intranet/educar_curso_cad.php?cod_curso={$turma->codCurso}",
-                    'fail' => true,
-                ];
-            }
-
             if (is_null($turma->localFuncionamentoDiferenciado) && in_array($turma->tipoMediacaoDidaticoPedagogico, [App_Model_TipoMediacaoDidaticoPedagogico::PRESENCIAL, App_Model_TipoMediacaoDidaticoPedagogico::SEMIPRESENCIAL])) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} é presencial ou semipresencial, portanto é necessário informar se ela possui local de funcionamento diferenciado.",
@@ -1050,19 +1040,6 @@ class EducacensoAnaliseController extends ApiCoreController
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} possui valor inválido. Verificamos que o local de funcionamento da escola é {$valuesDescription}. Portanto, o local de funcionamento diferenciado da turma {$nomeTurma}, deve estar de acordo com o local da escola.",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Local de funcionamento diferenciado da turma)',
-                    'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
-                    'fail' => true,
-                ];
-            }
-
-            if (($turma->tipoMediacaoDidaticoPedagogico == App_Model_TipoMediacaoDidaticoPedagogico::SEMIPRESENCIAL && !in_array($turma->modalidadeCurso, [ModalidadeCurso::EDUCACAO_ESPECIAL, ModalidadeCurso::EJA])) ||
-                ($turma->tipoMediacaoDidaticoPedagogico == App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA && !in_array($turma->modalidadeCurso, [ModalidadeCurso::ENSINO_REGULAR, ModalidadeCurso::EJA, ModalidadeCurso::EDUCACAO_PROFISSIONAL]))
-            ) {
-                $valuesDescription = $turma->getModalidadeCursoDescriptiveValue();
-                $opcoesPermitidas = $turma->getTipoMediacaoValidaParaModalidadeCurso();
-                $mensagem[] = [
-                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} possui valor inválido. Verificamos que a modalidade do curso da turma {$nomeTurma} é {$valuesDescription}, portanto a mediação da turma deve ser {$opcoesPermitidas}.",
-                    'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Tipo de mediação didático pedagógico)',
                     'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
                     'fail' => true,
                 ];
