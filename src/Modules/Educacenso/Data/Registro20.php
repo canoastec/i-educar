@@ -88,7 +88,7 @@ class Registro20 extends AbstractRegistro
             $record->educacaoDistancia() ? '' : $record->localFuncionamentoDiferenciado, // 23 - Local de funcionamento diferenciado
             $record->classeEspecial ?: 0, // 24 - Turma de Educação Especial (classe especial)
             $record->etapaAgregada, // 25 - Etapa agregada
-            $record->formacaoGeralBasica() ? $record->etapaEducacenso : '', // 26 - Etapa
+            $record->etapaEducacenso, // 26 - Etapa
             in_array($record->etapaEducacenso, [39, 40, 64]) ? $record->codCursoProfissional : '', // 27 - Código do curso
             $record->requereFormasOrganizacaoTurma() ? ($record->formasOrganizacaoTurma === 1 ? 1 : 0) : '', // 28 - Série/ano (séries anuais)
             $record->requereFormasOrganizacaoTurma() ? ($record->formasOrganizacaoTurma === 2 ? 1 : 0) : '', // 29 - Períodos semestrais
