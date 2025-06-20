@@ -241,10 +241,6 @@ class SchoolClassController extends Controller
             $params['cod_curso_profissional'] = null;
         }
 
-        if ($params['tipo_atendimento'] != TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR) {
-            $params['atividades_complementares'] = '{}';
-        }
-
         $etapasCursoTecnico = [39, 40, 64];
 
         if (isset($params['etapa_educacenso'])
