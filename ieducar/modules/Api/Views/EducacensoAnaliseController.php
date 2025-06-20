@@ -1591,9 +1591,9 @@ class EducacensoAnaliseController extends ApiCoreController
             $areaItinerario = $docente->areaItinerario ?? [];
 
             if (empty($areaItinerario) && in_array($docente->funcaoDocente, [
-                    FuncaoExercida::DOCENTE,
-                    FuncaoExercida::DOCENTE_TITULAR_EAD
-                ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $organizacaoCurricular)) {
+                FuncaoExercida::DOCENTE,
+                FuncaoExercida::DOCENTE_TITULAR_EAD,
+            ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $organizacaoCurricular)) {
                 $funcaoDesc = FuncaoExercida::getDescription($docente->funcaoDocente);
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 50 da escola {$docente->nomeEscola} possui valor inválido. Verificamos que o(a) docente {$docente->nomeDocente} exerce função {$funcaoDesc} na turma {$docente->nomeTurma} que possui organização curricular de Itinerário formativo de aprofundamento, portanto é necessário informar a(s) área(s) do itinerário formativo.",
@@ -1604,9 +1604,9 @@ class EducacensoAnaliseController extends ApiCoreController
             }
 
             if (!empty($areaItinerario) && !in_array($docente->funcaoDocente, [
-                    FuncaoExercida::DOCENTE,
-                    FuncaoExercida::DOCENTE_TITULAR_EAD
-                ])) {
+                FuncaoExercida::DOCENTE,
+                FuncaoExercida::DOCENTE_TITULAR_EAD,
+            ])) {
                 $funcaoDesc = FuncaoExercida::getDescription($docente->funcaoDocente);
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 50 da escola {$docente->nomeEscola} possui valor inválido. Verificamos que o(a) docente {$docente->nomeDocente} possui área(s) do itinerário formativo informada(s), mas a função exercida na turma {$docente->nomeTurma} é {$funcaoDesc}. A área do itinerário formativo só pode ser preenchida para as funções Docente ou Docente titular.",
@@ -1626,10 +1626,10 @@ class EducacensoAnaliseController extends ApiCoreController
             }
 
             if (empty($docente->lecionaItinerarioTecnicoProfissional) && in_array($docente->funcaoDocente, [
-                    FuncaoExercida::DOCENTE,
-                    FuncaoExercida::DOCENTE_TITULAR_EAD,
-                    FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
-                ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
+                FuncaoExercida::DOCENTE,
+                FuncaoExercida::DOCENTE_TITULAR_EAD,
+                FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL,
+            ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
                 $funcaoDesc = FuncaoExercida::getDescription($docente->funcaoDocente);
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 50 da escola {$docente->nomeEscola} não encontrados. Verificamos que o(a) docente {$docente->nomeDocente} exerce função {$funcaoDesc} na turma {$docente->nomeTurma} que possui organização curricular de Itinerário de formação técnica e profissional, portanto é necessário informar se o profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP).",
@@ -1640,10 +1640,10 @@ class EducacensoAnaliseController extends ApiCoreController
             }
 
             if (!empty($docente->lecionaItinerarioTecnicoProfissional) && !in_array($docente->funcaoDocente, [
-                    FuncaoExercida::DOCENTE,
-                    FuncaoExercida::DOCENTE_TITULAR_EAD,
-                    FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
-                ])) {
+                FuncaoExercida::DOCENTE,
+                FuncaoExercida::DOCENTE_TITULAR_EAD,
+                FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL,
+            ])) {
                 $funcaoDesc = FuncaoExercida::getDescription($docente->funcaoDocente);
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 50 da escola {$docente->nomeEscola} possui valor inválido. Verificamos que o(a) docente {$docente->nomeDocente} possui informação sobre lecionar no Itinerário de formação técnica e profissional (IFTP), mas a função exercida na turma {$docente->nomeTurma} é {$funcaoDesc}. Este campo só pode ser preenchido para as funções Docente, Docente titular ou Instrutor da Educação Profissional.",

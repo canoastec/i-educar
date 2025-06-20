@@ -5,10 +5,10 @@ namespace App\Models\Educacenso;
 use App\Models\LegacySchoolClass;
 use App_Model_LocalFuncionamentoDiferenciado;
 use App_Model_TipoMediacaoDidaticoPedagogico;
-use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
 use iEducar\Modules\Educacenso\Model\FormaOrganizacaoTurma;
 use iEducar\Modules\Educacenso\Model\LocalFuncionamento;
 use iEducar\Modules\Educacenso\Model\ModalidadeCurso;
+use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
 use iEducar\Modules\Educacenso\Model\TipoAtendimentoTurma;
 use iEducar\Modules\Educacenso\Model\UnidadesCurriculares;
 
@@ -78,7 +78,6 @@ class Registro20 implements RegistroEducacenso
      * @var string
      */
     public $etapaEducacenso;
-
 
     public $etapaAgregada;
 

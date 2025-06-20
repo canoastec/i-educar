@@ -209,7 +209,7 @@ return new class extends clsCadastro
         $this->inputsHelper()->checkbox(attrName: 'selecionar_todos', inputOptions: ['label' => 'Selecionar/remover todos']);
         $this->inputsHelper()->multipleSearchComponenteCurricular(attrName: null, inputOptions: [
             'label' => 'Áreas do conhecimento/componentes curriculares que leciona',
-            'required' => false
+            'required' => false,
         ], helperOptions: ['searchForArea' => true, 'allDisciplinesMulti' => true]);
 
         $options = [
@@ -237,7 +237,7 @@ return new class extends clsCadastro
             'resources' => [
                 null => 'Selecione',
                 1 => 'Sim',
-                0 => 'Não'
+                0 => 'Não',
             ],
             'value' => $this->leciona_itinerario_tecnico_profissional,
             'required' => false,
@@ -258,7 +258,6 @@ return new class extends clsCadastro
         $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: [
             'objectName' => 'area_itinerario',
         ]);
-
 
         $scripts = [
             '/vendor/legacy/Cadastro/Assets/Javascripts/ServidorVinculoTurma.js',
@@ -350,6 +349,7 @@ return new class extends clsCadastro
 
         if ($dataInicial > $dataFim) {
             $this->mensagem = 'A data inicial do vínculo não pode ser posterior à data final do vínculo.';
+
             return false;
         }
 
@@ -362,6 +362,7 @@ return new class extends clsCadastro
             $anoDataInicial = Carbon::createFromFormat('d/m/Y', $this->data_inicial)->year;
             if ($anoDataInicial != $this->ano) {
                 $this->mensagem = "A data inicial do vínculo deve estar dentro do ano letivo {$this->ano}.";
+
                 return false;
             }
         }
@@ -370,6 +371,7 @@ return new class extends clsCadastro
             $anoDataFim = Carbon::createFromFormat('d/m/Y', $this->data_fim)->year;
             if ($anoDataFim != $this->ano) {
                 $this->mensagem = "A data final do vínculo deve estar dentro do ano letivo {$this->ano}.";
+
                 return false;
             }
         }
@@ -388,6 +390,7 @@ return new class extends clsCadastro
         if ($dataInicialVinculo < $dataAdmissao) {
             $dataAdmissaoFormatada = Carbon::parse($dataAdmissao)->format('d/m/Y');
             $this->mensagem = "Não é possível cadastrar o vínculo pois a data inicial do vínculo ({$this->data_inicial}) é anterior à data de admissão na escola ({$dataAdmissaoFormatada}).";
+
             return false;
         }
 
@@ -405,6 +408,7 @@ return new class extends clsCadastro
         if ($dataFinalVinculo > $dataSaida) {
             $dataSaidaFormatada = Carbon::parse($dataSaida)->format('d/m/Y');
             $this->mensagem = "Não é possível cadastrar o vínculo pois a data final do vínculo ({$this->data_fim}) é posterior à data de saída da escola ({$dataSaidaFormatada}).";
+
             return false;
         }
 
@@ -539,10 +543,10 @@ return new class extends clsCadastro
         $organizacaoCurricular = transformStringFromDBInArray($turma->organizacao_curricular) ?? [];
 
         if (empty($this->leciona_itinerario_tecnico_profissional) && in_array($this->funcao_exercida, [
-                FuncaoExercida::DOCENTE,
-                FuncaoExercida::DOCENTE_TITULAR_EAD,
-                FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
-            ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
+            FuncaoExercida::DOCENTE,
+            FuncaoExercida::DOCENTE_TITULAR_EAD,
+            FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL,
+        ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
             $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
             $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> deve ser obrigatório quando o campo: <b>Função que exerce na turma</b> for {$funcaoDesc} e o campo: <b>Organização Curricular</b> da turma for: Itinerário de formação técnica e profissional.";
 
@@ -550,10 +554,10 @@ return new class extends clsCadastro
         }
 
         if (!empty($this->leciona_itinerario_tecnico_profissional) && !in_array($this->funcao_exercida, [
-                FuncaoExercida::DOCENTE,
-                FuncaoExercida::DOCENTE_TITULAR_EAD,
-                FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL
-            ])) {
+            FuncaoExercida::DOCENTE,
+            FuncaoExercida::DOCENTE_TITULAR_EAD,
+            FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL,
+        ])) {
             $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
             $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> não pode ser preenchido quando o campo: <b>Função que exerce na turma</b> for <b>{$funcaoDesc}</b>. Este campo só pode ser preenchido para as funções Docente, Docente titular ou Instrutor da Educação Profissional.";
 
@@ -561,7 +565,7 @@ return new class extends clsCadastro
         }
 
         if (!empty($this->leciona_itinerario_tecnico_profissional) && !in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
-            $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> não pode ser preenchido quando o campo: <b>Organização Curricular</b> não for <b>Itinerário de formação técnica e profissional</b>.";
+            $this->mensagem = 'O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> não pode ser preenchido quando o campo: <b>Organização Curricular</b> não for <b>Itinerário de formação técnica e profissional</b>.';
 
             return false;
         }
@@ -576,9 +580,9 @@ return new class extends clsCadastro
         $organizacaoCurricular = transformStringFromDBInArray($turma->organizacao_curricular) ?? [];
 
         if (empty($areaItinerario) && in_array($this->funcao_exercida, [
-                FuncaoExercida::DOCENTE,
-                FuncaoExercida::DOCENTE_TITULAR_EAD
-            ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $organizacaoCurricular)) {
+            FuncaoExercida::DOCENTE,
+            FuncaoExercida::DOCENTE_TITULAR_EAD,
+        ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $organizacaoCurricular)) {
             $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
             $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> deve ser obrigatório quando o campo: <b>Função que exerce na turma</b> for {$funcaoDesc} e o campo: <b>Organização Curricular</b> da turma for: Itinerário formativo de aprofundamento.";
 
@@ -586,9 +590,9 @@ return new class extends clsCadastro
         }
 
         if (!empty($areaItinerario) && !in_array($this->funcao_exercida, [
-                FuncaoExercida::DOCENTE,
-                FuncaoExercida::DOCENTE_TITULAR_EAD
-            ])) {
+            FuncaoExercida::DOCENTE,
+            FuncaoExercida::DOCENTE_TITULAR_EAD,
+        ])) {
             $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
             $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> não pode ser preenchido quando o campo: <b>Função que exerce na turma</b> for <b>{$funcaoDesc}</b>. Este campo só pode ser preenchido para as funções Docente ou Docente titular.";
 
@@ -596,7 +600,7 @@ return new class extends clsCadastro
         }
 
         if (!empty($areaItinerario) && !in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $organizacaoCurricular)) {
-            $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> não pode ser preenchido quando o campo: <b>Organização Curricular</b> não for <b> Itinerário formativo de aprofundamento</b>.";
+            $this->mensagem = 'O campo: <b>Área(s) do itinerário formativo</b> não pode ser preenchido quando o campo: <b>Organização Curricular</b> não for <b> Itinerário formativo de aprofundamento</b>.';
 
             return false;
         }

@@ -789,7 +789,7 @@ return new class extends clsCadastro
 
     public function bloqueiaNovaMatricula()
     {
-        return (bool)LegacyCourse::query()->whereKey($this->ref_cod_curso)->value('bloquear_novas_matriculas');
+        return (bool) LegacyCourse::query()->whereKey($this->ref_cod_curso)->value('bloquear_novas_matriculas');
     }
 
     public function permiteMatriculaSerieDestino()

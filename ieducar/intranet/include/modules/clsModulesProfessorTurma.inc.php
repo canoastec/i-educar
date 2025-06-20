@@ -328,7 +328,6 @@ class clsModulesProfessorTurma extends Model
                 $set .= "{$gruda}data_fim = NULL ";
             }
 
-
             $set .= "{$gruda}updated_at = CURRENT_TIMESTAMP";
             $gruda = ', ';
 
