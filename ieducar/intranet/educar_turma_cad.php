@@ -268,7 +268,6 @@ return new class extends clsCadastro
         $this->dias_semana = transformStringFromDBInArray(string: $this->dias_semana);
         $this->atividades_complementares = transformStringFromDBInArray(string: $this->atividades_complementares);
         $this->organizacao_curricular = transformStringFromDBInArray(string: $this->organizacao_curricular);
-        $this->cod_curso_profissional = transformStringFromDBInArray(string: $this->cod_curso_profissional);
         $this->tipo_atendimento = transformStringFromDBInArray(string: $this->tipo_atendimento);
         $this->area_itinerario = transformStringFromDBInArray(string: $this->area_itinerario);
 

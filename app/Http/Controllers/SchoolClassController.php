@@ -199,6 +199,14 @@ class SchoolClassController extends Controller
             $params['multiseriada'] = 0;
         }
 
+        if (empty($params['etapa_educacenso'])) {
+            $params['etapa_educacenso'] = null;
+        }
+
+        if (empty($params['etapa_agregada'])) {
+            $params['etapa_agregada'] = null;
+        }
+
         if (isset($params['dias_semana'])) {
             $params['dias_semana'] = '{' . implode(',', $params['dias_semana']) . '}';
         } else {
@@ -235,10 +243,6 @@ class SchoolClassController extends Controller
             $params['cod_curso_profissional'] = $params['cod_curso_profissional'][0];
         } else {
             $params['cod_curso_profissional'] = null;
-        }
-
-        if ($params['tipo_atendimento'] != TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR) {
-            $params['atividades_complementares'] = '{}';
         }
 
         $etapasCursoTecnico = [39, 40, 64];
