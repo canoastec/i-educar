@@ -1081,15 +1081,6 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            if(in_array($turma->etapaAgregada, [304, 305]) && !$turma->formacaoGeralBasica()) {
-                $mensagem[] = [
-                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se a turma {$nomeTurma} possui a formação geral básica informada na organização curricular.",
-                    'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados adicionais > Campo: Organização curricular)',
-                    'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
-                    'fail' => true,
-                ];
-            }
-
             if ($turma->itinerarioFormativoAprofundamento() && is_null($turma->areaItinerario)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o campo 'Área(s) do itinerário formativo' na turma {$nomeTurma} foi informado.",
