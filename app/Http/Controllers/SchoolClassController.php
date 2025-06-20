@@ -203,6 +203,10 @@ class SchoolClassController extends Controller
             $params['etapa_educacenso'] = null;
         }
 
+        if (empty($params['etapa_agregada'])) {
+            $params['etapa_agregada'] = null;
+        }
+
         if (isset($params['dias_semana'])) {
             $params['dias_semana'] = '{' . implode(',', $params['dias_semana']) . '}';
         } else {
