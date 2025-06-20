@@ -676,7 +676,6 @@ return new class extends clsCadastro
         $options = ['label' => 'Local de funcionamento diferenciado da turma', 'resources' => $resources, 'value' => $this->local_funcionamento_diferenciado, 'required' => false, 'size' => 70];
         $this->inputsHelper()->select(attrName: 'local_funcionamento_diferenciado', inputOptions: $options);
 
-
         $resources = [
             null => 'Selecione',
             1 => 'Sim',
@@ -709,7 +708,6 @@ return new class extends clsCadastro
             'size' => 70,
         ];
         $this->inputsHelper()->select(attrName: 'classe_com_lingua_brasileira_sinais', inputOptions: $options);
-
 
         $options = [
             'label' => 'Área(s) do itinerário formativo',

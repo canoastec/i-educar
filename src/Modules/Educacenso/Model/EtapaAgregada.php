@@ -30,4 +30,4 @@ class EtapaAgregada
             self::CURSO_TECNICO_FIC => 'Curso Técnico e FIC - Concomitante ou Subsequente',
         ];
     }
-} 
+}
