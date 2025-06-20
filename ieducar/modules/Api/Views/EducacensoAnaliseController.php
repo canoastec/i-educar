@@ -833,7 +833,7 @@ class EducacensoAnaliseController extends ApiCoreController
 
             $nomeEscola = mb_strtoupper($turma->nomeEscola);
             $nomeTurma = mb_strtoupper($turma->nomeTurma);
-            $tipoAtendimento = transformStringFromDBInArray($turma->tipoAtendimento) ?? [];
+            $tipoAtendimento = $turma->tipoAtendimento;
             $atividadeComplementar = in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimento); // Código 4 fixo no cadastro de turma
             $curricularEtapaEnsino = in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimento);
             $existeAtividadeComplementar = !empty(array_filter($turma->atividadesComplementares));
