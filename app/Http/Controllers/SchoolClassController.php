@@ -100,11 +100,12 @@ class SchoolClassController extends Controller
                     // valida se o turno da turma está sendo alterado
                     if ((int) $schoolClassPeriodId !== $request->integer('turma_turno_id') && $schoolClassService->hasStudentsPartials($codTurma)) {
                         DB::rollBack();
+                        $turnoNome = (new Period())->getDescriptiveValues()[(int) $schoolClassPeriodId];
 
                         return response()->json([
-                            'msg' => 'Esta turma possui turno integral e contém os códigos INEP dos turnos parciais
+                            'msg' => "Esta turma possui turno {$turnoNome} e contém os códigos INEP dos turnos parciais
                             informados. Para atender as regras de importação do censo, não é possível
-                            alterar o turno da turma.',
+                            alterar o turno da turma.",
                         ], 422);
                     }
                 }
