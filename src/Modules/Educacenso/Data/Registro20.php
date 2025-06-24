@@ -3,6 +3,7 @@
 namespace iEducar\Modules\Educacenso\Data;
 
 use App\Services\SchoolClass\SchoolClassService;
+use DateTime;
 use iEducar\Modules\Educacenso\Formatters;
 use iEducar\Modules\Educacenso\Model\TipoItinerarioFormativo;
 use iEducar\Modules\SchoolClass\Period;
@@ -62,6 +63,9 @@ class Registro20 extends AbstractRegistro
         $canExportComponente = $record->curricularEtapaDeEnsino() && !in_array($record->etapaEducacenso, [1, 2, 3]);
         $componentesEducacenso = $record->componentesCodigosEducacenso();
 
+        $horaInicial = (new DateTime($record->horaInicial))->format('H:i');
+        $horaFinal = (new DateTime($record->horaFinal))->format('H:i');
+
         return [
             '20', //  1
             $record->codigoEscolaInep, // 2 - Código de escola - Inep
@@ -69,13 +73,13 @@ class Registro20 extends AbstractRegistro
             '', // 4 - Código da Turma - Inep
             $this->convertStringToCenso($record->nomeTurma), // 5 - Nome da Turma
             $record->tipoMediacaoDidaticoPedagogico, // 6 - Tipo de mediação didático-pedagógica
-            $record->presencial() && in_array(1, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 7 - Domingp
-            $record->presencial() && in_array(2, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 8 - Segunda-feira
-            $record->presencial() && in_array(3, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 9 - Terça-feira
-            $record->presencial() && in_array(4, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 10 - Quarta-feira
-            $record->presencial() && in_array(5, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 11 - Quinta-feira
-            $record->presencial() && in_array(6, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 12 - Sexta-feira
-            $record->presencial() && in_array(7, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 13 - Sábado
+            $record->presencial() && in_array(1, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 7 - Domingp
+            $record->presencial() && in_array(2, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 8 - Segunda-feira
+            $record->presencial() && in_array(3, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 9 - Terça-feira
+            $record->presencial() && in_array(4, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 10 - Quarta-feira
+            $record->presencial() && in_array(5, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 11 - Quinta-feira
+            $record->presencial() && in_array(6, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 12 - Sexta-feira
+            $record->presencial() && in_array(7, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 13 - Sábado
             $record->curricularEtapaDeEnsino() ?: 0, //  14 - Curricular (etapa de ensino)
             $record->atividadeComplementar() ?: 0, // 15 - Atividade complementar
             $record->atendimentoEducacionalEspecializado() ?: 0, // 16 - Atendimento educacional especializado - AEE]
