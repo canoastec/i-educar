@@ -1564,7 +1564,7 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            $tipoAtendimentoTurma = transformStringFromDBInArray($docente->tipoAtendimentoTurma) ?? [];
+            $tipoAtendimentoTurma = $docente->tipoAtendimentoTurma;
             $docenteCurricularEtapaEnsino = in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $tipoAtendimentoTurma);
             $docenteAtividadeComplementar = in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $tipoAtendimentoTurma);
             $tipoAtendimentoDesc = TipoAtendimentoTurma::getDescription($tipoAtendimentoTurma);
@@ -1728,7 +1728,7 @@ class EducacensoAnaliseController extends ApiCoreController
             $codigoTurma = $aluno->codigoTurma;
             $codigoMatricula = $aluno->codigoMatricula;
 
-            $tipoAtendimentoTurma = transformStringFromDBInArray($aluno->tipoAtendimentoTurma) ?? [];
+            $tipoAtendimentoTurma = $aluno->tipoAtendimentoTurma;
 
             if (!$avaliableTimeService->isAvailable($codigoAluno, $codigoTurma, $aluno->turnoId)) {
                 $notAvaliableTime[$codigoAluno] = [
