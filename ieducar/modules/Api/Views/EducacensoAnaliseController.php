@@ -634,6 +634,15 @@ class EducacensoAnaliseController extends ApiCoreController
             ];
         }
 
+        if ($escola->predioEscolar() && (!$escola->numeroSalasCantinhoLeitura || $escola->numeroSalasCantinhoLeitura <= 0)) {
+            $mensagem[] = [
+                'text' => "Dados para formular o registro 10 da escola {$escola->nomeEscola} não encontrados. Verifique a quantidade de salas de aula com Cantinho da Leitura para a Educação Infantil e o Ensino fundamental (Anos iniciais)",
+                'path' => '(Escola > Cadastros > Escolas > Editar > Aba: Dependências > Campo: Quantidade de salas de aula com Cantinho da Leitura para a Educação Infantil e o Ensino fundamental (Anos iniciais)',
+                'linkPath' => "/intranet/educar_escola_cad.php?cod_escola={$escola->codEscola}",
+                'fail' => true,
+            ];
+        }
+
         if (!$escola->predioEscolar() && !$escola->numeroSalasUtilizadasForaPredio) {
             $mensagem[] = [
                 'text' => "Dados para formular o registro 10 da escola {$escola->nomeEscola} não encontrados. Verifique se a quantidade de salas de aula utilizadas pela escola fora do prédio escolar da escola foi informado.",
