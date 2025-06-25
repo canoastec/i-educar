@@ -82,7 +82,7 @@ docker-compose exec php vendor/bin/pest
 
 Para instalar o projeto execute **todos os passos** abaixo conectado em seu servidor web:
 
-> Este passo a passo serve para um servidor Ubuntu 22.04 LTS e não tem configurações mínimas de segurança
+> Este passo a passo serve para um servidor Ubuntu 24.04 LTS e não tem configurações mínimas de segurança
 
 Gere uma chave SSH no seu servidor, copie e adicione ao seu GitHub https://github.com/settings/keys.  
 
