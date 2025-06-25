@@ -102,7 +102,7 @@ apt update
 Instale as dependências:
 
 ```bash
-apt install -y nginx redis postgresql postgresql-contrib openjdk-8-jdk openssl unzip php8.3-common php8.3-cli php8.3-fpm php8.3-bcmath php8.3-curl php8.3-mbstring php8.3-pgsql php8.3-xml php8.3-zip php8.3-gd
+apt install -y nginx redis postgresql postgresql-contrib openjdk-8-jdk openssl unzip php8.4-common php8.4-cli php8.4-fpm php8.4-bcmath php8.4-curl php8.4-mbstring php8.4-pgsql php8.4-xml php8.4-zip php8.4-gd
 ```
 
 Inicie o serviço de banco de dados:
