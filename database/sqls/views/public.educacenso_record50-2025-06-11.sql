@@ -22,11 +22,9 @@ SELECT DISTINCT
     turma.etapa_educacenso AS "etapaEducacensoTurma",
     turma.ano AS "anoTurma",
     escola.cod_escola AS "codEscola",
-    turma.organizacao_curricular AS "organizacaoCurricular",
+    turma.organizacao_curricular AS "estruturaCurricular",
     professor_turma.outras_unidades_curriculares_obrigatorias AS "outrasUnidadesCurricularesObrigatorias",
-    turma.turma_turno_id AS "turmaTurnoId",
-    professor_turma.area_itinerario AS "areaItinerario",
-    professor_turma.leciona_itinerario_tecnico_profissional AS "lecionaItinerarioTecnicoProfissional"
+    turma.turma_turno_id AS "turmaTurnoId"
 FROM pmieducar.servidor
      JOIN modules.professor_turma ON professor_turma.servidor_id = servidor.cod_servidor
      JOIN pmieducar.turma ON turma.cod_turma = professor_turma.turma_id
@@ -56,8 +54,6 @@ WHERE true
   AND servidor.ativo = 1
   AND coalesce(servidor_alocacao.data_admissao, '1900-01-01'::date) <= instituicao.data_educacenso
   AND coalesce(servidor_alocacao.data_saida, '2999-01-01'::date) >= instituicao.data_educacenso
-  AND coalesce(professor_turma.data_inicial, '1900-01-01'::date) <= instituicao.data_educacenso
-  AND coalesce(professor_turma.data_fim, '2999-01-01'::date) >= instituicao.data_educacenso
   AND (
         exists(
             SELECT
