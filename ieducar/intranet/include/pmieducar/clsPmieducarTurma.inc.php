@@ -24,7 +24,7 @@ class clsPmieducarTurma extends Model
 
     public $ref_ref_cod_escola;
 
-    public $ref_cod_infra_predio_comodo;
+    public $ref_cod_infra_predio_comodo; // TODO: remover no futuro
 
     public $nm_turma;
 

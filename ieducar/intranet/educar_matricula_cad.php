@@ -172,16 +172,6 @@ return new class extends clsCadastro
             );
         }
 
-        if (is_numeric(value: $this->ref_cod_curso)) {
-            $obj_curso = new clsPmieducarCurso(cod_curso: $this->ref_cod_curso);
-            $det_curso = $obj_curso->detalhe();
-
-            if (is_numeric(value: $det_curso['ref_cod_tipo_avaliacao'])) {
-                $this->campoOculto(nome: 'apagar_radios', valor: $det_curso['padrao_ano_escolar']);
-                $this->campoOculto(nome: 'is_padrao', valor: $det_curso['padrao_ano_escolar']);
-            }
-        }
-
         $this->acao_enviar = 'formUtils.submit()';
     }
 
