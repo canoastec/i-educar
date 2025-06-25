@@ -506,6 +506,13 @@ class Registro20 implements RegistroEducacenso
         return in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $this->organizacaoCurricular);
     }
 
+    public function possuiOrganizacaoCurricular()
+    {
+        return $this->itinerarioFormacaoTecnicaProfissional() ||
+            $this->itinerarioFormativoAprofundamento() ||
+            $this->formacaoGeralBasica();
+    }
+
     public function requereFormasOrganizacaoTurma()
     {
         return $this->curricularEtapaDeEnsino() && !in_array($this->etapaEducacenso, [1, 2, 3, 24]);
