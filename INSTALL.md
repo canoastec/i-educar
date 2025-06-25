@@ -39,6 +39,12 @@ Clone o repositório:
 git clone git@github.com:portabilis/i-educar.git && cd i-educar
 ```
 
+Configura as variáveis de ambiente que desejar:
+
+```bash
+cp .env.example .env
+```
+
 Faça o build das imagens Docker utilizadas no projeto e inicie os containers da aplicação (pode levar alguns minutos):
 
 ```bash
