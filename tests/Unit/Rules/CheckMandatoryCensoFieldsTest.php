@@ -33,7 +33,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params = $this->createDefaultParams();
         $params->organizacao_curricular = null;
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -43,7 +43,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params = $this->createDefaultParams();
         $params->organizacao_curricular = '{}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -53,7 +53,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params = $this->createDefaultParams();
         $params->organizacao_curricular = '{null}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -64,7 +64,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -75,7 +75,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO_NORMAL_MAGISTERIO;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -86,7 +86,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->etapa_agregada = EtapaAgregada::ENSINO_FUNDAMENTAL;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertFalse($result);
         $this->assertStringContainsString('Formação geral básica', $this->rule->message());
@@ -99,7 +99,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO . '}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -110,7 +110,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO_NORMAL_MAGISTERIO;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO . '}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -121,7 +121,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->etapa_agregada = EtapaAgregada::ENSINO_FUNDAMENTAL;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO . '}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertFalse($result);
         $this->assertStringContainsString('Itinerário formativo de aprofundamento', $this->rule->message());
@@ -134,7 +134,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL . '}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -145,7 +145,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO_NORMAL_MAGISTERIO;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL . '}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -156,7 +156,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->etapa_agregada = EtapaAgregada::ENSINO_FUNDAMENTAL;
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL . '}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertFalse($result);
         $this->assertStringContainsString('Itinerário de formação técnica e profissional', $this->rule->message());
@@ -170,7 +170,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $organizations = OrganizacaoCurricular::FORMACAO_GERAL_BASICA . ',' . OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO . ',' . OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL;
         $params->organizacao_curricular = '{' . $organizations . '}';
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -182,7 +182,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
         $params->etapa_educacenso = 25;
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -194,7 +194,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
         $params->etapa_educacenso = 30;
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertFalse($result);
         $this->assertStringContainsString('25, 26, 27, 28 ou 29', $this->rule->message());
@@ -207,7 +207,7 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
         $params->etapa_educacenso = 35;
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertTrue($result);
     }
@@ -219,34 +219,9 @@ class CheckMandatoryCensoFieldsTest extends TestCase
         $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
         $params->etapa_educacenso = 30;
 
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
+        $result = $this->rule->validaCampoOrganizacaoCurricularDaTurma($params);
 
         $this->assertFalse($result);
         $this->assertStringContainsString('35, 36, 37 ou 38', $this->rule->message());
-    }
-
-    public function test_etapa_educacenso_limpa_quando_nao_ha_formacao_geral_basica()
-    {
-        $params = $this->createDefaultParams();
-        $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO;
-        $params->organizacao_curricular = '{' . OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO . '}';
-        $params->etapa_educacenso = 25;
-
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
-
-        $this->assertTrue($result);
-        $this->assertNull($params->etapa_educacenso);
-    }
-
-    public function test_etapa_educacenso_preservada_quando_ha_formacao_geral_basica()
-    {
-        $params = $this->createDefaultParams();
-        $params->etapa_agregada = EtapaAgregada::ENSINO_MEDIO;
-        $params->organizacao_curricular = '{' . OrganizacaoCurricular::FORMACAO_GERAL_BASICA . '}';
-        $params->etapa_educacenso = 25;
-
-        $result = $this->rule->validaCampoOrganizaçãoCurricularDaTurma($params);
-
-        $this->assertTrue($result);
     }
 }

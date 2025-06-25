@@ -202,6 +202,14 @@ class SchoolClassController extends Controller
             $params['multiseriada'] = 0;
         }
 
+        if (empty($params['etapa_educacenso'])) {
+            $params['etapa_educacenso'] = null;
+        }
+
+        if (empty($params['etapa_agregada'])) {
+            $params['etapa_agregada'] = null;
+        }
+
         if (isset($params['dias_semana'])) {
             $params['dias_semana'] = '{' . implode(',', $params['dias_semana']) . '}';
         } else {
@@ -240,11 +248,25 @@ class SchoolClassController extends Controller
             $params['cod_curso_profissional'] = null;
         }
 
-        $etapasCursoTecnico = [30, 31, 32, 33, 34, 39, 40, 64, 74];
+        $etapasCursoTecnico = [39, 40, 64];
 
         if (isset($params['etapa_educacenso'])
             && !in_array($params['etapa_educacenso'], $etapasCursoTecnico)) {
             $params['cod_curso_profissional'] = null;
+        }
+
+        if (isset($params['area_itinerario'])) {
+            $params['area_itinerario'] = array_map('intval', $params['area_itinerario']);
+
+            $params['area_itinerario'] = '{' . implode(',', $params['area_itinerario']) . '}';
+        } else {
+            $params['area_itinerario'] = null;
+        }
+
+        if (isset($params['cod_curso_profissional_intinerario'])) {
+            $params['cod_curso_profissional_intinerario'] = $params['cod_curso_profissional_intinerario'][0];
+        } else {
+            $params['cod_curso_profissional_intinerario'] = null;
         }
 
         if (empty($params['cod_turma'])) {

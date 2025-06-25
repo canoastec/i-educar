@@ -54,6 +54,7 @@ class Registro60 extends AbstractRegistro
         $data->veiculoTransporteEscolar = Portabilis_Utils_Database::pgArrayToArray($data->veiculoTransporteEscolar);
         $data->organizacaoCurricularTurma = Portabilis_Utils_Database::pgArrayToArray($data->organizacaoCurricularTurma);
         $data->tipoAtendimentoMatricula = Portabilis_Utils_Database::pgArrayToArray($data->tipoAtendimentoMatricula);
+        $data->tipoAtendimentoTurma = Portabilis_Utils_Database::pgArrayToArray($data->tipoAtendimentoTurma);
 
         return $data;
     }

@@ -104,7 +104,7 @@ class Registro50 implements ItemOfRegistro30, RegistroEducacenso
     public $tipoMediacaoTurma;
 
     /**
-     * @var int
+     * @var array
      *              Campo usado somente na análise
      */
     public $tipoAtendimentoTurma;
@@ -132,6 +132,18 @@ class Registro50 implements ItemOfRegistro30, RegistroEducacenso
      *            Campo usado somente na análise
      */
     public $organizacaoCurricular;
+
+    /**
+     * @var array
+     *            Campo usado somente na análise
+     */
+    public $areaItinerario;
+
+    /**
+     * @var int
+     *            Campo usado somente na análise
+     */
+    public $lecionaItinerarioTecnicoProfissional;
 
     /**
      * @var int

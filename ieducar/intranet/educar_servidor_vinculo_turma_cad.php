@@ -5,8 +5,11 @@ use App\Models\LegacyInstitution;
 use App\Models\LegacySchoolClass;
 use App\Models\LegacySchoolClassTeacher;
 use App\Services\iDiarioService;
+use Carbon\Carbon;
 use iEducar\Modules\Educacenso\Model\ModalidadeCurso;
+use iEducar\Modules\Educacenso\Model\OrganizacaoCurricular;
 use iEducar\Modules\Educacenso\Model\TipoAtendimentoTurma;
+use iEducar\Modules\Educacenso\Model\TipoItinerarioFormativo;
 use iEducar\Modules\Educacenso\Model\TipoMediacaoDidaticoPedagogico;
 use iEducar\Modules\Servidores\Model\FuncaoExercida;
 use iEducar\Support\View\SelectOptions;
@@ -43,6 +46,14 @@ return new class extends clsCadastro
 
     public $copia = false;
 
+    public $data_inicial;
+
+    public $data_fim;
+
+    public $area_itinerario;
+
+    public $leciona_itinerario_tecnico_profissional;
+
     public function Inicializar()
     {
         $this->id = $this->getQueryString(name: 'id');
@@ -75,6 +86,10 @@ return new class extends clsCadastro
                 $this->permite_lancar_faltas_componente = $registro['permite_lancar_faltas_componente'];
                 $this->turma_turno_id = $registro['turno_id'];
                 $this->nm_turma = $registro['nm_turma'];
+                $this->data_inicial = $registro['data_inicial'];
+                $this->data_fim = $registro['data_fim'];
+                $this->leciona_itinerario_tecnico_profissional = $registro['leciona_itinerario_tecnico_profissional'];
+                $this->area_itinerario = transformStringFromDBInArray(string: $registro['area_itinerario']);
 
                 $obj_turma = new clsPmieducarTurma(cod_turma: $this->ref_cod_turma);
                 $obj_turma = $obj_turma->detalhe();
@@ -197,6 +212,53 @@ return new class extends clsCadastro
             'required' => false,
         ], helperOptions: ['searchForArea' => true, 'allDisciplinesMulti' => true]);
 
+        $options = [
+            'label' => 'Data inicial do vínculo',
+            'placeholder' => 'dd/mm/yyyy',
+            'hint' => 'Este campo é utilizado exclusivamente para definir a exportação do servidor no Censo Escolar.',
+            'value' => $this->data_inicial,
+            'required' => false,
+        ];
+
+        $this->inputsHelper()->date('data_inicial', $options);
+
+        $options = [
+            'label' => 'Data final do vínculo',
+            'placeholder' => 'dd/mm/yyyy',
+            'hint' => 'Este campo é utilizado exclusivamente para definir a exportação do servidor no Censo Escolar.',
+            'value' => $this->data_fim,
+            'required' => false,
+        ];
+
+        $this->inputsHelper()->date('data_fim', $options);
+
+        $options = [
+            'label' => 'Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)',
+            'resources' => [
+                null => 'Selecione',
+                1 => 'Sim',
+                0 => 'Não',
+            ],
+            'value' => $this->leciona_itinerario_tecnico_profissional,
+            'required' => false,
+        ];
+        $this->inputsHelper()->select(attrName: 'leciona_itinerario_tecnico_profissional', inputOptions: $options);
+
+        $options = [
+            'label' => 'Área do itinerário formativo',
+            'required' => false,
+            'disabled' => false,
+            'size' => 70,
+            'options' => [
+                'values' => $this->area_itinerario,
+                'all_values' => TipoItinerarioFormativo::getDescriptiveValues(),
+            ],
+        ];
+
+        $this->inputsHelper()->multipleSearchCustom(attrName: '', inputOptions: $options, helperOptions: [
+            'objectName' => 'area_itinerario',
+        ]);
+
         $scripts = [
             '/vendor/legacy/Cadastro/Assets/Javascripts/ServidorVinculoTurma.js',
         ];
@@ -229,6 +291,13 @@ return new class extends clsCadastro
             return false;
         }
 
+        if (!$this->validaDatas()) {
+            return false;
+        }
+
+        $dataInicial = $this->data_inicial ? Carbon::createFromFormat('d/m/Y', $this->data_inicial)->format('Y-m-d') : null;
+        $dataFim = $this->data_fim ? Carbon::createFromFormat('d/m/Y', $this->data_fim)->format('Y-m-d') : null;
+
         $professorTurma = new clsModulesProfessorTurma(
             id: null,
             ano: $this->ano,
@@ -239,6 +308,10 @@ return new class extends clsCadastro
             tipo_vinculo: $this->tipo_vinculo,
             permite_lancar_faltas_componente: $this->permite_lancar_faltas_componente,
             turno_id: $this->turma_turno_id,
+            data_inicial: $dataInicial,
+            data_fim: $dataFim,
+            leciona_itinerario_tecnico_profissional: $this->leciona_itinerario_tecnico_profissional,
+            area_itinerario: $this->area_itinerario
         );
         $id = $professorTurma->existe2();
         if ($id) {
@@ -255,6 +328,93 @@ return new class extends clsCadastro
         $this->simpleRedirect(url: $backUrl);
     }
 
+    private function validaDatas()
+    {
+        if (!$this->data_inicial && !$this->data_fim) {
+            return true;
+        }
+
+        return $this->validaDataBasica()
+            && $this->validaAnoLetivo();
+    }
+
+    private function validaDataBasica()
+    {
+        if (!$this->data_inicial || !$this->data_fim) {
+            return true;
+        }
+
+        $dataInicial = Carbon::createFromFormat('d/m/Y', $this->data_inicial)->format('Y-m-d');
+        $dataFim = Carbon::createFromFormat('d/m/Y', $this->data_fim)->format('Y-m-d');
+
+        if ($dataInicial > $dataFim) {
+            $this->mensagem = 'A data inicial do vínculo não pode ser posterior à data final do vínculo.';
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validaAnoLetivo()
+    {
+        if ($this->data_inicial) {
+            $anoDataInicial = Carbon::createFromFormat('d/m/Y', $this->data_inicial)->year;
+            if ($anoDataInicial != $this->ano) {
+                $this->mensagem = "A data inicial do vínculo deve estar dentro do ano letivo {$this->ano}.";
+
+                return false;
+            }
+        }
+
+        if ($this->data_fim) {
+            $anoDataFim = Carbon::createFromFormat('d/m/Y', $this->data_fim)->year;
+            if ($anoDataFim != $this->ano) {
+                $this->mensagem = "A data final do vínculo deve estar dentro do ano letivo {$this->ano}.";
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function validaDataAdmissao($dataAdmissao)
+    {
+        if (!$dataAdmissao || !$this->data_inicial) {
+            return true;
+        }
+
+        $dataInicialVinculo = Carbon::createFromFormat('d/m/Y', $this->data_inicial)->format('Y-m-d');
+
+        if ($dataInicialVinculo < $dataAdmissao) {
+            $dataAdmissaoFormatada = Carbon::parse($dataAdmissao)->format('d/m/Y');
+            $this->mensagem = "Não é possível cadastrar o vínculo pois a data inicial do vínculo ({$this->data_inicial}) é anterior à data de admissão na escola ({$dataAdmissaoFormatada}).";
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validaDataSaida($dataSaida)
+    {
+        if (!$dataSaida || !$this->data_fim) {
+            return true;
+        }
+
+        $dataFinalVinculo = Carbon::createFromFormat('d/m/Y', $this->data_fim)->format('Y-m-d');
+
+        if ($dataFinalVinculo > $dataSaida) {
+            $dataSaidaFormatada = Carbon::parse($dataSaida)->format('d/m/Y');
+            $this->mensagem = "Não é possível cadastrar o vínculo pois a data final do vínculo ({$this->data_fim}) é posterior à data de saída da escola ({$dataSaidaFormatada}).";
+
+            return false;
+        }
+
+        return true;
+    }
+
     public function Editar()
     {
         $backUrl = sprintf(
@@ -266,6 +426,9 @@ return new class extends clsCadastro
         $obj_permissoes = new clsPermissoes;
         $obj_permissoes->permissao_cadastra(int_processo_ap: 635, int_idpes_usuario: $this->pessoa_logada, int_soma_nivel_acesso: 7, str_pagina_redirecionar: $backUrl);
 
+        $dataInicial = $this->data_inicial ? Carbon::createFromFormat('d/m/Y', $this->data_inicial)->format('Y-m-d') : null;
+        $dataFim = $this->data_fim ? Carbon::createFromFormat('d/m/Y', $this->data_fim)->format('Y-m-d') : null;
+
         $professorTurma = new clsModulesProfessorTurma(
             id: $this->id,
             ano: $this->ano,
@@ -276,6 +439,10 @@ return new class extends clsCadastro
             tipo_vinculo: $this->tipo_vinculo,
             permite_lancar_faltas_componente: $this->permite_lancar_faltas_componente,
             turno_id: $this->turma_turno_id,
+            data_inicial: $dataInicial,
+            data_fim: $dataFim,
+            leciona_itinerario_tecnico_profissional: $this->leciona_itinerario_tecnico_profissional,
+            area_itinerario: $this->area_itinerario
         );
 
         if (!$this->validaCamposCenso()) {
@@ -283,6 +450,10 @@ return new class extends clsCadastro
         }
 
         if (!$this->validaVinculoEscola()) {
+            return false;
+        }
+
+        if (!$this->validaDatas()) {
             return false;
         }
 
@@ -336,7 +507,9 @@ return new class extends clsCadastro
             return true;
         }
 
-        return $this->validaFuncaoExercida();
+        return $this->validaFuncaoExercida() &&
+            $this->validaAreaItinerárioFormativo() &&
+            $this->validaLecionaItinerarioTecnicoProfissional();
     }
 
     public function validaVinculoEscola()
@@ -362,6 +535,77 @@ return new class extends clsCadastro
         $this->mensagem = 'Não é possível cadastrar o vínculo pois o servidor não está alocado na escola selecionada.';
 
         return false;
+    }
+
+    private function validaLecionaItinerarioTecnicoProfissional()
+    {
+        $turma = LegacySchoolClass::query()->find($this->ref_cod_turma, ['organizacao_curricular']);
+        $organizacaoCurricular = transformStringFromDBInArray($turma->organizacao_curricular) ?? [];
+
+        if (empty($this->leciona_itinerario_tecnico_profissional) && in_array($this->funcao_exercida, [
+            FuncaoExercida::DOCENTE,
+            FuncaoExercida::DOCENTE_TITULAR_EAD,
+            FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL,
+        ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
+            $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
+            $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> deve ser obrigatório quando o campo: <b>Função que exerce na turma</b> for {$funcaoDesc} e o campo: <b>Organização Curricular</b> da turma for: Itinerário de formação técnica e profissional.";
+
+            return false;
+        }
+
+        if (!empty($this->leciona_itinerario_tecnico_profissional) && !in_array($this->funcao_exercida, [
+            FuncaoExercida::DOCENTE,
+            FuncaoExercida::DOCENTE_TITULAR_EAD,
+            FuncaoExercida::INSTRUTOR_EDUCACAO_PROFISSIONAL,
+        ])) {
+            $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
+            $this->mensagem = "O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> não pode ser preenchido quando o campo: <b>Função que exerce na turma</b> for <b>{$funcaoDesc}</b>. Este campo só pode ser preenchido para as funções Docente, Docente titular ou Instrutor da Educação Profissional.";
+
+            return false;
+        }
+
+        if (!empty($this->leciona_itinerario_tecnico_profissional) && !in_array(OrganizacaoCurricular::ITINERARIO_FORMACAO_TECNICA_PROFISSIONAL, $organizacaoCurricular)) {
+            $this->mensagem = 'O campo: <b>Profissional escolar leciona no Itinerário de formação técnica e profissional (IFTP)</b> não pode ser preenchido quando o campo: <b>Organização Curricular</b> não for <b>Itinerário de formação técnica e profissional</b>.';
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validaAreaItinerárioFormativo()
+    {
+        $turma = LegacySchoolClass::query()->find($this->ref_cod_turma, ['organizacao_curricular']);
+        $areaItinerario = $this->area_itinerario ?? [];
+        $organizacaoCurricular = transformStringFromDBInArray($turma->organizacao_curricular) ?? [];
+
+        if (empty($areaItinerario) && in_array($this->funcao_exercida, [
+            FuncaoExercida::DOCENTE,
+            FuncaoExercida::DOCENTE_TITULAR_EAD,
+        ]) && in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $organizacaoCurricular)) {
+            $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
+            $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> deve ser obrigatório quando o campo: <b>Função que exerce na turma</b> for {$funcaoDesc} e o campo: <b>Organização Curricular</b> da turma for: Itinerário formativo de aprofundamento.";
+
+            return false;
+        }
+
+        if (!empty($areaItinerario) && !in_array($this->funcao_exercida, [
+            FuncaoExercida::DOCENTE,
+            FuncaoExercida::DOCENTE_TITULAR_EAD,
+        ])) {
+            $funcaoDesc = FuncaoExercida::getDescription($this->funcao_exercida);
+            $this->mensagem = "O campo: <b>Área(s) do itinerário formativo</b> não pode ser preenchido quando o campo: <b>Função que exerce na turma</b> for <b>{$funcaoDesc}</b>. Este campo só pode ser preenchido para as funções Docente ou Docente titular.";
+
+            return false;
+        }
+
+        if (!empty($areaItinerario) && !in_array(OrganizacaoCurricular::ITINERARIO_FORMATIVO_APROFUNDAMENTO, $organizacaoCurricular)) {
+            $this->mensagem = 'O campo: <b>Área(s) do itinerário formativo</b> não pode ser preenchido quando o campo: <b>Organização Curricular</b> não for <b> Itinerário formativo de aprofundamento</b>.';
+
+            return false;
+        }
+
+        return true;
     }
 
     private function validaFuncaoExercida()

@@ -37,15 +37,6 @@ $j('.tablecadastro >tbody  > tr').each(function(index, row) {
 var modoCadastro = $j('#retorno').val() == 'Novo';
 let obrigarCamposCenso = $j('#obrigar_campos_censo').val() == '1';
 
-let verificaEtapaEducacenso = ()=>{
-  $j('#etapa_educacenso').makeUnrequired();
-  if ($j('#organizacao_curricular').val() &&
-    $j('#organizacao_curricular').val().include('1') &&
-    obrigarCamposCenso) {
-      $j('#etapa_educacenso').makeRequired();
-  }
-}
-
 let verificaEtapaAgregada = ()=>{
   $j('#etapa_agregada').makeUnrequired();
 
@@ -196,9 +187,14 @@ $j('#tipo_atendimento').change(function() {
   habilitaClasseEspecial();
 });
 $j('#organizacao_curricular').change(function() {
-  verificaEtapaEducacenso();
   habilitaEtapaEducacenso();
   verificaFormaOrganizacaoTurma();
+  habilitaAreasIntinerarioFormativo();
+  habilitaTipoCursoIntinerario();
+});
+
+$j('#tipo_curso_intinerario').change(function() {
+  habilitaCodigoCursoTecnico();
 });
 
 $j('#etapa_agregada').change(function() {
@@ -229,7 +225,7 @@ function mostraAtividadesComplementares(){
 }
 
 function mostraCursoTecnico() {
-  var etapasEnsinoTecnico = ['30', '31', '32', '33', '34', '39', '40', '64', '74'];
+  var etapasEnsinoTecnico = ['39', '40', '64'];
   var mostraCampo = $j.inArray($j('#etapa_educacenso').val(),etapasEnsinoTecnico) != -1;
   if (mostraCampo) {
     $j('#cod_curso_profissional').prop('disabled', false);
@@ -312,12 +308,66 @@ function validaAtividadesComplementares() {
 $j('#tipo_mediacao_didatico_pedagogico').on('change', verificaLocalFuncionamentoDiferenciado);
 
 function habilitaEtapaEducacenso() {
-  $j("#etapa_educacenso").prop('disabled', false);
+  $j("#etapa_educacenso").prop('disabled', true);
+  $j('#etapa_educacenso').makeUnrequired();
+
   const notContainData = $j('#organizacao_curricular').val() === null;
 
-  if (notContainData || !$j('#organizacao_curricular').val().include('1')) {
-    $j("#etapa_educacenso").prop('disabled', true).val('');
+  const etapasAgregadasNotFormacao = ['301', '302', '303', '306', '308'];
+  const etapasAgregadasFormacao = ['304', '305'];
+
+  if(
+    (etapasAgregadasNotFormacao.includes($j('#etapa_agregada').val()) && notContainData) ||
+      (etapasAgregadasFormacao.includes($j('#etapa_agregada').val()) && !notContainData && $j('#organizacao_curricular').val().include('1'))
+  ) {
+    $j("#etapa_educacenso").prop('disabled', false);
+    if(obrigarCamposCenso) {
+      $j('#etapa_educacenso').makeRequired();
+    }
+  } else {
+    $j("#etapa_educacenso").val('');
   }
+}
+
+function habilitaAreasIntinerarioFormativo() {
+  $j("#area_itinerario").prop('disabled', true);
+  const notContainData = $j('#organizacao_curricular').val() === null;
+  $j('#area_itinerario').makeUnrequired();
+
+  if (!notContainData && $j('#organizacao_curricular').val().include('4')) {
+    $j("#area_itinerario").prop('disabled', false);
+    $j('#area_itinerario').makeRequired();
+  } else {
+    $j("#area_itinerario").val('');
+  }
+  $j('#area_itinerario').trigger('chosen:updated');
+}
+
+function habilitaTipoCursoIntinerario() {
+  $j("#tipo_curso_intinerario").prop('disabled', true);
+  const notContainData = $j('#organizacao_curricular').val() === null;
+  $j('#tipo_curso_intinerario').makeUnrequired();
+
+  if (!notContainData && $j('#organizacao_curricular').val().include('5')) {
+    $j("#tipo_curso_intinerario").prop('disabled', false);
+    $j('#tipo_curso_intinerario').makeRequired();
+  } else {
+    $j("#tipo_curso_intinerario").val('');
+    habilitaCodigoCursoTecnico();
+  }
+}
+
+function habilitaCodigoCursoTecnico() {
+  $j("#cod_curso_profissional_intinerario").prop('disabled', true);
+  $j('#cod_curso_profissional_intinerario').makeUnrequired();
+
+  if ($j('#tipo_curso_intinerario').val() === '1') {
+    $j("#cod_curso_profissional_intinerario").prop('disabled', false);
+    $j('#cod_curso_profissional_intinerario').makeRequired();
+  } else {
+    $j("#cod_curso_profissional_intinerario").val('');
+  }
+  $j('#cod_curso_profissional_intinerario').trigger('chosen:updated');
 }
 
 function habilitaEtapaAgregada() {
@@ -345,7 +395,6 @@ function verificaObrigatoriedadeOrganizacaoCurricular() {
     $j('#organizacao_curricular').val([]).trigger('chosen:updated');
   }
   habilitaEtapaEducacenso();
-  verificaEtapaEducacenso();
 }
 
 function habilitaClasseEspecial() {
@@ -571,7 +620,6 @@ $j(document).ready(function() {
       mostraAtividadesComplementares();
       mostraCursoTecnico();
       habilitaEtapaEducacenso();
-      verificaEtapaEducacenso();
       verificaEtapaAgregada();
       habilitaEtapaAgregada();
       verificaClasseEspecial();
@@ -579,6 +627,9 @@ $j(document).ready(function() {
       verificaFormaOrganizacaoTurma();
       verificaFormacaoAlternancia();
       verificaObrigatoriedadeOrganizacaoCurricular();
+      habilitaAreasIntinerarioFormativo();
+      habilitaTipoCursoIntinerario();
+      habilitaCodigoCursoTecnico();
     });
 
   // Turmas Parciais

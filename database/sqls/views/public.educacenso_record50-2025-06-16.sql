@@ -1,4 +1,4 @@
-CREATE VIEW public.educacenso_record50 AS
+CREATE OR REPLACE VIEW public.educacenso_record50 AS
 SELECT DISTINCT
     '50' AS registro,
     educacenso_cod_escola.cod_escola_inep AS "inepEscola",
@@ -24,9 +24,7 @@ SELECT DISTINCT
     escola.cod_escola AS "codEscola",
     turma.organizacao_curricular AS "organizacaoCurricular",
     professor_turma.outras_unidades_curriculares_obrigatorias AS "outrasUnidadesCurricularesObrigatorias",
-    turma.turma_turno_id AS "turmaTurnoId",
-    professor_turma.area_itinerario AS "areaItinerario",
-    professor_turma.leciona_itinerario_tecnico_profissional AS "lecionaItinerarioTecnicoProfissional"
+    turma.turma_turno_id AS "turmaTurnoId"
 FROM pmieducar.servidor
      JOIN modules.professor_turma ON professor_turma.servidor_id = servidor.cod_servidor
      JOIN pmieducar.turma ON turma.cod_turma = professor_turma.turma_id
