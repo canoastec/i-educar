@@ -100,9 +100,9 @@ class Registro20 extends AbstractRegistro
             $record->requereFormasOrganizacaoTurma() ? ($record->formasOrganizacaoTurma === 4 ? 1 : 0) : '', // 31 - Grupos não seriados com base na idade ou competência
             $record->requereFormasOrganizacaoTurma() ? ($record->formasOrganizacaoTurma === 5 ? 1 : 0) : '', // 32 - Módulos
             $record->formacaoAlternancia ?: 0, // 33 - Turma de Formação por Alternância (proposta pedagógica de formação por alternância: tempo-escola e tempo-comunidade)
-            $record->formacaoGeralBasica() ? 1 : 0, // 34 - Formação geral básica
-            $record->itinerarioFormativoAprofundamento() ? 1 : 0, // 35 - Itinerário formativo de aprofundamento
-            $record->itinerarioFormacaoTecnicaProfissional() ? 1 : 0, // 36 - Itinerário de formação técnica e profissional
+            $record->possuiOrganizacaoCurricular() ? ($record->formacaoGeralBasica() ? 1 : 0) : '', // 34 - Formação geral básica
+            $record->possuiOrganizacaoCurricular() ? ($record->itinerarioFormativoAprofundamento() ? 1 : 0) : '', // 35 - Itinerário formativo de aprofundamento
+            $record->possuiOrganizacaoCurricular() ? ($record->itinerarioFormacaoTecnicaProfissional() ? 1 : 0) : '', // 36 - Itinerário de formação técnica e profissional
             $record->itinerarioFormativoAprofundamento() ? (in_array(TipoItinerarioFormativo::LINGUANGENS, $record->areaItinerario) ? 1 : 0) : '', // 37 - Área do conhecimento de linguagens e suas tecnologias
             $record->itinerarioFormativoAprofundamento() ? (in_array(TipoItinerarioFormativo::MATEMATICA, $record->areaItinerario) ? 1 : 0) : '', // 38 - Área do conhecimento de matemática e suas tecnologias
             $record->itinerarioFormativoAprofundamento() ? (in_array(TipoItinerarioFormativo::CIENCIAS_NATUREZA, $record->areaItinerario) ? 1 : 0) : '', // 39 - Área do conhecimento de ciências da natureza e suas tecnologias
