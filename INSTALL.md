@@ -42,14 +42,14 @@ git clone git@github.com:portabilis/i-educar.git && cd i-educar
 Faça o build das imagens Docker utilizadas no projeto e inicie os containers da aplicação (pode levar alguns minutos):
 
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 Execute o comando para fazer uma nova instalação:
 
 ```bash
-docker-compose exec php composer new-install
-docker-compose exec php php artisan db:seed
+docker compose exec php composer new-install
+docker compose exec php php artisan db:seed
 ```
 
 ### Personalizando a instalação
@@ -75,7 +75,7 @@ cp .env.example .env.testing
 Execute o comando:
 
 ```bash
-docker-compose exec php vendor/bin/pest
+docker compose exec php vendor/bin/pest
 ```
 
 ## Instalação em servidor web
