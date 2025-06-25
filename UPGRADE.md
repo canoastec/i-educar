@@ -40,8 +40,7 @@ git checkout 2.9
 php artisan migrate
 ```
 
-Neste momento é necessário **fazer backup do seu banco de dados** Postgres versão 15, instalar a versão 16 e **fazer a
-restauração do banco de dados** na nova versão.
+> Neste momento é necessário **fazer backup do seu banco de dados** na versão atual e fazer e a migração para a nova versão versão.
 
 Atualize o código fonte:
 
