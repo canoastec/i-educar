@@ -21,6 +21,8 @@ x-php: &php
     REDIS_HOST: redis
     DB_HOST: postgres
     PGPASSWORD: ${DB_PASSWORD}
+  extra_hosts:
+    - host.docker.internal:host-gateway
 
 services:
 
