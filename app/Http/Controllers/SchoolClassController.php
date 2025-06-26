@@ -23,7 +23,7 @@ class SchoolClassController extends Controller
     {
         $response = ['msg' => 'Edição efetuada com sucesso.'];
         $schoolClassService = new SchoolClassService;
-        $schoolClassInepService = new SchoolClassInepService;
+        $schoolClassInepService = app(SchoolClassInepService::class);
         $schoolClassStageService = new SchoolClassStageService;
 
         $codModulo = $request->get('ref_cod_modulo');
@@ -47,8 +47,20 @@ class SchoolClassController extends Controller
         try {
             DB::beginTransaction();
 
-            $schoolClassToStore = $this->prepareSchoolClassDataToStore($request);
             $schoolClassPeriodId = LegacySchoolClass::query()->whereKey($codTurmaRequest)->value('turma_turno_id');
+            if ($codigoInepEducacenso &&
+                $request->integer('turma_turno_id') !== Period::FULLTIME &&
+                (int)$schoolClassPeriodId !== $request->integer('turma_turno_id') &&
+                $schoolClassService->hasStudentsPartials($codTurmaRequest)) {
+
+                $turnoNome = (new Period())->getDescriptiveValues()[(int)$schoolClassPeriodId];
+
+                throw ValidationException::withMessages([
+                    'turma_turno_id' => "Esta turma possui turno {$turnoNome} e contém os códigos INEP dos turnos parciais informados. Para atender as regras de importação do censo, não é possível alterar o turno da turma."
+                ]);
+            }
+
+            $schoolClassToStore = $this->prepareSchoolClassDataToStore($request);
             $schoolClass = $schoolClassService->storeSchoolClass($schoolClassToStore);
 
             $codTurma = $schoolClass->cod_turma;
@@ -92,53 +104,13 @@ class SchoolClassController extends Controller
                 $multiGradesService->deleteAllGradesOfSchoolClass($schoolClass);
             }
 
-            if ($codigoInepEducacenso) {
-                $turnoId = null;
-                if ($request->integer('turma_turno_id') === Period::FULLTIME) {
-                    $turnoId = Period::FULLTIME;
-                } else {
-                    // valida se o turno da turma está sendo alterado
-                    if ((int) $schoolClassPeriodId !== $request->integer('turma_turno_id') && $schoolClassService->hasStudentsPartials($codTurma)) {
-                        DB::rollBack();
-                        $turnoNome = (new Period())->getDescriptiveValues()[(int) $schoolClassPeriodId];
-
-                        return response()->json([
-                            'msg' => "Esta turma possui turno {$turnoNome} e contém os códigos INEP dos turnos parciais
-                            informados. Para atender as regras de importação do censo, não é possível
-                            alterar o turno da turma.",
-                        ], 422);
-                    }
-                }
-                $schoolClassInepService->store($codTurma, $codigoInepEducacenso, $turnoId);
-            } else {
-                $schoolClassInepService->delete($codTurma);
-            }
-
-            if ($codigoInepEducacensoMatutino) {
-                $schoolClassInepService->store(
-                    codTurma: $codTurma,
-                    codigoInepEducacenso: $codigoInepEducacensoMatutino,
-                    turnoId: Period::MORNING
-                );
-            } else {
-                $schoolClassInepService->delete(
-                    codTurma: $codTurma,
-                    turnoId: Period::MORNING
-                );
-            }
-
-            if ($codigoInepEducacensoVespertino) {
-                $schoolClassInepService->store(
-                    codTurma: $codTurma,
-                    codigoInepEducacenso: $codigoInepEducacensoVespertino,
-                    turnoId: Period::AFTERNOON
-                );
-            } else {
-                $schoolClassInepService->delete(
-                    codTurma: $codTurma,
-                    turnoId: Period::AFTERNOON
-                );
-            }
+            $schoolClassInepService->save(
+                codTurma: $codTurma,
+                codigoInepEducacenso: $codigoInepEducacenso,
+                codigoInepEducacensoMatutino: $codigoInepEducacensoMatutino,
+                codigoInepEducacensoVespertino: $codigoInepEducacensoVespertino,
+                turnoId: $request->integer('turma_turno_id')
+            );
 
             if ($datasInicioModulos[0] && $datasFimModulos[0]) {
                 $schoolClassStageService->store(
