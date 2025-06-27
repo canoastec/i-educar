@@ -5,11 +5,11 @@
 @endpush
 
 @section('content')
-    <form id="enrollments-enroll" action="{{ Asset::get('/matricula/' .  $registration->id . '/enturmar/' . $schoolClass->id)}}" method="post">
+    <form id="enrollments-relocate" action="{{ Asset::get('/matricula/' .  $registration->id . '/remanejar/' . $schoolClass->id)}}" method="post">
         <table class="table-default">
             <thead>
                 <tr>
-                    <td colspan="2"><b>Enturmar</b></td>
+                    <td colspan="2"><b>Remanejar</b></td>
                 </tr>
             </thead>
             <tbody>
@@ -30,7 +30,7 @@
                     <td>{{ $registration->grade->name ?? null }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Turma selecionada:</th>
+                    <th scope="row">Turma de destino:</th>
                     <td>{{ $schoolClass->name ?? null }}</td>
                 </tr>
                 <tr>
@@ -49,14 +49,14 @@
                     <th scope="row">Período de enturmação:</th>
                     <td>{{ $schoolClass->begin_academic_year->format('d/m/Y') }} à {{ $schoolClass->end_academic_year->format('d/m/Y') }}</td>
                 </tr>
-                @if($enableCancelButton && $enrollments->count())
+                @if($enrollments->count())
                 <tr>
                     <th scope="row">Turma de origem<span class="campo_obrigatorio">*</span>:</th>
                     <td>
                         <select name="enrollment_from_id" class="select-default" required>
                             <option value="">Selecione a turma de origem</option>
                             @foreach($enrollments as $enrollment)
-                                @if($enrollment->schoolClass->id == $schoolClass->id)
+                                @if(!$enableCancelButton || $enrollment->schoolClass->id != $schoolClass->id)
                                     <option value="{{ $enrollment->id }}">{{ $enrollment->schoolClass->name }}</option>
                                 @endif
                             @endforeach
@@ -66,17 +66,12 @@
                 @endif
                 <tr>
                     <th scope="row">
-                        @if($enableCancelButton)
-                            Data da saída<span class="campo_obrigatorio">*</span>
-                        @else
-                            Data da enturmação<span class="campo_obrigatorio">*</span>
-                        @endif
+                        Data da enturmação/saída<span class="campo_obrigatorio">*</span>
                         <br>
                         <small class="text-muted">dd/mm/aaaa</small>
                     </th>
                     <td>
-                        <input name="enrollment_date" value="{{ old('enrollment_date') }}" onkeypress="formataData(this, event);" class="form-input {{ $errors->has('enrollment_date') ? 'error' : '' }}" type="text" maxlength="10">
-                    </td>
+                        <input name="enrollment_date" value="{{ old('enrollment_date') }}" onkeypress="formataData(this, event);" class="form-input {{ $errors->has('enrollment_date') ? 'error' : '' }}" type="text" maxlength="10" required>
                 </tr>
             </tbody>
         </table>
@@ -84,52 +79,16 @@
         <div class="separator"></div>
 
         <div style="text-align: center">
-            @if($enableCancelButton)
-                @if(Gate::allows('view', 696))
-                    <button class="btn"  onclick="modalConfirmacao('is_cancellation')" type="button" name="is_cancellation" value="1">Desenturmar</button>
-                @endif
+            @if($enrollments->count())
+                <button class="btn" type="submit">Transferir para a turma (Remanejar)</button>
             @else
-                <button class="btn" type="submit">Enturmar</button>
+                <p>O aluno não possui enturmações ativas para remanejar.</p>
             @endif
-            <a href="{{ Asset::get('/intranet/educar_matricula_turma_lst.php?ref_cod_matricula=' . $registration->id . '&ano_letivo=' . $registration->year) }}" class="btn">Cancelar</a>
+            <a href="{{ Asset::get('/intranet/educar_matricula_turma_lst.php?ref_cod_matricula=' . $registration->id . '&ano_letivo=' . $registration->year . '&acao=remanejar') }}" class="btn">Cancelar</a>
         </div>
     </form>
 
     <script>
-        function modalConfirmacao(val) {
-            let mensagem = buscaMensagem(val);
-            makeDialog({
-                title: 'Atenção!',
-                content: mensagem,
-                maxWidth: 860,
-                width: 860,
-                modal: true,
-                buttons: [{
-                    text: 'OK',
-                    click: function () {
-                        $j('#enrollments-enroll').append('<input  type="hidden" name="'+val+'" value="1" id="'+val+'"/>')
-                        $j('#enrollments-enroll').submit()
-                        $j(this).dialog('destroy');
-                    }
-                },{
-                    text: 'Cancelar',
-                    click: function () {
-                        $j(this).dialog('destroy');
-                    }
-                }]
-            });
-        }
-
-        function buscaMensagem(val) {
-            if (val === 'is_cancellation') {
-                return 'O processo de desenturmação e enturmação manual ' +
-                       'não será considerado como remanejamento ou troca de turma, ' +
-                       'para isso você deve selecionar a turma nova e remanejar. Deseja continuar?';
-            }
-
-            return 'Deseja continuar?';
-        }
-
         function makeDialog (params) {
             let container = $j('#dialog-container');
             if (container.length < 1) {
@@ -148,4 +107,4 @@
             container.dialog(params);
         }
     </script>
-@endsection
+@endsection 

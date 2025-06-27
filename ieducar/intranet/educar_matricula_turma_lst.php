@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+
 return new class extends clsListagem
 {
     public $pessoa_logada;
@@ -53,7 +56,13 @@ return new class extends clsListagem
 
     public function Gerar()
     {
-        $this->titulo = 'Selecione uma turma para enturmar ou remover a enturmação';
+        $acao = $_GET['acao'] ?? 'enturmar';
+        
+        if ($acao === 'remanejar') {
+            $this->titulo = 'Selecione uma turma para remanejar a matrícula';
+        } else {
+            $this->titulo = 'Selecione uma turma para enturmar ou remover a enturmação';
+        }
 
         $this->ref_cod_matricula = $_GET['ref_cod_matricula'];
 
@@ -204,10 +213,31 @@ return new class extends clsListagem
                 $enturmado = 'Não';
             }
 
-            $link = route(name: 'enrollments.enroll.create', parameters: [
-                'registration' => $this->ref_cod_matricula,
-                'schoolClass' => $turma['cod_turma'],
-            ]);
+            // Verifica permissão de desenturmar para exibir turmas já enturmadas
+            $permissaoDesenturmar = $this->getPermissaoVisualizar(696);
+            
+            // Se não tem permissão de desenturmar e está enturmado, não exibe a linha
+            if (!$permissaoDesenturmar && $turmaHasEnturmacao) {
+                continue;
+            }
+
+            // Para remanejamento, não exibe turmas onde o aluno já está enturmado
+            if ($acao === 'remanejar' && $turmaHasEnturmacao) {
+                continue;
+            }
+
+            if ($acao === 'remanejar') {
+                $link = route(name: 'enrollments.relocate.create', parameters: [
+                    'registration' => $this->ref_cod_matricula,
+                    'schoolClass' => $turma['cod_turma'],
+                ]);
+            } else {
+                $link = route(name: 'enrollments.enroll.create', parameters: [
+                    'registration' => $this->ref_cod_matricula,
+                    'schoolClass' => $turma['cod_turma'],
+                ]);
+            }
+            
             $this->addLinhas(linha: ["<a href='{$link}'>{$turma['nm_turma']}</a>", $enturmado]);
         }
 
@@ -224,9 +254,15 @@ return new class extends clsListagem
 
         $this->largura = '100%';
 
-        $this->breadcrumb(currentPage: 'Enturmações da matrícula', breadcrumbs: [
-            url(path: 'intranet/educar_index.php') => 'Escola',
-        ]);
+        if ($acao === 'remanejar') {
+            $this->breadcrumb(currentPage: 'Turmas disponíveis para remanejamento', breadcrumbs: [
+                url(path: 'intranet/educar_index.php') => 'Escola',
+            ]);
+        } else {
+            $this->breadcrumb(currentPage: 'Enturmações da matrícula', breadcrumbs: [
+                url(path: 'intranet/educar_index.php') => 'Escola',
+            ]);
+        }
     }
 
     public function makeExtra()
@@ -238,5 +274,16 @@ return new class extends clsListagem
     {
         $this->title = 'Matricula Turma';
         $this->processoAp = 578;
+    }
+
+    private function getPermissaoVisualizar($process)
+    {
+        $user = Auth::user();
+        $allow = Gate::allows('view', $process);
+        if ($user->isLibrary()) {
+            return false;
+        }
+
+        return $allow;
     }
 };
