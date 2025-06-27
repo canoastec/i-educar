@@ -112,7 +112,7 @@ let verificaLocalFuncionamentoDiferenciado = () => {
       $j('#local_funcionamento_diferenciado').makeRequired();
     }
   } else {
-    $j('#local_funcionamento_diferenciado').val();
+    $j('#local_funcionamento_diferenciado').val("");
   }
 }
 
