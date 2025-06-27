@@ -2,6 +2,7 @@
 
 use App\Menu;
 use App\Models\LegacyUserType;
+use App\Process;
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
@@ -29,11 +30,9 @@ return new class extends Migration
         $userTypes = LegacyUserType::all();
 
         // Busca o menu principal de Movimentações de Matrícula
-        $mainMenu = Menu::query()->where('title', 'Movimentações de Matrícula')->first();
-
-        if (!$mainMenu) {
-            return; // Se não encontrar o menu principal, não faz nada
-        }
+        $mainMenu = Menu::query()
+            ->where('process', Process::REGISTRATION_ACTIONS)
+            ->first();
 
         // Atualiza a ordem do Enturmar para 14
         Menu::query()->updateOrCreate([
@@ -47,7 +46,7 @@ return new class extends Migration
         ]);
 
         // Cria/atualiza Desenturmar logo após Enturmar (order 15)
-        $menu = Menu::query()->updateOrCreate([
+        Menu::query()->updateOrCreate([
             'process' => 696,
         ], [
             'parent_id' => $mainMenu->getKey(),
