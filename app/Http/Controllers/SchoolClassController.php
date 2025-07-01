@@ -48,6 +48,7 @@ class SchoolClassController extends Controller
             DB::beginTransaction();
 
             $schoolClassToStore = $this->prepareSchoolClassDataToStore($request);
+            $schoolClassPeriodId = LegacySchoolClass::query()->whereKey($codTurmaRequest)->value('turma_turno_id');
             $schoolClass = $schoolClassService->storeSchoolClass($schoolClassToStore);
 
             $codTurma = $schoolClass->cod_turma;
@@ -96,13 +97,15 @@ class SchoolClassController extends Controller
                 if ($request->integer('turma_turno_id') === Period::FULLTIME) {
                     $turnoId = Period::FULLTIME;
                 } else {
-                    if ($schoolClassService->hasStudentsPartials($codTurma)) {
+                    // valida se o turno da turma está sendo alterado
+                    if ((int) $schoolClassPeriodId !== $request->integer('turma_turno_id') && $schoolClassService->hasStudentsPartials($codTurma)) {
                         DB::rollBack();
+                        $turnoNome = (new Period())->getDescriptiveValues()[(int) $schoolClassPeriodId];
 
                         return response()->json([
-                            'msg' => 'Esta turma possui turno integral e contém os códigos INEP dos turnos parciais
+                            'msg' => "Esta turma possui turno {$turnoNome} e contém os códigos INEP dos turnos parciais
                             informados. Para atender as regras de importação do censo, não é possível
-                            alterar o turno da turma.',
+                            alterar o turno da turma.",
                         ], 422);
                     }
                 }

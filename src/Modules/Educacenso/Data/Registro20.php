@@ -3,6 +3,7 @@
 namespace iEducar\Modules\Educacenso\Data;
 
 use App\Services\SchoolClass\SchoolClassService;
+use DateTime;
 use iEducar\Modules\Educacenso\Formatters;
 use iEducar\Modules\Educacenso\Model\TipoItinerarioFormativo;
 use iEducar\Modules\SchoolClass\Period;
@@ -62,6 +63,9 @@ class Registro20 extends AbstractRegistro
         $canExportComponente = $record->curricularEtapaDeEnsino() && !in_array($record->etapaEducacenso, [1, 2, 3]);
         $componentesEducacenso = $record->componentesCodigosEducacenso();
 
+        $horaInicial = (new DateTime($record->horaInicial))->format('H:i');
+        $horaFinal = (new DateTime($record->horaFinal))->format('H:i');
+
         return [
             '20', //  1
             $record->codigoEscolaInep, // 2 - Código de escola - Inep
@@ -69,13 +73,13 @@ class Registro20 extends AbstractRegistro
             '', // 4 - Código da Turma - Inep
             $this->convertStringToCenso($record->nomeTurma), // 5 - Nome da Turma
             $record->tipoMediacaoDidaticoPedagogico, // 6 - Tipo de mediação didático-pedagógica
-            $record->presencial() && in_array(1, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 7 - Domingp
-            $record->presencial() && in_array(2, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 8 - Segunda-feira
-            $record->presencial() && in_array(3, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 9 - Terça-feira
-            $record->presencial() && in_array(4, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 10 - Quarta-feira
-            $record->presencial() && in_array(5, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 11 - Quinta-feira
-            $record->presencial() && in_array(6, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 12 - Sexta-feira
-            $record->presencial() && in_array(7, $record->diasSemana) ? $record->horaInicial . '-' . $record->horaFinal : '', // 13 - Sábado
+            $record->presencial() && in_array(1, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 7 - Domingp
+            $record->presencial() && in_array(2, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 8 - Segunda-feira
+            $record->presencial() && in_array(3, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 9 - Terça-feira
+            $record->presencial() && in_array(4, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 10 - Quarta-feira
+            $record->presencial() && in_array(5, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 11 - Quinta-feira
+            $record->presencial() && in_array(6, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 12 - Sexta-feira
+            $record->presencial() && in_array(7, $record->diasSemana) ? $horaInicial . '-' . $horaFinal : '', // 13 - Sábado
             $record->curricularEtapaDeEnsino() ?: 0, //  14 - Curricular (etapa de ensino)
             $record->atividadeComplementar() ?: 0, // 15 - Atividade complementar
             $record->atendimentoEducacionalEspecializado() ?: 0, // 16 - Atendimento educacional especializado - AEE]
@@ -96,13 +100,13 @@ class Registro20 extends AbstractRegistro
             $record->requereFormasOrganizacaoTurma() ? ($record->formasOrganizacaoTurma === 4 ? 1 : 0) : '', // 31 - Grupos não seriados com base na idade ou competência
             $record->requereFormasOrganizacaoTurma() ? ($record->formasOrganizacaoTurma === 5 ? 1 : 0) : '', // 32 - Módulos
             $record->formacaoAlternancia ?: 0, // 33 - Turma de Formação por Alternância (proposta pedagógica de formação por alternância: tempo-escola e tempo-comunidade)
-            (in_array($record->etapaAgregada, [304, 305]) && $record->formacaoGeralBasica()) ? 1 : 0, // 34 - Formação geral básica
-            (in_array($record->etapaAgregada, [304, 305]) && $record->itinerarioFormativoAprofundamento()) ? 1 : 0, // 35 - Itinerário formativo de aprofundamento
-            (in_array($record->etapaAgregada, [304, 305]) && $record->itinerarioFormacaoTecnicaProfissional()) ? 1 : 0, // 36 - Itinerário de formação técnica e profissional
-            in_array(TipoItinerarioFormativo::LINGUANGENS, $record->areaItinerario) ? 1 : 0, // 37 - Área do conhecimento de linguagens e suas tecnologias
-            in_array(TipoItinerarioFormativo::MATEMATICA, $record->areaItinerario) ? 1 : 0, // 38 - Área do conhecimento de matemática e suas tecnologias
-            in_array(TipoItinerarioFormativo::CIENCIAS_NATUREZA, $record->areaItinerario) ? 1 : 0, // 39 - Área do conhecimento de ciências da natureza e suas tecnologias
-            in_array(TipoItinerarioFormativo::CIENCIAS_HUMANAS, $record->areaItinerario) ? 1 : 0, // 40 - Área do conhecimento de ciências humanas e sociais aplicadas
+            $record->possuiOrganizacaoCurricular() ? ($record->formacaoGeralBasica() ? 1 : 0) : '', // 34 - Formação geral básica
+            $record->possuiOrganizacaoCurricular() ? ($record->itinerarioFormativoAprofundamento() ? 1 : 0) : '', // 35 - Itinerário formativo de aprofundamento
+            $record->possuiOrganizacaoCurricular() ? ($record->itinerarioFormacaoTecnicaProfissional() ? 1 : 0) : '', // 36 - Itinerário de formação técnica e profissional
+            $record->itinerarioFormativoAprofundamento() ? (in_array(TipoItinerarioFormativo::LINGUANGENS, $record->areaItinerario) ? 1 : 0) : '', // 37 - Área do conhecimento de linguagens e suas tecnologias
+            $record->itinerarioFormativoAprofundamento() ? (in_array(TipoItinerarioFormativo::MATEMATICA, $record->areaItinerario) ? 1 : 0) : '', // 38 - Área do conhecimento de matemática e suas tecnologias
+            $record->itinerarioFormativoAprofundamento() ? (in_array(TipoItinerarioFormativo::CIENCIAS_NATUREZA, $record->areaItinerario) ? 1 : 0) : '', // 39 - Área do conhecimento de ciências da natureza e suas tecnologias
+            $record->itinerarioFormativoAprofundamento() ? (in_array(TipoItinerarioFormativo::CIENCIAS_HUMANAS, $record->areaItinerario) ? 1 : 0) : '', // 40 - Área do conhecimento de ciências humanas e sociais aplicadas
             (in_array($record->etapaAgregada, [304, 305]) && $record->itinerarioFormacaoTecnicaProfissional()) ? $record->tipoCursoIntinerario : '', // 41 - Tipo do curso do itinerário de formação técnica e profissional
             (in_array($record->etapaAgregada, [304, 305]) && $record->itinerarioFormacaoTecnicaProfissional()) ? $record->codCursoProfissionalIntinerario : '', // 42 - Código do curso técnico
             $canExportComponente ? $this->getCensoValueForDiscipline(1, $componentesEducacenso, $record->disciplinasEducacensoComDocentes) : '', // 43 - 1. Química
