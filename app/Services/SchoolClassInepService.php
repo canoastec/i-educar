@@ -13,7 +13,6 @@ class SchoolClassInepService
      */
     public function __construct(private  SchoolClassService $schoolClassService)
     {
-        $this->schoolClassService = $schoolClassService;
     }
 
     /**
@@ -21,6 +20,17 @@ class SchoolClassInepService
      */
     public function store($codTurma, $codigoInepEducacenso, $turnoId = null)
     {
+        SchoolClassInep::where('cod_turma', $codTurma)
+            ->where('cod_turma_inep', $codigoInepEducacenso)
+            ->where(function ($query) use ($turnoId) {
+                if ($turnoId === null) {
+                    $query->whereNotNull('turma_turno_id');
+                } else {
+                    $query->whereNull('turma_turno_id')->orWhere('turma_turno_id', '!=', $turnoId);
+                }
+            })
+            ->delete();
+
         return SchoolClassInep::updateOrCreate([
             'cod_turma' => $codTurma,
             'turma_turno_id' => $turnoId,
