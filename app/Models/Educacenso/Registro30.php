@@ -266,7 +266,10 @@ class Registro30 implements RegistroEducacenso
             $this->deficienciaVisaoMonocular,
         ];
 
-        if (empty($this->arrayDeficiencias)) {
+        if (
+            empty($this->arrayDeficiencias) ||
+            count(Registro30::removeTranstornosArrayDeficiencias(transformStringFromDBInArray($this->arrayDeficiencias))) === 0
+        ) {
             return null;
         }
 
