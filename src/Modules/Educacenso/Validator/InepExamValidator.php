@@ -156,10 +156,10 @@ class InepExamValidator implements EducacensoValidator
     {
         if ($this->validateResource(
             RecursosRealizacaoProvas::GUIA_INTERPRETE,
-            [],
             [
                 Deficiencias::SURDOCEGUEIRA,
-            ]
+            ],
+            []
         )) {
             return true;
         }
