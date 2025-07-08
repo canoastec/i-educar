@@ -123,7 +123,6 @@ return new class extends clsCadastro
         $enturmacoes = new clsPmieducarMatriculaTurma;
         $enturmacoes = $enturmacoes->lista(
             int_ref_cod_matricula: $this->cod_matricula,
-            int_ativo: 1
         );
 
         $arrayEnturmacoes = [];
