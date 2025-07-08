@@ -8,11 +8,14 @@ use App\Services\SchoolClassInepService;
 use Database\Factories\LegacySchoolClassFactory;
 use Database\Factories\SchoolClassInepFactory;
 use iEducar\Modules\SchoolClass\Period;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class SchoolClassInepServiceTest extends TestCase
 {
+    use DatabaseTransactions;
+
     private SchoolClassInepService $service;
     private SchoolClassService $schoolClassService;
 
