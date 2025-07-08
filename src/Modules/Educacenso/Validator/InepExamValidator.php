@@ -99,17 +99,10 @@ class InepExamValidator implements EducacensoValidator
             [
                 Deficiencias::CEGUEIRA,
                 Deficiencias::BAIXA_VISAO,
-                Deficiencias::VISAO_MONOCULAR,
                 Deficiencias::SURDOCEGUEIRA,
                 Deficiencias::DEFICIENCIA_FISICA,
                 Deficiencias::DEFICIENCIA_INTELECTUAL,
                 Deficiencias::TRANSTORNO_ESPECTRO_AUTISTA,
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
             ],
             [
                 Deficiencias::SURDEZ,
@@ -134,17 +127,10 @@ class InepExamValidator implements EducacensoValidator
             [
                 Deficiencias::CEGUEIRA,
                 Deficiencias::BAIXA_VISAO,
-                Deficiencias::VISAO_MONOCULAR,
                 Deficiencias::SURDOCEGUEIRA,
                 Deficiencias::DEFICIENCIA_FISICA,
                 Deficiencias::DEFICIENCIA_INTELECTUAL,
                 Deficiencias::TRANSTORNO_ESPECTRO_AUTISTA,
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
             ],
             [
             ]
@@ -170,10 +156,10 @@ class InepExamValidator implements EducacensoValidator
     {
         if ($this->validateResource(
             RecursosRealizacaoProvas::GUIA_INTERPRETE,
-            [],
             [
                 Deficiencias::SURDOCEGUEIRA,
-            ]
+            ],
+            []
         )) {
             return true;
         }
@@ -194,12 +180,6 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::SURDEZ,
                 Deficiencias::DEFICIENCIA_AUDITIVA,
                 Deficiencias::SURDOCEGUEIRA,
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -224,12 +204,6 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::SURDEZ,
                 Deficiencias::DEFICIENCIA_AUDITIVA,
                 Deficiencias::SURDOCEGUEIRA,
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -252,13 +226,8 @@ class InepExamValidator implements EducacensoValidator
             RecursosRealizacaoProvas::PROVA_AMPLIADA_FONTE_18,
             [
                 Deficiencias::BAIXA_VISAO,
+                Deficiencias::VISAO_MONOCULAR,
                 Deficiencias::SURDOCEGUEIRA,
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -283,12 +252,6 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::BAIXA_VISAO,
                 Deficiencias::VISAO_MONOCULAR,
                 Deficiencias::SURDOCEGUEIRA,
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -312,17 +275,10 @@ class InepExamValidator implements EducacensoValidator
             [
                 Deficiencias::CEGUEIRA,
                 Deficiencias::BAIXA_VISAO,
-                Deficiencias::VISAO_MONOCULAR,
                 Deficiencias::SURDOCEGUEIRA,
                 Deficiencias::DEFICIENCIA_FISICA,
                 Deficiencias::DEFICIENCIA_INTELECTUAL,
                 Deficiencias::TRANSTORNO_ESPECTRO_AUTISTA,
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
             ],
             [
                 Deficiencias::SURDEZ,
@@ -347,12 +303,6 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::SURDEZ,
                 Deficiencias::DEFICIENCIA_AUDITIVA,
                 Deficiencias::SURDOCEGUEIRA,
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -377,12 +327,6 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::SURDEZ,
                 Deficiencias::DEFICIENCIA_AUDITIVA,
                 Deficiencias::SURDOCEGUEIRA,
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
             ],
             [
                 Deficiencias::CEGUEIRA,
@@ -406,12 +350,6 @@ class InepExamValidator implements EducacensoValidator
             [
                 Deficiencias::CEGUEIRA,
                 Deficiencias::SURDOCEGUEIRA,
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
             ],
             []
         )) {
@@ -433,12 +371,6 @@ class InepExamValidator implements EducacensoValidator
             [
                 Deficiencias::CEGUEIRA,
                 Deficiencias::SURDOCEGUEIRA,
-                Transtornos::DISCALCULIA,
-                Transtornos::DISGRAFIA,
-                Transtornos::DISLALIA,
-                Transtornos::DISLEXIA,
-                Transtornos::TDAH,
-                Transtornos::TPAC,
             ],
             []
         )) {
