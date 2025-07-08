@@ -4,7 +4,6 @@ namespace iEducar\Modules\Educacenso\Validator;
 
 use iEducar\Modules\Educacenso\Model\Deficiencias;
 use iEducar\Modules\Educacenso\Model\RecursosRealizacaoProvas;
-use iEducar\Modules\Educacenso\Model\Transtornos;
 
 class InepExamValidator implements EducacensoValidator
 {
