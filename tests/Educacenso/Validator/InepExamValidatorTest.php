@@ -117,7 +117,7 @@ class InepExamValidatorTest extends TestCase
     public function test_guia_interprete_and_neutral_deficiency_choosed()
     {
         $resources = [RecursosRealizacaoProvas::GUIA_INTERPRETE];
-        $deficiencies = [Deficiencias::DEFICIENCIA_AUDITIVA];
+        $deficiencies = [Deficiencias::SURDOCEGUEIRA];
         $validator = new InepExamValidator($resources, $deficiencies);
 
         $this->assertTrue($validator->isValid());
@@ -126,7 +126,7 @@ class InepExamValidatorTest extends TestCase
     public function test_guia_interprete_and_forbidden_deficiency_choosed()
     {
         $resources = [RecursosRealizacaoProvas::GUIA_INTERPRETE];
-        $deficiencies = [Deficiencias::SURDOCEGUEIRA];
+        $deficiencies = [Deficiencias::CEGUEIRA];
         $validator = new InepExamValidator($resources, $deficiencies);
 
         $this->assertFalse($validator->isValid());

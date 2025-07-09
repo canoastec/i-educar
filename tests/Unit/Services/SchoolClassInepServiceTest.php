@@ -17,10 +17,13 @@ class SchoolClassInepServiceTest extends TestCase
     use DatabaseTransactions;
 
     private SchoolClassInepService $service;
+
     private SchoolClassService $schoolClassService;
 
     private const INEP_CODE_1 = '12345678';
+
     private const INEP_CODE_2 = '87654321';
+
     private const INEP_CODE_3 = '11223344';
 
     protected function setUp(): void
@@ -37,14 +40,14 @@ class SchoolClassInepServiceTest extends TestCase
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
 
         $this->service->delete($schoolClass->cod_turma, Period::MORNING);
 
         $this->assertDatabaseMissing('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
     }
 
@@ -54,14 +57,14 @@ class SchoolClassInepServiceTest extends TestCase
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => null
+            'turma_turno_id' => null,
         ]);
 
         $this->service->delete($schoolClass->cod_turma, null);
 
         $this->assertDatabaseMissing('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => null
+            'turma_turno_id' => null,
         ]);
     }
 
@@ -71,24 +74,24 @@ class SchoolClassInepServiceTest extends TestCase
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::AFTERNOON
+            'turma_turno_id' => Period::AFTERNOON,
         ]);
 
         $this->service->delete($schoolClass->cod_turma, Period::MORNING);
 
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::AFTERNOON
+            'turma_turno_id' => Period::AFTERNOON,
         ]);
 
         $this->assertDatabaseMissing('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
     }
 
@@ -118,7 +121,7 @@ class SchoolClassInepServiceTest extends TestCase
         $inicial = SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_1,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
 
         // Chama store com mesmos parâmetros de busca (cod_turma, turma_turno_id) mas código INEP diferente
@@ -229,7 +232,7 @@ class SchoolClassInepServiceTest extends TestCase
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_1,
-            'turma_turno_id' => null
+            'turma_turno_id' => null,
         ]);
     }
 
@@ -254,7 +257,7 @@ class SchoolClassInepServiceTest extends TestCase
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_1,
-            'turma_turno_id' => Period::FULLTIME
+            'turma_turno_id' => Period::FULLTIME,
         ]);
     }
 
@@ -279,19 +282,19 @@ class SchoolClassInepServiceTest extends TestCase
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_1,
-            'turma_turno_id' => Period::FULLTIME
+            'turma_turno_id' => Period::FULLTIME,
         ]);
 
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_2,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
 
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_3,
-            'turma_turno_id' => Period::AFTERNOON
+            'turma_turno_id' => Period::AFTERNOON,
         ]);
     }
 
@@ -301,7 +304,7 @@ class SchoolClassInepServiceTest extends TestCase
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => null
+            'turma_turno_id' => null,
         ]);
 
         $this->schoolClassService
@@ -318,7 +321,7 @@ class SchoolClassInepServiceTest extends TestCase
 
         $this->assertDatabaseMissing('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => null
+            'turma_turno_id' => null,
         ]);
     }
 
@@ -328,12 +331,12 @@ class SchoolClassInepServiceTest extends TestCase
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::AFTERNOON
+            'turma_turno_id' => Period::AFTERNOON,
         ]);
 
         $this->service->save(
@@ -346,12 +349,12 @@ class SchoolClassInepServiceTest extends TestCase
 
         $this->assertDatabaseMissing('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
 
         $this->assertDatabaseMissing('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::AFTERNOON
+            'turma_turno_id' => Period::AFTERNOON,
         ]);
     }
 
@@ -375,7 +378,7 @@ class SchoolClassInepServiceTest extends TestCase
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_1,
-            'turma_turno_id' => null
+            'turma_turno_id' => null,
         ]);
     }
 
@@ -435,13 +438,13 @@ class SchoolClassInepServiceTest extends TestCase
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_2,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
 
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_3,
-            'turma_turno_id' => Period::AFTERNOON
+            'turma_turno_id' => Period::AFTERNOON,
         ]);
     }
 
@@ -451,17 +454,17 @@ class SchoolClassInepServiceTest extends TestCase
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => null
+            'turma_turno_id' => null,
         ]);
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::AFTERNOON
+            'turma_turno_id' => Period::AFTERNOON,
         ]);
 
         $this->schoolClassService
@@ -486,12 +489,12 @@ class SchoolClassInepServiceTest extends TestCase
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => null
+            'turma_turno_id' => null,
         ]);
 
         SchoolClassInepFactory::new()->create([
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::AFTERNOON
+            'turma_turno_id' => Period::AFTERNOON,
         ]);
 
         $this->service->save(
@@ -508,17 +511,17 @@ class SchoolClassInepServiceTest extends TestCase
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_2,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
 
         $this->assertDatabaseMissing('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => null
+            'turma_turno_id' => null,
         ]);
 
         $this->assertDatabaseMissing('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::AFTERNOON
+            'turma_turno_id' => Period::AFTERNOON,
         ]);
     }
 
@@ -539,7 +542,7 @@ class SchoolClassInepServiceTest extends TestCase
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_1,
-            'turma_turno_id' => null
+            'turma_turno_id' => null,
         ]);
         $this->assertDatabaseRecordCount(1, $schoolClass->cod_turma);
 
@@ -564,19 +567,19 @@ class SchoolClassInepServiceTest extends TestCase
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_1,
-            'turma_turno_id' => Period::FULLTIME
+            'turma_turno_id' => Period::FULLTIME,
         ]);
 
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_2,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
 
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_3,
-            'turma_turno_id' => Period::AFTERNOON
+            'turma_turno_id' => Period::AFTERNOON,
         ]);
 
         // 3. Mudar a turma para turno matutino e salvar novamente
@@ -594,23 +597,23 @@ class SchoolClassInepServiceTest extends TestCase
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_1,
-            'turma_turno_id' => null
+            'turma_turno_id' => null,
         ]);
 
         // Verifica que os registros parciais foram removidos
         $this->assertDatabaseMissing('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::MORNING
+            'turma_turno_id' => Period::MORNING,
         ]);
 
         $this->assertDatabaseMissing('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::AFTERNOON
+            'turma_turno_id' => Period::AFTERNOON,
         ]);
 
         $this->assertDatabaseMissing('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
-            'turma_turno_id' => Period::FULLTIME
+            'turma_turno_id' => Period::FULLTIME,
         ]);
 
         // 4. Alterar o turno da turma para integral novamente
@@ -628,11 +631,11 @@ class SchoolClassInepServiceTest extends TestCase
         $this->assertDatabaseHas('modules.educacenso_cod_turma', [
             'cod_turma' => $schoolClass->cod_turma,
             'cod_turma_inep' => self::INEP_CODE_1,
-            'turma_turno_id' => null // null porque não tem enturmações parciais
+            'turma_turno_id' => null, // null porque não tem enturmações parciais
         ]);
     }
 
-    private function assertDatabaseRecordCount(int $expectedCount, int $codTurma, string $codigoInep = null): void
+    private function assertDatabaseRecordCount(int $expectedCount, int $codTurma, ?string $codigoInep = null): void
     {
         $query = SchoolClassInep::where('cod_turma', $codTurma);
 
