@@ -8,12 +8,7 @@ use iEducar\Modules\SchoolClass\Period;
 
 class SchoolClassInepService
 {
-    /**
-     * @param SchoolClassService $schoolClassService
-     */
-    public function __construct(private  SchoolClassService $schoolClassService)
-    {
-    }
+    public function __construct(private SchoolClassService $schoolClassService) {}
 
     /**
      * @return SchoolClassInep
