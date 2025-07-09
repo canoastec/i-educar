@@ -90,7 +90,7 @@ class Registro20 extends AbstractRegistro
             $record->atividadeComplementar() ? ($record->atividadesComplementares[4] ?? '') : '', // 21 - Código 5 - Tipos de atividades complementares
             $record->atividadeComplementar() ? ($record->atividadesComplementares[5] ?? '') : '', // 22 - Código 6 - Tipos de atividades complementares
             $record->educacaoDistancia() ? '' : $record->localFuncionamentoDiferenciado, // 23 - Local de funcionamento diferenciado
-            $record->classeEspecial ?: 0, // 24 - Turma de Educação Especial (classe especial)
+            $record->curricularEtapaDeEnsino() ? $record->classeEspecial ?: 0 : null, // 24 - Turma de Educação Especial (classe especial)
             $record->etapaAgregada, // 25 - Etapa agregada
             $record->etapaEducacenso, // 26 - Etapa
             in_array($record->etapaEducacenso, [39, 40, 64]) ? $record->codCursoProfissional : '', // 27 - Código do curso
