@@ -61,7 +61,7 @@ class LegacyEvaluationRule extends Model
         'tipo_progressao',
         'tipo_presenca',
         'pontos',
-        'tipo_recuperacao_paralela'
+        'tipo_recuperacao_paralela',
     ];
 
     /**
