@@ -899,6 +899,15 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
+            if ($turma->formacaoAlternancia == 1 && !in_array($turma->etapaEducacenso, [19, 20, 21, 41, 22, 23, 25, 26, 27, 28, 29, 35, 36, 37, 38, 69, 70, 71, 72, 73, 74, 39, 40, 64, 68])) {
+                $mensagem[] = [
+                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que na turma {$nomeTurma} o campo Turma de Formação por Alternância (proposta pedagógica de formação por alternância: tempo-escola e tempo-comunidade) foi preenchido, porém a etapa de ensino informada não é compatível com essa informação.",
+                    'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados gerais > Campo: Turma de Formação por Alternância (proposta pedagógica de formação por alternância: tempo-escola e tempo-comunidade))',
+                    'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
+                    'fail' => true,
+                ];
+            }
+
             if (empty($turma->tipoMediacaoDidaticoPedagogico)) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verifique se o tipo de mediação didático pedagógica da turma {$nomeTurma} foi informado.",
@@ -1139,8 +1148,8 @@ class EducacensoAnaliseController extends ApiCoreController
 
                         break;
                     case App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA:
-                        if (!in_array($turma->etapaEducacenso, [25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 70, 71, 64])) {
-                            $opcoesEtapaEducacenso = '25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 70, 71, 64';
+                        if (!in_array($turma->etapaEducacenso, [25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 68, 67, 70, 71, 73])) {
+                            $opcoesEtapaEducacenso = '25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 68, 67, 70, 71, 73';
                             $valid = false;
                         }
 

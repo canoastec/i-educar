@@ -4,6 +4,7 @@ namespace iEducar\Modules\Educacenso\Validator;
 
 use iEducar\Modules\Educacenso\Model\Deficiencias;
 use iEducar\Modules\Educacenso\Model\RecursosRealizacaoProvas;
+use iEducar\Modules\Educacenso\Model\Transtornos;
 
 class InepExamValidator implements EducacensoValidator
 {
@@ -98,10 +99,18 @@ class InepExamValidator implements EducacensoValidator
             [
                 Deficiencias::CEGUEIRA,
                 Deficiencias::BAIXA_VISAO,
+                Deficiencias::VISAO_MONOCULAR,
                 Deficiencias::SURDOCEGUEIRA,
                 Deficiencias::DEFICIENCIA_FISICA,
                 Deficiencias::DEFICIENCIA_INTELECTUAL,
                 Deficiencias::TRANSTORNO_ESPECTRO_AUTISTA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
+                Transtornos::OUTROS,
             ],
             [
                 Deficiencias::SURDEZ,
@@ -130,6 +139,13 @@ class InepExamValidator implements EducacensoValidator
                 Deficiencias::DEFICIENCIA_FISICA,
                 Deficiencias::DEFICIENCIA_INTELECTUAL,
                 Deficiencias::TRANSTORNO_ESPECTRO_AUTISTA,
+                Transtornos::DISCALCULIA,
+                Transtornos::DISGRAFIA,
+                Transtornos::DISLALIA,
+                Transtornos::DISLEXIA,
+                Transtornos::TDAH,
+                Transtornos::TPAC,
+                Transtornos::OUTROS,
             ],
             [
             ]
