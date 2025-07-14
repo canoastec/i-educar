@@ -81,4 +81,6 @@ class Process
     public const BLOCK_ENROLLMENT = 9999115;
 
     public const STAGE = 9999116;
+
+    public const SITUACAO_FINAL_IMPORT = 9999118;
 }
