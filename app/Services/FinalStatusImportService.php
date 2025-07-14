@@ -260,7 +260,7 @@ class FinalStatusImportService
         $registrations = LegacyRegistration::query()
             ->with([
                 'enrollments' => function ($query) {
-                    $query->active()->orderBy('sequencial', 'DESC');
+                    $query->orderBy('sequencial', 'DESC'); //todas as enturmações
                 },
             ])->whereIn('cod_matricula', $registrationIds)
             ->get()
@@ -412,11 +412,11 @@ class FinalStatusImportService
 
             $enrollment = null;
             if (in_array($statusCode, $this->getStatusRequiringExitDate())) {
-                $enrollments = $registration->lastEnrollment()
-                    ->active()
+                $enrollments = $registration->enrollments()
+                    ->orderBy('sequencial', 'DESC')
                     ->get();
 
-                if ($enrollments->count() > 1) {
+                if ($enrollments->where('ativo', 1)->count() > 1) {
                     $errors[] = [
                         'row' => $rowNumber,
                         'error' => "Matrícula {$registrationId} com situação '{$finalStatus}' possui {$enrollments->count()} enturmações ativas. Não é possível continuar com múltiplas enturmações.",
@@ -428,7 +428,7 @@ class FinalStatusImportService
                 if ($enrollments->count() === 0) {
                     $errors[] = [
                         'row' => $rowNumber,
-                        'error' => "Matrícula {$registrationId} com situação '{$finalStatus}' não possui enturmação ativa. É necessário ter uma enturmação ativa para atualizar a situação.",
+                        'error' => "Matrícula {$registrationId} com situação '{$finalStatus}' não possui enturmação. É necessário ter uma enturmação para atualizar a situação.",
                     ];
 
                     return null;
@@ -606,7 +606,7 @@ class FinalStatusImportService
             if (in_array($statusCode, $this->getStatusRequiringExitDate())) {
                 $enrollments = $registration->enrollments;
 
-                if ($enrollments->count() > 1) {
+                if ($enrollments->where('ativo', 1)->count() > 1) {
                     $errors[] = [
                         'row' => $rowNumber,
                         'error' => "Matrícula {$registrationId} com situação '{$finalStatus}' possui {$enrollments->count()} enturmações ativas. Não é possível continuar com múltiplas enturmações.",
@@ -618,7 +618,7 @@ class FinalStatusImportService
                 if ($enrollments->count() === 0) {
                     $warnings[] = [
                         'row' => $rowNumber,
-                        'warning' => "Matrícula {$registrationId} com situação '{$finalStatus}' não possui enturmação ativa. Apenas a matrícula será atualizada.",
+                        'warning' => "Matrícula {$registrationId} com situação '{$finalStatus}' não possui enturmações. Apenas a matrícula será atualizada.",
                     ];
                 } else {
                     $enrollment = $enrollments->first();
