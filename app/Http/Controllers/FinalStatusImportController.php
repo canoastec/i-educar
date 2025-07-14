@@ -35,10 +35,9 @@ class FinalStatusImportController extends Controller
     public function upload(Request $request)
     {
         $this->authorize('modify', Process::SITUACAO_FINAL_IMPORT);
-
         $validator = Validator::make($request->all(), [
             'file' => 'required|file|mimes:csv|max:20480',
-        ]);
+        ], attributes: ['file' => 'Arquivo']);
 
         if ($validator->fails()) {
             return redirect()->back()
