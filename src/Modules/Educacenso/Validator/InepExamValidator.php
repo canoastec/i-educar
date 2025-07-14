@@ -98,6 +98,7 @@ class InepExamValidator implements EducacensoValidator
             [
                 Deficiencias::CEGUEIRA,
                 Deficiencias::BAIXA_VISAO,
+                Deficiencias::VISAO_MONOCULAR,
                 Deficiencias::SURDOCEGUEIRA,
                 Deficiencias::DEFICIENCIA_FISICA,
                 Deficiencias::DEFICIENCIA_INTELECTUAL,
