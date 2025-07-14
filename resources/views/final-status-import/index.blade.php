@@ -17,9 +17,7 @@
                 <tr>
                     <td class="formmdtd" colspan="2">
                         <p style="margin: 10px 0;">
-                            Esta funcionalidade permite importar um arquivo CSV com as situações finais das matrículas. <br>
-                            O arquivo deve conter pelo menos as colunas:
-                            <br><strong>{{ implode(', ', $expectedColumns) }}</strong>.
+                            Esta funcionalidade permite importar um arquivo CSV com as situações finais das matrículas.
                         </p>
                     </td>
                 </tr>
@@ -27,33 +25,24 @@
                 <tr>
                     <td class="formmdtd" colspan="2">
                         <div style="background-color: #d9edf7; border: 1px solid #bce8f1; color: #31708f; padding: 10px; margin: 10px 0; border-radius: 4px;">
-                            <h6 style="margin: 0 0 10px 0; font-weight: bold;">⚠️ Informações Importantes:</h6>
+                            <p style="margin: 0 0 10px 0; font-weight: bold;">⚠️ Informações Importantes:</p>
                             <ul style="margin: 0; padding-left: 20px;">
+                                <li><strong>O csv deve conter pelo menos as colunas: </strong> {{ implode(', ', $expectedColumns) }}
                                 <li><strong>Data de Saída é obrigatória</strong> para as situações: Deixou de frequentar, Falecido e Transferido</li>
                                 <li><strong>Formato da Data de Saída:</strong> DD/MM/AAAA (ex: 15/12/2023)</li>
                                 <li><strong>Enturmações:</strong> Situações como Transferido, Deixou de frequentar e Falecido exigem uma única enturmação ativa. Múltiplas enturmações impedirão o processamento.</li>
                                 <li><strong>Mapeamento Automático:</strong> O sistema tentará mapear automaticamente as colunas do seu arquivo</li>
-                                <li><strong>Nomes das Situações:</strong> Devem estar exatamente como mostrado abaixo</li>
+                                <li><strong>Situações:</strong>
+                                    @foreach($situations as $situation)
+                                        <small style="background-color: #337ab7; color: white; padding: 3px 6px; border-radius: 3px; margin-right: 2px; line-height: 2.2; white-space: nowrap">
+                                            {{ $situation }}
+                                        </small>
+                                    @endforeach
+                                </li>
                             </ul>
                         </div>
                     </td>
                 </tr>
-
-                <tr>
-                    <td class="formmdtd" colspan="2">
-                        <div style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 4px;">
-                            <h6 style="margin: 0 0 10px 0; font-weight: bold;">Situações Finais Aceitas:</h6>
-                            <div style="display: flex; flex-wrap: wrap; gap: 5px;">
-                                @foreach($situations as $situation)
-                                    <span style="background-color: #337ab7; color: white; padding: 3px 6px; border-radius: 3px; font-size: 11px;">
-                                        {{ $situation }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-
                 <tr>
                     <td class="formmdtd" colspan="2">
                         @php
@@ -73,7 +62,7 @@
                     <td class="formlttd" valign="top">
                         <input type="file" class="geral" name="file" id="file" accept=".csv" required>
                         @if($errors->has('file'))
-                            <br><span style="color: red; font-size: 12px;">{{ $errors->first('file') }}</span>
+                            <br><span style="color: red;">{{ $errors->first('file') }}</span>
                         @endif
                         <br><small style="color: #666;">Formatos aceitos: CSV</small>
                     </td>

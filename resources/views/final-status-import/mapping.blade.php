@@ -16,7 +16,7 @@
                 </tr>
                 <tr>
                     <td class="formmdtd" colspan="2">
-                        <p style="margin: 10px 0;">
+                        <p style="margin: 0;">
                             Selecione qual coluna do seu arquivo corresponde a cada campo necessário:
                         </p>
                     </td>
@@ -24,9 +24,9 @@
 
                 <tr>
                     <td class="formmdtd" colspan="2">
-                        <div style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 10px; margin: 10px 0; border-radius: 4px;">
-                            <h6 style="margin: 0 0 5px 0; font-weight: bold;">✅ Mapeamento Automático Aplicado</h6>
-                            <p style="margin: 0; font-size: 12px;">O sistema detectou automaticamente as colunas do seu arquivo. Verifique se o mapeamento está correto antes de prosseguir.</p>
+                        <div style="background-color: #d4edda; border: 1px solid #c3e6cb; padding: 10px; border-radius: 4px;">
+                            <strong style="margin: 0 0 5px 0; font-weight: bold;">✅ Mapeamento Automático Aplicado</strong>
+                            <p style="margin: 0;">O sistema detectou automaticamente as colunas do seu arquivo. Verifique se o mapeamento está correto antes de prosseguir.</p>
                         </div>
                     </td>
                 </tr>
@@ -49,7 +49,7 @@
                                 <span style="color: red; font-weight: bold;">*</span>
                             @endif
                             @if($field === 'exit_date')
-                                <br><sub style="color: #666; font-size: 10px;">Obrigatória para: Deixou de frequentar, Transferido, Falecido</sub>
+                                <br><sub style="color: #666;">Obrigatória para: Deixou de frequentar, Transferido, Falecido</sub>
                             @endif
                         </td>
                         <td class="formlttd" valign="top">
@@ -65,7 +65,7 @@
                                 @endforeach
                             </select>
                             @if($errors->has("column_mapping.{$field}"))
-                                <br><span style="color: red; font-size: 12px;">{{ $errors->first("column_mapping.{$field}") }}</span>
+                                <br><span style="color: red">{{ $errors->first("column_mapping.{$field}") }}</span>
                             @endif
                         </td>
                     </tr>
@@ -73,7 +73,7 @@
 
                 @if($errors->has('column_mapping'))
                     <tr>
-                        <td colspan="2" style="color: red; padding: 10px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px;">
+                        <td colspan="2" style="padding: 10px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: red;">
                             <strong>Erro de Mapeamento:</strong> {{ $errors->first('column_mapping') }}
                         </td>
                     </tr>
@@ -132,4 +132,3 @@ $j(document).ready(function() {
 });
 </script>
 @endpush
- 
