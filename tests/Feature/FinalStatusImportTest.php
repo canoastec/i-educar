@@ -288,6 +288,11 @@ class FinalStatusImportTest extends TestCase
     public function test_validation_passes_with_valid_data_and_exit_date()
     {
         $registration = LegacyRegistrationFactory::new()->create();
+        
+        LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'ativo' => 1,
+        ]);
 
         $data = [
             ['registration_id' => (string) $registration->cod_matricula, 'final_status' => 'Transferido', 'exit_date' => '15/12/2023'],

@@ -281,16 +281,9 @@ class FinalStatusImportDatabaseTest extends TestCase
 
         $result = $this->service->validateData($data, ['registration_id' => 0, 'final_status' => 1, 'exit_date' => 2]);
 
-        $this->assertTrue($result['success']);
-        $this->assertCount(1, $result['warnings']);
-        $this->assertStringContainsString('não possui enturmação ativa', $result['warnings'][0]['warning']);
-
-        $validatedRow = $result['validated_data'][0];
-        $this->callUpdateDatabase($validatedRow);
-
-        $registration->refresh();
-        $this->assertEquals(4, $registration->aprovado);
-        $this->assertEquals('2023-12-15', $registration->data_cancel->format('Y-m-d'));
+        $this->assertFalse($result['success']);
+        $this->assertCount(1, $result['errors']);
+        $this->assertStringContainsString('não possui enturmação', $result['errors'][0]['error']);
     }
 
     public function test_situation_that_does_not_update_enrollment()
@@ -325,6 +318,149 @@ class FinalStatusImportDatabaseTest extends TestCase
         $this->assertFalse($enrollment->abandono);
         $this->assertFalse($enrollment->falecido);
         $this->assertNull($enrollment->data_exclusao);
+    }
+
+    public function test_deixou_de_frequentar_with_old_active_enrollment_and_existing_abandoned()
+    {
+        $registration = LegacyRegistrationFactory::new()->create(['aprovado' => 3]);
+        
+        // Enturmação antiga ativa (não deve ser mexida)
+        $oldEnrollment = LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'sequencial' => 1,
+            'ativo' => 1,
+            'transferido' => false,
+            'abandono' => false,
+            'falecido' => false,
+        ]);
+        
+        // Enturmação mais recente já com abandono (deve ser atualizada)
+        $recentEnrollment = LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'sequencial' => 2,
+            'ativo' => 0,
+            'transferido' => false,
+            'abandono' => true,
+            'falecido' => false,
+            'data_exclusao' => '2023-10-15',
+        ]);
+
+        $data = [
+            ['registration_id' => (string) $registration->cod_matricula, 'final_status' => 'Deixou de frequentar', 'exit_date' => '20/11/2023'],
+        ];
+
+        $result = $this->service->validateData($data, ['registration_id' => 0, 'final_status' => 1, 'exit_date' => 2]);
+
+        $this->assertTrue($result['success']);
+
+        $validatedRow = $result['validated_data'][0];
+        $this->callUpdateDatabase($validatedRow);
+
+        $registration->refresh();
+        $this->assertEquals(6, $registration->aprovado);
+        $this->assertEquals('2023-11-20', $registration->data_cancel->format('Y-m-d'));
+
+        // Enturmação antiga não deve ser alterada
+        $oldEnrollment->refresh();
+        $this->assertEquals(1, $oldEnrollment->ativo);
+        $this->assertFalse($oldEnrollment->abandono);
+        $this->assertFalse($oldEnrollment->transferido);
+        $this->assertFalse($oldEnrollment->falecido);
+        $this->assertNull($oldEnrollment->data_exclusao);
+
+        // Enturmação recente deve ter apenas a data atualizada
+        $recentEnrollment->refresh();
+        $this->assertTrue($recentEnrollment->abandono);
+        $this->assertFalse($recentEnrollment->transferido);
+        $this->assertFalse($recentEnrollment->falecido);
+        $this->assertEquals(0, $recentEnrollment->ativo);
+        $this->assertEquals('2023-11-20', $recentEnrollment->data_exclusao->format('Y-m-d'));
+        $this->assertEquals($this->user->id, $recentEnrollment->ref_usuario_exc);
+    }
+
+    public function test_deixou_de_frequentar_with_two_existing_abandoned_enrollments()
+    {
+        $registration = LegacyRegistrationFactory::new()->create(['aprovado' => 3]);
+        
+        // Enturmação antiga já com abandono (não deve ser mexida)
+        $oldEnrollment = LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'sequencial' => 1,
+            'ativo' => 0,
+            'transferido' => false,
+            'abandono' => true,
+            'falecido' => false,
+            'data_exclusao' => '2023-09-15',
+        ]);
+        
+        // Enturmação mais recente já com abandono (deve ter data atualizada)
+        $recentEnrollment = LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'sequencial' => 2,
+            'ativo' => 0,
+            'transferido' => false,
+            'abandono' => true,
+            'falecido' => false,
+            'data_exclusao' => '2023-10-15',
+        ]);
+
+        $data = [
+            ['registration_id' => (string) $registration->cod_matricula, 'final_status' => 'Deixou de frequentar', 'exit_date' => '20/11/2023'],
+        ];
+
+        $result = $this->service->validateData($data, ['registration_id' => 0, 'final_status' => 1, 'exit_date' => 2]);
+
+        $this->assertTrue($result['success']);
+
+        $validatedRow = $result['validated_data'][0];
+        $this->callUpdateDatabase($validatedRow);
+
+        $registration->refresh();
+        $this->assertEquals(6, $registration->aprovado);
+        $this->assertEquals('2023-11-20', $registration->data_cancel->format('Y-m-d'));
+
+        // Enturmação antiga não deve ser alterada
+        $oldEnrollment->refresh();
+        $this->assertEquals(0, $oldEnrollment->ativo);
+        $this->assertTrue($oldEnrollment->abandono);
+        $this->assertFalse($oldEnrollment->transferido);
+        $this->assertFalse($oldEnrollment->falecido);
+        $this->assertEquals('2023-09-15', $oldEnrollment->data_exclusao->format('Y-m-d'));
+
+        // Enturmação recente deve ter apenas a data atualizada
+        $recentEnrollment->refresh();
+        $this->assertTrue($recentEnrollment->abandono);
+        $this->assertFalse($recentEnrollment->transferido);
+        $this->assertFalse($recentEnrollment->falecido);
+        $this->assertEquals(0, $recentEnrollment->ativo);
+        $this->assertEquals('2023-11-20', $recentEnrollment->data_exclusao->format('Y-m-d'));
+        $this->assertEquals($this->user->id, $recentEnrollment->ref_usuario_exc);
+    }
+
+    public function test_deixou_de_frequentar_with_transferred_enrollment()
+    {
+        $registration = LegacyRegistrationFactory::new()->create(['aprovado' => 3]);
+        
+        // Enturmação com transferido=true (não deve ser permitido converter para abandono)
+        $enrollment = LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'ativo' => 0,
+            'transferido' => true,
+            'abandono' => false,
+            'falecido' => false,
+            'data_exclusao' => '2023-10-15',
+        ]);
+
+        $data = [
+            ['registration_id' => (string) $registration->cod_matricula, 'final_status' => 'Deixou de frequentar', 'exit_date' => '20/11/2023'],
+        ];
+
+        $result = $this->service->validateData($data, ['registration_id' => 0, 'final_status' => 1, 'exit_date' => 2]);
+
+        // Deve falhar porque não é permitido converter transferido para abandono
+        $this->assertFalse($result['success']);
+        $this->assertCount(1, $result['errors']);
+        $this->assertStringContainsString('status incompatível', $result['errors'][0]['error']);
     }
 
     private function callUpdateDatabase(array $validatedRow): void

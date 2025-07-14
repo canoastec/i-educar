@@ -140,7 +140,25 @@ class FinalStatusImportService
         foreach ($rows as $rowIndex => $row) {
             $rowNumber = $rowIndex + 2;
 
-            $validationResult = $this->validateRow($row, $columnIndexes, $errors, $warnings, $rowNumber);
+            $rowData = $this->extractRowData($row, $columnIndexes);
+            $registrationId = $rowData['registration_id'];
+            $finalStatus = $rowData['final_status'];
+            $exitDate = $rowData['exit_date'];
+
+            $registration = null;
+            if (is_numeric($registrationId) && (int) $registrationId == $registrationId && (int) $registrationId > 0) {
+                $registration = LegacyRegistration::find($registrationId);
+            }
+
+            $validationResult = $this->validateRowWithStrictRules(
+                $registrationId,
+                $finalStatus,
+                $exitDate,
+                $rowNumber,
+                $errors,
+                $warnings,
+                $registration
+            );
 
             if ($validationResult !== null) {
                 $validatedData[] = $validationResult;
@@ -243,6 +261,7 @@ class FinalStatusImportService
         $warnings = [];
         $validatedData = [];
 
+        // Pré-carrega todas as matrículas para otimização
         $registrationIds = [];
         foreach ($data as $row) {
             if (isset($row['registration_id'])) {
@@ -260,7 +279,7 @@ class FinalStatusImportService
         $registrations = LegacyRegistration::query()
             ->with([
                 'enrollments' => function ($query) {
-                    $query->orderBy('sequencial', 'DESC'); //todas as enturmações
+                    $query->orderBy('sequencial', 'DESC');
                 },
             ])->whereIn('cod_matricula', $registrationIds)
             ->get()
@@ -269,25 +288,17 @@ class FinalStatusImportService
         foreach ($data as $rowIndex => $row) {
             $rowNumber = $rowIndex + 1;
 
-            if (isset($row['registration_id'])) {
-                $registrationId = trim($row['registration_id'] ?? '');
-                $finalStatus = trim($row['final_status'] ?? '');
-                $exitDate = trim($row['exit_date'] ?? '');
-            } else {
-                $registrationId = isset($columnMapping['registration_id']) && $columnMapping['registration_id'] >= 0 ?
-                    trim($row[$columnMapping['registration_id']] ?? '') : '';
-                $finalStatus = isset($columnMapping['final_status']) && $columnMapping['final_status'] >= 0 ?
-                    trim($row[$columnMapping['final_status']] ?? '') : '';
-                $exitDate = isset($columnMapping['exit_date']) && $columnMapping['exit_date'] >= 0 ?
-                    trim($row[$columnMapping['exit_date']] ?? '') : '';
-            }
+            $rowData = $this->extractRowData($row, $columnMapping);
+            $registrationId = $rowData['registration_id'];
+            $finalStatus = $rowData['final_status'];
+            $exitDate = $rowData['exit_date'];
 
             $registration = null;
             if (is_numeric($registrationId) && (int) $registrationId == $registrationId && (int) $registrationId > 0) {
                 $registration = $registrations->get((int) $registrationId);
             }
 
-            $validationResult = $this->validateExtractedData(
+            $validationResult = $this->validateRowWithStrictRules(
                 $registrationId,
                 $finalStatus,
                 $exitDate,
@@ -314,42 +325,51 @@ class FinalStatusImportService
         ];
     }
 
-    private function validateRow(array $row, array $columnIndexes, array &$errors, array &$warnings, int $rowNumber): ?array
+    private function extractRowData($row, $columnMapping, $columnIndexes = null): array
+    {
+        if (isset($row['registration_id'])) {
+            // Dados já estão no formato correto (usado pelos testes)
+            return [
+                'registration_id' => trim($row['registration_id'] ?? ''),
+                'final_status' => trim($row['final_status'] ?? ''),
+                'exit_date' => trim($row['exit_date'] ?? ''),
+            ];
+        } else {
+            // Dados vindos do CSV (usado em produção)
+            $registrationId = isset($columnMapping['registration_id']) && $columnMapping['registration_id'] >= 0 ?
+                trim($row[$columnMapping['registration_id']] ?? '') : '';
+            $finalStatus = isset($columnMapping['final_status']) && $columnMapping['final_status'] >= 0 ?
+                trim($row[$columnMapping['final_status']] ?? '') : '';
+            $exitDate = isset($columnMapping['exit_date']) && $columnMapping['exit_date'] >= 0 ?
+                trim($row[$columnMapping['exit_date']] ?? '') : '';
+
+            return [
+                'registration_id' => $registrationId,
+                'final_status' => $finalStatus,
+                'exit_date' => $exitDate,
+            ];
+        }
+    }
+
+    private function validateRowWithStrictRules(string $registrationId, string $finalStatus, string $exitDate, int $rowNumber, array &$errors, array &$warnings, $registration = null): ?array
     {
         try {
-            $registrationId = isset($columnIndexes['registration_id']) ?
-                trim($row[$columnIndexes['registration_id']] ?? '') : '';
-
-            $finalStatus = isset($columnIndexes['final_status']) ?
-                trim($row[$columnIndexes['final_status']] ?? '') : '';
-
-            $exitDate = isset($columnIndexes['exit_date']) ?
-                trim($row[$columnIndexes['exit_date']] ?? '') : '';
-
-            if (strlen(trim($registrationId)) === 0) {
+            // Validação do ID da matrícula
+            $idValidation = $this->isValidRegistrationId($registrationId);
+            if ($idValidation !== true) {
                 $errors[] = [
                     'row' => $rowNumber,
-                    'error' => 'ID da matrícula é obrigatório',
+                    'error' => $idValidation,
                 ];
-
                 return null;
             }
 
-            if (!is_numeric($registrationId) || (int) $registrationId != $registrationId || (int) $registrationId <= 0) {
-                $errors[] = [
-                    'row' => $rowNumber,
-                    'error' => "Matrícula ID tem valor inválido para matrícula: '{$registrationId}'",
-                ];
-
-                return null;
-            }
-
+            // Validação da situação final
             if (empty($finalStatus)) {
                 $errors[] = [
                     'row' => $rowNumber,
                     'error' => 'Situação final é obrigatória',
                 ];
-
                 return null;
             }
 
@@ -361,30 +381,30 @@ class FinalStatusImportService
                     'row' => $rowNumber,
                     'error' => "Matrícula {$registrationId} com situação final inválida: '{$finalStatus}'",
                 ];
-
                 return null;
             }
 
-            if (in_array($statusCode, $this->getStatusRequiringExitDate()) && empty($exitDate)) {
+            // Validação da data de saída
+            $exitDateValidation = $this->validateExitDate($exitDate, $registrationId, $rowNumber, $statusCode, $finalStatus);
+            if ($exitDateValidation !== true) {
                 $errors[] = [
                     'row' => $rowNumber,
-                    'error' => "Matrícula {$registrationId} com situação '{$finalStatus}': Data de saída é obrigatória",
+                    'error' => $exitDateValidation,
                 ];
-
                 return null;
             }
+            $processedExitDate = !empty($exitDate) ? Carbon::createFromFormat('d/m/Y', $exitDate)->format('Y-m-d') : null;
 
-            $registration = LegacyRegistration::find($registrationId);
-
+            // Validação da matrícula
             if (!$registration) {
                 $errors[] = [
                     'row' => $rowNumber,
                     'error' => "Matrícula não encontrada: {$registrationId}",
                 ];
-
                 return null;
             }
 
+            // Warning para matrícula inativa
             if (!$registration->ativo) {
                 $warnings[] = [
                     'row' => $rowNumber,
@@ -392,49 +412,42 @@ class FinalStatusImportService
                 ];
             }
 
-            $processedExitDate = null;
-            if (!empty($exitDate)) {
-                $validator = Validator::make([
-                    'exit_date' => $exitDate,
-                ], [
-                    'exit_date' => ['date_format:d/m/Y'],
-                ]);
-                if ($validator->fails()) {
-                    $errors[] = [
-                        'row' => $rowNumber,
-                        'error' => "Matrícula {$registrationId} com data de saída inválida: '{$exitDate}'. Use formato DD/MM/AAAA",
-                    ];
-
-                    return null;
-                }
-                $processedExitDate = Carbon::createFromFormat('d/m/Y', $exitDate)->format('Y-m-d');
-            }
-
             $enrollment = null;
             if (in_array($statusCode, $this->getStatusRequiringExitDate())) {
-                $enrollments = $registration->enrollments()
-                    ->orderBy('sequencial', 'DESC')
-                    ->get();
-
-                if ($enrollments->where('ativo', 1)->count() > 1) {
+                $enrollments = $registration->enrollments;
+                
+                // Verifica múltiplas enturmações ativas
+                $activeCount = $enrollments->where('ativo', 1)->count();
+                if ($activeCount > 1) {
                     $errors[] = [
                         'row' => $rowNumber,
-                        'error' => "Matrícula {$registrationId} com situação '{$finalStatus}' possui {$enrollments->count()} enturmações ativas. Não é possível continuar com múltiplas enturmações.",
+                        'error' => "Matrícula {$registrationId} possui {$activeCount} enturmações ativas. Não é possível continuar com múltiplas enturmações.",
                     ];
-
                     return null;
                 }
 
+                // Verifica se existe pelo menos uma enturmação
                 if ($enrollments->count() === 0) {
                     $errors[] = [
                         'row' => $rowNumber,
                         'error' => "Matrícula {$registrationId} com situação '{$finalStatus}' não possui enturmação. É necessário ter uma enturmação para atualizar a situação.",
                     ];
-
                     return null;
-                } else {
-                    $enrollment = $enrollments->first();
                 }
+
+                // Pega a enturmação mais recente
+                $latestEnrollment = $enrollments->first();
+                
+                // Valida se a enturmação pode ser atualizada
+                if (!$this->canUpdateEnrollment($latestEnrollment, $statusCode)) {
+                    $errors[] = [
+                        'row' => $rowNumber,
+                        'error' => "Matrícula {$registrationId} com situação '{$finalStatus}' possui enturmação inativa com status incompatível. Não é possível atualizar.",
+                    ];
+                    return null;
+                }
+                
+                $enrollment = $latestEnrollment;
             }
 
             return [
@@ -448,20 +461,51 @@ class FinalStatusImportService
             ];
 
         } catch (\Exception $e) {
-            if (strpos($e->getMessage(), 'sintaxe de entrada é inválida para tipo integer') !== false) {
-                $errors[] = [
-                    'row' => $rowNumber,
-                    'error' => "Matrícula ID tem valor inválido para matrícula: '{$registrationId}'",
-                ];
-            } else {
-                $errors[] = [
-                    'row' => $rowNumber,
-                    'error' => 'Erro ao validar linha: ' . $e->getMessage(),
-                ];
-            }
-
+            $msg = strpos($e->getMessage(), 'sintaxe de entrada é inválida para tipo integer') !== false
+                ? "Matrícula ID tem valor inválido para matrícula: '{$registrationId}'"
+                : 'Erro ao validar linha: ' . $e->getMessage();
+            $errors[] = [
+                'row' => $rowNumber,
+                'error' => $msg,
+            ];
             return null;
         }
+    }
+
+    /**
+     * Valida o ID da matrícula. Retorna true se válido, ou mensagem de erro se inválido.
+     */
+    private function isValidRegistrationId($registrationId)
+    {
+        $trimmed = trim($registrationId);
+        if ($trimmed === '' || $trimmed === null) {
+            return 'ID da matrícula é obrigatório';
+        }
+        if (!is_numeric($trimmed) || (int)$trimmed != $trimmed || (int)$trimmed <= 0) {
+            return "Matrícula ID tem valor inválido para matrícula: '{$registrationId}'";
+        }
+        return true;
+    }
+
+    /**
+     * Valida a data de saída. Retorna true se válida, ou mensagem de erro se inválida.
+     */
+    private function validateExitDate($exitDate, $registrationId, $rowNumber, $statusCode, $finalStatus)
+    {
+        if (in_array($statusCode, $this->getStatusRequiringExitDate()) && empty($exitDate)) {
+            return "Matrícula {$registrationId} com situação '{$finalStatus}': Data de saída é obrigatória";
+        }
+        if (!empty($exitDate)) {
+            $validator = Validator::make([
+                'exit_date' => $exitDate,
+            ], [
+                'exit_date' => ['date_format:d/m/Y'],
+            ]);
+            if ($validator->fails()) {
+                return "Matrícula {$registrationId} com data de saída inválida: '{$exitDate}'. Use formato DD/MM/AAAA";
+            }
+        }
+        return true;
     }
 
     private function updateDatabase(array $validatedRow, $user): void
@@ -515,136 +559,6 @@ class FinalStatusImportService
         }
     }
 
-    private function validateExtractedData(string $registrationId, string $finalStatus, string $exitDate, int $rowNumber, array &$errors, array &$warnings, $registration = null): ?array
-    {
-        try {
-            if (strlen(trim($registrationId)) === 0) {
-                $errors[] = [
-                    'row' => $rowNumber,
-                    'error' => 'ID da matrícula é obrigatório',
-                ];
-
-                return null;
-            }
-
-            if (!is_numeric($registrationId) || (int) $registrationId != $registrationId || (int) $registrationId <= 0) {
-                $errors[] = [
-                    'row' => $rowNumber,
-                    'error' => "Matrícula ID tem valor inválido para matrícula: '{$registrationId}'",
-                ];
-
-                return null;
-            }
-
-            if (empty($finalStatus)) {
-                $errors[] = [
-                    'row' => $rowNumber,
-                    'error' => 'Situação final é obrigatória',
-                ];
-
-                return null;
-            }
-
-            $normalizedFinalStatus = strtolower(trim($finalStatus));
-            $statusCode = $this->getStatusMapping()[$normalizedFinalStatus] ?? null;
-
-            if ($statusCode === null) {
-                $errors[] = [
-                    'row' => $rowNumber,
-                    'error' => "Matrícula {$registrationId} com situação final inválida: '{$finalStatus}'",
-                ];
-
-                return null;
-            }
-
-            if (in_array($statusCode, $this->getStatusRequiringExitDate())) {
-                if (empty($exitDate)) {
-                    $errors[] = [
-                        'row' => $rowNumber,
-                        'error' => "Matrícula {$registrationId} com situação '{$finalStatus}': Data de saída é obrigatória",
-                    ];
-
-                    return null;
-                }
-            }
-
-            if (!$registration) {
-                $errors[] = [
-                    'row' => $rowNumber,
-                    'error' => "Matrícula não encontrada: {$registrationId}",
-                ];
-
-                return null;
-            }
-
-            if (!$registration->ativo) {
-                $warnings[] = [
-                    'row' => $rowNumber,
-                    'warning' => "Matrícula {$registrationId} está inativa, mas será atualizada",
-                ];
-            }
-
-            $processedExitDate = null;
-            if (!empty($exitDate)) {
-                $validator = Validator::make([
-                    'exit_date' => $exitDate,
-                ], [
-                    'exit_date' => ['date_format:d/m/Y'],
-                ]);
-                if ($validator->fails()) {
-                    $errors[] = [
-                        'row' => $rowNumber,
-                        'error' => "Matrícula {$registrationId} com data de saída inválida: '{$exitDate}'. Use formato DD/MM/AAAA",
-                    ];
-
-                    return null;
-                }
-                $processedExitDate = Carbon::createFromFormat('d/m/Y', $exitDate)->format('Y-m-d');
-            }
-
-            $enrollment = null;
-            if (in_array($statusCode, $this->getStatusRequiringExitDate())) {
-                $enrollments = $registration->enrollments;
-
-                if ($enrollments->where('ativo', 1)->count() > 1) {
-                    $errors[] = [
-                        'row' => $rowNumber,
-                        'error' => "Matrícula {$registrationId} com situação '{$finalStatus}' possui {$enrollments->count()} enturmações ativas. Não é possível continuar com múltiplas enturmações.",
-                    ];
-
-                    return null;
-                }
-
-                if ($enrollments->count() === 0) {
-                    $warnings[] = [
-                        'row' => $rowNumber,
-                        'warning' => "Matrícula {$registrationId} com situação '{$finalStatus}' não possui enturmações. Apenas a matrícula será atualizada.",
-                    ];
-                } else {
-                    $enrollment = $enrollments->first();
-                }
-            }
-
-            return [
-                'row_number' => $rowNumber,
-                'registration_id' => $registrationId,
-                'registration' => $registration,
-                'normalized_final_status' => $normalizedFinalStatus,
-                'status_code' => $statusCode,
-                'processed_exit_date' => $processedExitDate,
-                'enrollment' => $enrollment,
-            ];
-
-        } catch (\Exception $e) {
-            $errors[] = [
-                'row' => $rowNumber,
-                'error' => 'Erro ao validar linha: ' . $e->getMessage(),
-            ];
-
-            return null;
-        }
-    }
-
     private function processDisciplineScoreSituation(LegacyRegistration $registration, int $newStatus): void
     {
         $registrationScoreId = $registration->registrationStores()->value('id');
@@ -652,5 +566,42 @@ class FinalStatusImportService
         if ($registrationScoreId) {
             (new Avaliacao_Model_NotaComponenteMediaDataMapper)->updateSituation($registrationScoreId, $newStatus);
         }
+    }
+
+    private function canUpdateEnrollment($enrollment, int $newStatusCode): bool
+    {
+        // Se ativa, sempre pode ser atualizada
+        if ($enrollment->ativo) {
+            return true;
+        }
+
+        // Não pode ser reclassificado ou remanejado
+        if (!empty($enrollment->reclassificado) || !empty($enrollment->remanejado)) {
+            return false;
+        }
+
+        // Se inativa, só pode se não tiver status ou se for o mesmo status
+        $currentStatus = $this->getEnrollmentCurrentStatus($enrollment);
+        return $currentStatus === null || $currentStatus === $newStatusCode;
+    }
+
+    /**
+     * Obtém o status atual da enturmação baseado nos campos booleanos
+     */
+    private function getEnrollmentCurrentStatus($enrollment): ?int
+    {
+        if ($enrollment->abandono) {
+            return RegistrationStatus::ABANDONED;
+        }
+
+        if ($enrollment->transferido) {
+            return RegistrationStatus::TRANSFERRED;
+        }
+
+        if ($enrollment->falecido) {
+            return RegistrationStatus::DECEASED;
+        }
+
+        return null;
     }
 }

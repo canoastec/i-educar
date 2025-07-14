@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\LoginFirstUser;
 use Tests\TestCase;
+use Database\Factories\LegacyEnrollmentFactory;
 
 class FinalStatusImportRealDataTest extends TestCase
 {
@@ -117,6 +118,11 @@ class FinalStatusImportRealDataTest extends TestCase
     public function test_validates_transferido_with_valid_exit_date()
     {
         $registration = LegacyRegistrationFactory::new()->create();
+        
+        LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'ativo' => 1,
+        ]);
 
         $testData = [
             ['registration_id' => (string) $registration->cod_matricula, 'final_status' => 'Transferido', 'exit_date' => '15/12/2023'],
@@ -155,6 +161,11 @@ class FinalStatusImportRealDataTest extends TestCase
     public function test_accepts_valid_date_formats()
     {
         $registration = LegacyRegistrationFactory::new()->create();
+        
+        LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'ativo' => 1,
+        ]);
 
         $validDates = [
             '15/12/2023',
@@ -202,6 +213,11 @@ class FinalStatusImportRealDataTest extends TestCase
     public function test_accepts_all_valid_situation_types()
     {
         $registration = LegacyRegistrationFactory::new()->create();
+        
+        LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'ativo' => 1,
+        ]);
 
         $validSituations = [
             'Aprovado',

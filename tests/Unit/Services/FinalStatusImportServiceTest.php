@@ -233,6 +233,11 @@ class FinalStatusImportServiceTest extends TestCase
     public function test_validates_valid_date_format()
     {
         $registration = LegacyRegistrationFactory::new()->create();
+        
+        LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'ativo' => 1,
+        ]);
 
         $data = [
             ['registration_id' => (string) $registration->cod_matricula, 'final_status' => 'Transferido', 'exit_date' => '15/12/2023'],
@@ -396,6 +401,11 @@ class FinalStatusImportServiceTest extends TestCase
     public function test_deixou_de_frequentar_maps_to_abandono_code()
     {
         $registration = LegacyRegistrationFactory::new()->create();
+        
+        LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'ativo' => 1,
+        ]);
 
         $data = [
             ['registration_id' => (string) $registration->cod_matricula, 'final_status' => 'Deixou de frequentar', 'exit_date' => '15/12/2023'],
