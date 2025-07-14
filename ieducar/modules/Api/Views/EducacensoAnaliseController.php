@@ -1148,8 +1148,8 @@ class EducacensoAnaliseController extends ApiCoreController
 
                         break;
                     case App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA:
-                        if (!in_array($turma->etapaEducacenso, [25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 70, 71, 64])) {
-                            $opcoesEtapaEducacenso = '25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 70, 71, 64';
+                        if (!in_array($turma->etapaEducacenso, [25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 68, 67, 70, 71, 73])) {
+                            $opcoesEtapaEducacenso = '25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 68, 67, 70, 71, 73';
                             $valid = false;
                         }
 
