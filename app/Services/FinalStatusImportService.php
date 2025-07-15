@@ -415,13 +415,13 @@ class FinalStatusImportService
             $enrollment = null;
             if (in_array($statusCode, $this->getStatusRequiringExitDate())) {
                 $enrollments = $registration->enrollments;
-                
+
                 // Verifica múltiplas enturmações ativas
                 $activeCount = $enrollments->where('ativo', 1)->count();
                 if ($activeCount > 1) {
                     $errors[] = [
                         'row' => $rowNumber,
-                        'error' => "Matrícula {$registrationId} possui {$activeCount} enturmações ativas. Não é possível continuar com múltiplas enturmações.",
+                        'error' => "Matrícula {$registrationId} possui {$activeCount} enturmações ativas. Não é possível alterar a situação final para '{$finalStatus}' enquanto houver mais de uma enturmação ativa.",
                     ];
                     return null;
                 }
@@ -437,7 +437,7 @@ class FinalStatusImportService
 
                 // Pega a enturmação mais recente
                 $latestEnrollment = $enrollments->first();
-                
+
                 // Valida se a enturmação pode ser atualizada
                 if (!$this->canUpdateEnrollment($latestEnrollment, $statusCode)) {
                     $errors[] = [
@@ -446,7 +446,7 @@ class FinalStatusImportService
                     ];
                     return null;
                 }
-                
+
                 $enrollment = $latestEnrollment;
             }
 
