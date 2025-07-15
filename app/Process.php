@@ -82,5 +82,5 @@ class Process
 
     public const STAGE = 9999116;
 
-    public const SITUACAO_FINAL_IMPORT = 9999118;
+    public const FINAL_STATUS_IMPORT = 9999118;
 }

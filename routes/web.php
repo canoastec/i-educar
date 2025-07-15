@@ -138,12 +138,12 @@ Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.
     Route::get('/avisos', 'AnnouncementUserController@show')->withoutMiddleware(AnnouncementMiddleware::class)->name('announcement.user.show');
     Route::post('/avisos', 'AnnouncementUserController@confirm')->withoutMiddleware(AnnouncementMiddleware::class)->name('announcement.user.confirm');
 
-    Route::get('/importacao-situacao-final', 'FinalStatusImportController@index')->middleware('can:view:' . Process::SITUACAO_FINAL_IMPORT)->name('situacao-final-import.index');
-    Route::post('/importacao-situacao-final/upload', 'FinalStatusImportController@upload')->middleware('can:modify:' . Process::SITUACAO_FINAL_IMPORT)->name('situacao-final-import.upload');
-    Route::get('/importacao-situacao-final/analise', 'FinalStatusImportController@analysis')->middleware('can:view:' . Process::SITUACAO_FINAL_IMPORT)->name('situacao-final-import.analysis');
-    Route::get('/importacao-situacao-final/mapeamento', 'FinalStatusImportController@showMapping')->middleware('can:modify:' . Process::SITUACAO_FINAL_IMPORT)->name('situacao-final-import.mapping');
-    Route::post('/importacao-situacao-final/importar', 'FinalStatusImportController@import')->middleware('can:modify:' . Process::SITUACAO_FINAL_IMPORT)->name('situacao-final-import.import');
-    Route::get('/importacao-situacao-final/status', 'FinalStatusImportController@status')->middleware('can:view:' . Process::SITUACAO_FINAL_IMPORT)->name('situacao-final-import.status');
+    Route::get('/importacao-situacao-final', 'FinalStatusImportController@index')->middleware('can:view:' . Process::FINAL_STATUS_IMPORT)->name('final-status-import.index');
+    Route::post('/importacao-situacao-final/upload', 'FinalStatusImportController@upload')->middleware('can:modify:' . Process::FINAL_STATUS_IMPORT)->name('final-status-import.upload');
+    Route::get('/importacao-situacao-final/analise', 'FinalStatusImportController@analysis')->middleware('can:view:' . Process::FINAL_STATUS_IMPORT)->name('final-status-import.analysis');
+    Route::get('/importacao-situacao-final/mapeamento', 'FinalStatusImportController@showMapping')->middleware('can:modify:' . Process::FINAL_STATUS_IMPORT)->name('final-status-import.mapping');
+    Route::post('/importacao-situacao-final/importar', 'FinalStatusImportController@import')->middleware('can:modify:' . Process::FINAL_STATUS_IMPORT)->name('final-status-import.import');
+    Route::get('/importacao-situacao-final/status', 'FinalStatusImportController@status')->middleware('can:view:' . Process::FINAL_STATUS_IMPORT)->name('final-status-import.status');
 
     Route::get('/atualiza-data-entrada', 'UpdateRegistrationDateController@index')->middleware('can:view:' . Process::UPDATE_REGISTRATION_DATE)->name('update-registration-date.index');
     Route::post('/atualiza-data-entrada', 'UpdateRegistrationDateController@updateStatus')->middleware('can:modify:' . Process::UPDATE_REGISTRATION_DATE)->name('update-registration-date.update-date');

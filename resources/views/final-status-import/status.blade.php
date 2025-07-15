@@ -82,7 +82,7 @@
                             </div>
                         @endif
                         <div style="margin-top: 20px">
-                            <a href="{{ route('situacao-final-import.index') }}" class="btn-green">
+                            <a href="{{ route('final-status-import.index') }}" class="btn-green">
                                 <i class="fa fa-refresh"></i> Nova Importação
                             </a>
                         </div>

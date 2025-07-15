@@ -5,7 +5,7 @@
 @endpush
 
 @section('content')
-    <form id="formcadastro" action="{{ route('situacao-final-import.upload') }}" method="post" enctype="multipart/form-data">
+    <form id="formcadastro" action="{{ route('final-status-import.upload') }}" method="post" enctype="multipart/form-data">
         @csrf
         <table class="tablecadastro" width="100%" border="0" cellpadding="2" cellspacing="0" role="presentation">
             <tbody>

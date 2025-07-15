@@ -18,7 +18,7 @@ class FinalStatusImportController extends Controller
 
     public function index()
     {
-        $this->menu(Process::SITUACAO_FINAL_IMPORT);
+        $this->menu(Process::FINAL_STATUS_IMPORT);
         $this->breadcrumb('Importação de Situação Final', [
             url('/intranet/educar_configuracoes_index.php') => 'Configurações',
         ]);
@@ -34,7 +34,7 @@ class FinalStatusImportController extends Controller
 
     public function upload(Request $request)
     {
-        $this->authorize('modify', Process::SITUACAO_FINAL_IMPORT);
+        $this->authorize('modify', Process::FINAL_STATUS_IMPORT);
         $validator = Validator::make($request->all(), [
             'file' => 'required|file|mimes:csv|max:20480',
         ], attributes: ['file' => 'Arquivo']);
@@ -56,7 +56,7 @@ class FinalStatusImportController extends Controller
                 'import_original_name' => $file->getClientOriginalName(),
             ]);
 
-            return redirect()->route('situacao-final-import.analysis')
+            return redirect()->route('final-status-import.analysis')
                 ->with('success', 'Arquivo enviado e analisado com sucesso!');
 
         } catch (\Exception $e) {
@@ -68,17 +68,17 @@ class FinalStatusImportController extends Controller
 
     public function analysis()
     {
-        $this->authorize('view', Process::SITUACAO_FINAL_IMPORT);
+        $this->authorize('view', Process::FINAL_STATUS_IMPORT);
 
         if (!session('import_analysis')) {
-            return redirect()->route('situacao-final-import.index')
+            return redirect()->route('final-status-import.index')
                 ->withErrors(['error' => 'Nenhum arquivo foi enviado. Por favor, faça o upload novamente.']);
         }
 
-        $this->menu(Process::SITUACAO_FINAL_IMPORT);
+        $this->menu(Process::FINAL_STATUS_IMPORT);
         $this->breadcrumb('Análise do Arquivo', [
             url('/intranet/educar_configuracoes_index.php') => 'Configurações',
-            route('situacao-final-import.index') => 'Importação de Situação Final',
+            route('final-status-import.index') => 'Importação de Situação Final',
         ]);
 
         $analysis = session('import_analysis');
@@ -88,17 +88,17 @@ class FinalStatusImportController extends Controller
 
     public function showMapping()
     {
-        $this->authorize('modify', Process::SITUACAO_FINAL_IMPORT);
+        $this->authorize('modify', Process::FINAL_STATUS_IMPORT);
 
         if (!session('import_analysis')) {
-            return redirect()->route('situacao-final-import.index')
+            return redirect()->route('final-status-import.index')
                 ->withErrors(['error' => 'Sessão expirada. Por favor, faça o upload do arquivo novamente.']);
         }
 
-        $this->menu(Process::SITUACAO_FINAL_IMPORT);
+        $this->menu(Process::FINAL_STATUS_IMPORT);
         $this->breadcrumb('Mapeamento de Colunas', [
             url('/intranet/educar_configuracoes_index.php') => 'Configurações',
-            route('situacao-final-import.index') => 'Importação de Situação Final',
+            route('final-status-import.index') => 'Importação de Situação Final',
         ]);
 
         $analysis = session('import_analysis');
@@ -112,10 +112,10 @@ class FinalStatusImportController extends Controller
 
     public function import(Request $request)
     {
-        $this->authorize('modify', Process::SITUACAO_FINAL_IMPORT);
+        $this->authorize('modify', Process::FINAL_STATUS_IMPORT);
 
         if (!session('import_analysis')) {
-            return redirect()->route('situacao-final-import.index')
+            return redirect()->route('final-status-import.index')
                 ->withErrors(['error' => 'Sessão expirada. Por favor, faça o upload do arquivo novamente.']);
         }
 
@@ -153,7 +153,7 @@ class FinalStatusImportController extends Controller
 
             session(['import_result' => $result]);
 
-            return redirect()->route('situacao-final-import.status')
+            return redirect()->route('final-status-import.status')
                 ->with('success', 'Importação concluída!');
 
         } catch (\Exception $e) {
@@ -165,17 +165,17 @@ class FinalStatusImportController extends Controller
 
     public function status()
     {
-        $this->authorize('view', Process::SITUACAO_FINAL_IMPORT);
+        $this->authorize('view', Process::FINAL_STATUS_IMPORT);
 
         if (!session('import_result')) {
-            return redirect()->route('situacao-final-import.index')
+            return redirect()->route('final-status-import.index')
                 ->withErrors(['error' => 'Nenhuma importação foi processada.']);
         }
 
-        $this->menu(Process::SITUACAO_FINAL_IMPORT);
+        $this->menu(Process::FINAL_STATUS_IMPORT);
         $this->breadcrumb('Status da Importação', [
             url('/intranet/educar_configuracoes_index.php') => 'Configurações',
-            route('situacao-final-import.index') => 'Importação de Situação Final',
+            route('final-status-import.index') => 'Importação de Situação Final',
         ]);
 
         $result = session('import_result');

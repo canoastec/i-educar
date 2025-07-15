@@ -65,10 +65,10 @@
         <div class="separator"></div>
 
         <div style="text-align: center; margin-top: 20px; margin-bottom: 20px">
-            <a href="{{ route('situacao-final-import.mapping') }}" class="btn-green">
+            <a href="{{ route('final-status-import.mapping') }}" class="btn-green">
                 <i class="fa fa-arrow-right"></i> Continuar para Mapeamento
             </a>
-            <a href="{{ route('situacao-final-import.index') }}" class="btn"
+            <a href="{{ route('final-status-import.index') }}" class="btn"
                style="margin-left: 10px; background-color: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px">
                 <i class="fa fa-refresh"></i> Enviar Outro Arquivo
             </a>

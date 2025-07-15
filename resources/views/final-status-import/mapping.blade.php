@@ -5,7 +5,7 @@
 @endpush
 
 @section('content')
-    <form id="formcadastro" action="{{ route('situacao-final-import.import') }}" method="post">
+    <form id="formcadastro" action="{{ route('final-status-import.import') }}" method="post">
         @csrf
         <table class="tablecadastro" width="100%" border="0" cellpadding="2" cellspacing="0" role="presentation">
             <tbody>
@@ -101,7 +101,7 @@
             <button id="btn_iniciar" type="submit" class="btn-green">
                 <i class="fa fa-upload"></i> Iniciar Importação
             </button>
-            <a href="{{ route('situacao-final-import.analysis') }}" class="btn" style="margin-left: 10px; background-color: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
+            <a href="{{ route('final-status-import.analysis') }}" class="btn" style="margin-left: 10px; background-color: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
                 <i class="fa fa-arrow-left"></i> Voltar
             </a>
         </div>
