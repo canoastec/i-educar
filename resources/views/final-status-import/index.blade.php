@@ -28,9 +28,9 @@
                             <p style="margin: 0 0 10px 0; font-weight: bold;">⚠️ Informações Importantes:</p>
                             <ul style="margin: 0; padding-left: 20px;">
                                 <li><strong>O csv deve conter pelo menos as colunas: </strong> {{ implode(', ', $expectedColumns) }}
-                                <li><strong>Data de Saída é obrigatória</strong> para as situações: Deixou de frequentar, Falecido e Transferido</li>
+                                <li><strong>Data de Saída é obrigatória</strong> para as situações: Deixou de frequentar, Falecido, Transferido e Reclassificado</li>
                                 <li><strong>Formato da Data de Saída:</strong> DD/MM/AAAA (ex: 15/12/2023)</li>
-                                <li><strong>Enturmações:</strong> Situações como Transferido, Deixou de frequentar e Falecido exigem uma única enturmação ativa. Múltiplas enturmações impedirão o processamento.</li>
+                                <li><strong>Enturmações:</strong> Situações como Transferido, Deixou de frequentar, Falecido e Reclassificado exigem uma única enturmação ativa. Múltiplas enturmações impedirão o processamento.</li>
                                 <li><strong>Mapeamento Automático:</strong> O sistema tentará mapear automaticamente as colunas do seu arquivo</li>
                                 <li><strong>Situações:</strong>
                                     @foreach($situations as $situation)
