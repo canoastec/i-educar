@@ -176,7 +176,7 @@ class FinalStatusImportService
             ];
         }
 
-        $batchSize = 50;
+        $batchSize = 500;
         $batches = array_chunk($validatedData, $batchSize);
 
         foreach ($batches as $batch) {
