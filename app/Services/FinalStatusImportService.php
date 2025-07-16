@@ -51,6 +51,15 @@ class FinalStatusImportService
         return $this->requiredColumns;
     }
 
+    public function getRequiredColumnsTranslations(): array
+    {
+        $translations = [];
+        foreach ($this->requiredColumns as $column) {
+            $translations[$column] = $this->expectedColumns[$column] ?? $column;
+        }
+        return $translations;
+    }
+
     public function getStatusRequiringExitDate(): array
     {
         return [

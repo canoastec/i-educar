@@ -49,11 +49,11 @@
                                 <span style="color: red; font-weight: bold;">*</span>
                             @endif
                             @if($field === 'exit_date')
-                                <br><sub style="color: #666;">Obrigatória para: Deixou de frequentar, Transferido, Falecido</sub>
+                                <br><sub style="color: #666;">Obrigatória para: Deixou de frequentar, Transferido, Falecido e Reclassificado</sub>
                             @endif
                         </td>
                         <td class="formlttd" valign="top">
-                            <select name="column_mapping[{{ $field }}]" class="geral" style="width: 300px;">
+                            <select required name="column_mapping[{{ $field }}]" class="geral" style="width: 300px;">
                                 <option value="">-- Selecione --</option>
                                 @foreach($headers as $index => $header)
                                     @php
