@@ -69,7 +69,8 @@ class FinalStatusImportTest extends TestCase
         $this->assertContains(App_Model_MatriculaSituacao::ABANDONO, $statusRequiringExitDate);
         $this->assertContains(App_Model_MatriculaSituacao::TRANSFERIDO, $statusRequiringExitDate);
         $this->assertContains(App_Model_MatriculaSituacao::FALECIDO, $statusRequiringExitDate);
-        $this->assertCount(3, $statusRequiringExitDate);
+        $this->assertContains(App_Model_MatriculaSituacao::RECLASSIFICADO, $statusRequiringExitDate);
+        $this->assertCount(4, $statusRequiringExitDate);
     }
 
     public function test_service_validates_situation_names()
@@ -268,7 +269,7 @@ class FinalStatusImportTest extends TestCase
         $this->assertFalse($result['success']);
         $this->assertCount(1, $result['errors']);
         $this->assertStringContainsString('possui 2 enturmações ativas', $result['errors'][0]['error']);
-        $this->assertStringContainsString('Não é possível continuar com múltiplas enturmações', $result['errors'][0]['error']);
+        $this->assertStringContainsString(' enquanto houver mais de uma enturmação ativa', $result['errors'][0]['error']);
     }
 
     public function test_validation_passes_with_valid_data()
@@ -288,7 +289,7 @@ class FinalStatusImportTest extends TestCase
     public function test_validation_passes_with_valid_data_and_exit_date()
     {
         $registration = LegacyRegistrationFactory::new()->create();
-        
+
         LegacyEnrollmentFactory::new()->create([
             'ref_cod_matricula' => $registration->cod_matricula,
             'ativo' => 1,

@@ -53,7 +53,12 @@ class FinalStatusImportService
 
     public function getStatusRequiringExitDate(): array
     {
-        return RegistrationStatus::getStatusInactive();
+        return [
+            RegistrationStatus::ABANDONED,
+            RegistrationStatus::TRANSFERRED,
+            RegistrationStatus::DECEASED,
+            RegistrationStatus::RECLASSIFIED,
+        ];
     }
 
     public function analyzeUploadedFile($uploadedFile): array
@@ -543,6 +548,9 @@ class FinalStatusImportService
                 case RegistrationStatus::DECEASED:
                     $enrollment->falecido = true;
                     break;
+                case RegistrationStatus::RECLASSIFIED:
+                    $enrollment->reclassificado = true;
+                    break;
             }
 
             $enrollment->ativo = 0;
@@ -575,8 +583,8 @@ class FinalStatusImportService
             return true;
         }
 
-        // Não pode ser reclassificado ou remanejado
-        if (!empty($enrollment->reclassificado) || !empty($enrollment->remanejado)) {
+        // Não pode ser remanejado
+        if (!empty($enrollment->remanejado)) {
             return false;
         }
 
@@ -600,6 +608,10 @@ class FinalStatusImportService
 
         if ($enrollment->falecido) {
             return RegistrationStatus::DECEASED;
+        }
+
+        if ($enrollment->reclassificado) {
+            return RegistrationStatus::RECLASSIFIED;
         }
 
         return null;

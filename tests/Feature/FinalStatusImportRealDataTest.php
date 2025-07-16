@@ -118,7 +118,7 @@ class FinalStatusImportRealDataTest extends TestCase
     public function test_validates_transferido_with_valid_exit_date()
     {
         $registration = LegacyRegistrationFactory::new()->create();
-        
+
         LegacyEnrollmentFactory::new()->create([
             'ref_cod_matricula' => $registration->cod_matricula,
             'ativo' => 1,
@@ -161,7 +161,7 @@ class FinalStatusImportRealDataTest extends TestCase
     public function test_accepts_valid_date_formats()
     {
         $registration = LegacyRegistrationFactory::new()->create();
-        
+
         LegacyEnrollmentFactory::new()->create([
             'ref_cod_matricula' => $registration->cod_matricula,
             'ativo' => 1,
@@ -213,7 +213,7 @@ class FinalStatusImportRealDataTest extends TestCase
     public function test_accepts_all_valid_situation_types()
     {
         $registration = LegacyRegistrationFactory::new()->create();
-        
+
         LegacyEnrollmentFactory::new()->create([
             'ref_cod_matricula' => $registration->cod_matricula,
             'ativo' => 1,
@@ -239,7 +239,7 @@ class FinalStatusImportRealDataTest extends TestCase
 
             $columnMapping = ['registration_id' => 0, 'final_status' => 1];
 
-            if (in_array($validSituation, ['Transferido', 'Deixou de frequentar', 'Falecido'])) {
+            if (in_array($validSituation, ['Transferido', 'Deixou de frequentar', 'Falecido', 'Reclassificado'])) {
                 $testData[0]['exit_date'] = '15/12/2023';
                 $columnMapping['exit_date'] = 2;
             }

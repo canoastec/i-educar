@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\RegistrationStatus;
 use App\Services\FinalStatusImportService;
 use Database\Factories\LegacyEnrollmentFactory;
 use Database\Factories\LegacyRegistrationFactory;
@@ -124,12 +125,19 @@ class FinalStatusImportDatabaseTest extends TestCase
     public function test_reclassificado_saves_correctly_in_database()
     {
         $registration = LegacyRegistrationFactory::new()->create(['aprovado' => 3]);
+        $enrollment = LegacyEnrollmentFactory::new()->create([
+            'ref_cod_matricula' => $registration->cod_matricula,
+            'ativo' => 1,
+            'transferido' => false,
+            'abandono' => false,
+            'falecido' => false,
+        ]);
 
         $data = [
-            ['registration_id' => (string) $registration->cod_matricula, 'final_status' => 'Reclassificado', 'exit_date' => ''],
+            ['registration_id' => (string) $registration->cod_matricula, 'final_status' => 'Reclassificado', 'exit_date' => '20/11/2023'],
         ];
 
-        $result = $this->service->validateData($data, ['registration_id' => 0, 'final_status' => 1]);
+        $result = $this->service->validateData($data, ['registration_id' => 0, 'final_status' => 1, 'exit_date' => 2]);
 
         $this->assertTrue($result['success']);
 
@@ -138,7 +146,16 @@ class FinalStatusImportDatabaseTest extends TestCase
 
         $registration->refresh();
         $this->assertEquals(5, $registration->aprovado);
-        $this->assertNull($registration->data_cancel);
+        $this->assertEquals('2023-11-20', $registration->data_cancel->format('Y-m-d'));
+
+        $enrollment->refresh();
+        $this->assertTrue($enrollment->reclassificado);
+        $this->assertFalse($enrollment->transferido);
+        $this->assertFalse($enrollment->falecido);
+        $this->assertFalse($enrollment->abandono);
+        $this->assertEquals(0, $enrollment->ativo);
+        $this->assertEquals('2023-11-20', $enrollment->data_exclusao->format('Y-m-d'));
+        $this->assertEquals($this->user->id, $enrollment->ref_usuario_exc);
     }
 
     public function test_deixou_de_frequentar_saves_correctly_in_database()
@@ -323,7 +340,7 @@ class FinalStatusImportDatabaseTest extends TestCase
     public function test_deixou_de_frequentar_with_old_active_enrollment_and_existing_abandoned()
     {
         $registration = LegacyRegistrationFactory::new()->create(['aprovado' => 3]);
-        
+
         // Enturmação antiga ativa (não deve ser mexida)
         $oldEnrollment = LegacyEnrollmentFactory::new()->create([
             'ref_cod_matricula' => $registration->cod_matricula,
@@ -333,7 +350,7 @@ class FinalStatusImportDatabaseTest extends TestCase
             'abandono' => false,
             'falecido' => false,
         ]);
-        
+
         // Enturmação mais recente já com abandono (deve ser atualizada)
         $recentEnrollment = LegacyEnrollmentFactory::new()->create([
             'ref_cod_matricula' => $registration->cod_matricula,
@@ -381,7 +398,7 @@ class FinalStatusImportDatabaseTest extends TestCase
     public function test_deixou_de_frequentar_with_two_existing_abandoned_enrollments()
     {
         $registration = LegacyRegistrationFactory::new()->create(['aprovado' => 3]);
-        
+
         // Enturmação antiga já com abandono (não deve ser mexida)
         $oldEnrollment = LegacyEnrollmentFactory::new()->create([
             'ref_cod_matricula' => $registration->cod_matricula,
@@ -392,7 +409,7 @@ class FinalStatusImportDatabaseTest extends TestCase
             'falecido' => false,
             'data_exclusao' => '2023-09-15',
         ]);
-        
+
         // Enturmação mais recente já com abandono (deve ter data atualizada)
         $recentEnrollment = LegacyEnrollmentFactory::new()->create([
             'ref_cod_matricula' => $registration->cod_matricula,
@@ -440,7 +457,7 @@ class FinalStatusImportDatabaseTest extends TestCase
     public function test_deixou_de_frequentar_with_transferred_enrollment()
     {
         $registration = LegacyRegistrationFactory::new()->create(['aprovado' => 3]);
-        
+
         // Enturmação com transferido=true (não deve ser permitido converter para abandono)
         $enrollment = LegacyEnrollmentFactory::new()->create([
             'ref_cod_matricula' => $registration->cod_matricula,

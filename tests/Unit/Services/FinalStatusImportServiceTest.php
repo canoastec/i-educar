@@ -33,7 +33,7 @@ class FinalStatusImportServiceTest extends TestCase
     {
         $statusRequiringExitDate = $this->service->getStatusRequiringExitDate();
 
-        $expected = [RegistrationStatus::TRANSFERRED, RegistrationStatus::ABANDONED, RegistrationStatus::DECEASED];
+        $expected = [RegistrationStatus::TRANSFERRED, RegistrationStatus::ABANDONED, RegistrationStatus::DECEASED , RegistrationStatus::RECLASSIFIED];
         $this->assertEqualsCanonicalizing($expected, $statusRequiringExitDate);
     }
 
@@ -233,7 +233,7 @@ class FinalStatusImportServiceTest extends TestCase
     public function test_validates_valid_date_format()
     {
         $registration = LegacyRegistrationFactory::new()->create();
-        
+
         LegacyEnrollmentFactory::new()->create([
             'ref_cod_matricula' => $registration->cod_matricula,
             'ativo' => 1,
@@ -360,7 +360,7 @@ class FinalStatusImportServiceTest extends TestCase
         $this->assertFalse($result['success']);
         $this->assertCount(1, $result['errors']);
         $this->assertStringContainsString('possui 2 enturmações ativas', $result['errors'][0]['error']);
-        $this->assertStringContainsString('Não é possível continuar com múltiplas enturmações', $result['errors'][0]['error']);
+        $this->assertStringContainsString('enquanto houver mais de uma enturmação ativa', $result['errors'][0]['error']);
     }
 
     public function test_does_not_warn_about_single_active_enrollment()
@@ -401,7 +401,7 @@ class FinalStatusImportServiceTest extends TestCase
     public function test_deixou_de_frequentar_maps_to_abandono_code()
     {
         $registration = LegacyRegistrationFactory::new()->create();
-        
+
         LegacyEnrollmentFactory::new()->create([
             'ref_cod_matricula' => $registration->cod_matricula,
             'ativo' => 1,
