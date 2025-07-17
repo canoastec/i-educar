@@ -875,7 +875,7 @@ class EducacensoAnaliseController extends ApiCoreController
 
             if (!empty($turma->etapaEducacenso) && $turma->etapaEducacenso != 1 && !$exists) {
                 $mensagem[] = [
-                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} não possui nenhum docente vinculado, ou as datas de início e término do vínculo/alocação estão fora do período de referência da exportação.",
+                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} não possui nenhum docente vinculado, ou as datas de início e término da alocação estão fora do período de referência da exportação.",
                     'path' => '(Servidores > Cadastros > Servidores)',
                     'linkPath' => '/intranet/educar_servidor_lst.php',
                     'fail' => true,
