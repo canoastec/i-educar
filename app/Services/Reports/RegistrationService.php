@@ -8,7 +8,7 @@ class RegistrationService
     {
         if ($isGeneralAbsence) {
             $value = (($academicDays - $absenceTotal) * 100) / $academicDays;
-            $valueStr = number_format($value, 20, '.', '');
+            $valueStr = number_format($value, 4, '.', '');
 
             return bcdiv($valueStr, '1', 1);
         }
@@ -18,7 +18,7 @@ class RegistrationService
         }
 
         $value = 100 - (($absenceTotal * ($courseHourAbsence * 100)) / $gradeWorkload);
-        $valueStr = number_format($value, 20, '.', '');
+        $valueStr = number_format($value, 4, '.', '');
 
         return bcdiv($valueStr, '1', 1);
     }
@@ -27,7 +27,7 @@ class RegistrationService
     {
         if ($absence && !empty($disciplineWorkload)) {
             $value = 100 - (($absence * $hourAbsence * 100) / $disciplineWorkload);
-            $valueStr = number_format($value, 20, '.', '');
+            $valueStr = number_format($value, 4, '.', '');
             return bcdiv($valueStr, 1, 1);
         }
 
