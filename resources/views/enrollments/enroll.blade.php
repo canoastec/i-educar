@@ -85,11 +85,13 @@
 
         <div style="text-align: center">
             @if($enableCancelButton)
-                @if(Gate::allows('view', 696))
+                @if($canUnenroll)
                     <button class="btn"  onclick="modalConfirmacao('is_cancellation')" type="button" name="is_cancellation" value="1">Desenturmar</button>
                 @endif
             @else
-                <button class="btn" type="submit">Enturmar</button>
+                @if($canEnroll)
+                    <button class="btn" type="submit">Enturmar</button>
+                @endif
             @endif
             <a href="{{ Asset::get('/intranet/educar_matricula_turma_lst.php?ref_cod_matricula=' . $registration->id . '&ano_letivo=' . $registration->year) }}" class="btn">Cancelar</a>
         </div>

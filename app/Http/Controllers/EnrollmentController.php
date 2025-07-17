@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EnrollmentRequest;
 use App\Models\LegacyRegistration;
 use App\Models\LegacySchoolClass;
+use App\Process;
 use App\Services\EnrollmentService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -32,16 +33,18 @@ class EnrollmentController extends Controller
 
         $enrollments = $registration->enrollments()->active()->get();
         $enableCancelButton = $enrollments->where('schoolClass.id', $schoolClass->id)->isNotEmpty();
+        $canEnroll = Gate::allows('modify', Process::ENROLLMENT);
+        $canUnenroll = Gate::allows('modify', Process::UNENROLLMENT);
 
         if ($enableCancelButton) {
-            $hasPermission = Gate::allows('view', 696);
-
-            if (!$hasPermission) {
+            if (!$canUnenroll) {
                 return redirect()->back()->with('error', 'Você não tem permissão para desenturmar alunos.');
             }
+        } elseif (!$canEnroll) {
+            return redirect()->back()->with('error', 'Você não tem permissão para enturmar alunos.');
         }
 
-        $this->menu(578);
+        $this->menu(Process::REGISTRATIONS);
 
         $anotherClassroomEnrollments = $enrollmentService->anotherClassroomEnrollments($schoolClass, $registration);
 
@@ -51,6 +54,8 @@ class EnrollmentController extends Controller
             'schoolClass' => $schoolClass,
             'enableCancelButton' => $enableCancelButton,
             'anotherClassroomEnrollments' => $anotherClassroomEnrollments,
+            'canEnroll' => $canEnroll,
+            'canUnenroll' => $canUnenroll,
         ]);
     }
 
@@ -63,6 +68,16 @@ class EnrollmentController extends Controller
         LegacyRegistration $registration,
         LegacySchoolClass $schoolClass
     ) {
+        if ($request->input('is_cancellation')) {
+            if (!Gate::allows('modify', Process::UNENROLLMENT)) {
+                return redirect()->back()->with('error', 'Você não tem permissão para desenturmar alunos.');
+            }
+        } else {
+            if (!Gate::allows('modify', Process::ENROLLMENT)) {
+                return redirect()->back()->with('error', 'Você não tem permissão para enturmar alunos.');
+            }
+        }
+
         DB::beginTransaction();
         $date = Carbon::createFromFormat('d/m/Y', $request->input('enrollment_date'));
 
@@ -80,11 +95,13 @@ class EnrollmentController extends Controller
             }
 
             DB::commit();
+
             return redirect('/intranet/educar_matricula_det.php?cod_matricula=' . $registration->id)
                 ->with('success', $successMessage);
 
         } catch (Throwable $throwable) {
             DB::rollback();
+
             return redirect()->back()->with('error', $throwable->getMessage());
         }
     }
@@ -103,7 +120,11 @@ class EnrollmentController extends Controller
             url('intranet/educar_index.php') => 'Escola',
         ]);
 
-        $this->menu(578);
+        if (!Gate::allows('modify', Process::RELOCATE)) {
+            return redirect()->back()->with('error', 'Você não tem permissão para remanejar alunos.');
+        }
+
+        $this->menu(Process::REGISTRATIONS);
 
         $enableCancelButton = $enrollmentService->isEnrolled($schoolClass, $registration);
         $anotherClassroomEnrollments = $enrollmentService->anotherClassroomEnrollments($schoolClass, $registration);
@@ -128,6 +149,10 @@ class EnrollmentController extends Controller
         LegacyRegistration $registration,
         LegacySchoolClass $schoolClass
     ) {
+        if (!Gate::allows('modify', Process::RELOCATE)) {
+            return redirect()->back()->with('error', 'Você não tem permissão para remanejar alunos.');
+        }
+
         DB::beginTransaction();
         $date = Carbon::createFromFormat('d/m/Y', $request->input('enrollment_date'));
 
@@ -162,11 +187,13 @@ class EnrollmentController extends Controller
             $enrollmentService->enroll($registration, $schoolClass, $date, $isRelocatedSameClassGroup);
 
             DB::commit();
+
             return redirect('/intranet/educar_matricula_det.php?cod_matricula=' . $registration->id)
                 ->with('success', 'Remanejamento realizado com sucesso.');
 
         } catch (Throwable $throwable) {
             DB::rollback();
+
             return redirect()->back()->with('error', $throwable->getMessage());
         }
     }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Process;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -45,7 +46,15 @@ return new class extends clsListagem
     {
         parent::__construct();
         $user = Auth::user();
-        $allow = Gate::allows('view', 683);
+
+        $acao = $_GET['acao'] ?? 'enturmar';
+        if ($acao === 'remanejar') {
+            $allow = Gate::allows('view', Process::RELOCATE);
+        } else {
+            $canEnroll = Gate::allows('view', Process::ENROLLMENT);
+            $canUnenroll = Gate::allows('view', Process::UNENROLLMENT);
+            $allow = $canEnroll || $canUnenroll;
+        }
 
         if ($user->isLibrary() || !$allow) {
             $this->simpleRedirect(url: '/intranet/index.php');
@@ -57,7 +66,7 @@ return new class extends clsListagem
     public function Gerar()
     {
         $acao = $_GET['acao'] ?? 'enturmar';
-        
+
         if ($acao === 'remanejar') {
             $this->titulo = 'Selecione uma turma para remanejar a matrícula';
         } else {
@@ -214,8 +223,8 @@ return new class extends clsListagem
             }
 
             // Verifica permissão de desenturmar para exibir turmas já enturmadas
-            $permissaoDesenturmar = $this->getPermissaoVisualizar(696);
-            
+            $permissaoDesenturmar = $this->getPermissaoVisualizar(Process::UNENROLLMENT);
+
             // Se não tem permissão de desenturmar e está enturmado, não exibe a linha
             if (!$permissaoDesenturmar && $turmaHasEnturmacao) {
                 continue;
@@ -237,7 +246,7 @@ return new class extends clsListagem
                     'schoolClass' => $turma['cod_turma'],
                 ]);
             }
-            
+
             $this->addLinhas(linha: ["<a href='{$link}'>{$turma['nm_turma']}</a>", $enturmado]);
         }
 
@@ -277,6 +286,17 @@ return new class extends clsListagem
     }
 
     private function getPermissaoVisualizar($process)
+    {
+        $user = Auth::user();
+        $allow = Gate::allows('view', $process);
+        if ($user->isLibrary()) {
+            return false;
+        }
+
+        return $allow;
+    }
+
+    private function getPermissaoModificar($process)
     {
         $user = Auth::user();
         $allow = Gate::allows('view', $process);

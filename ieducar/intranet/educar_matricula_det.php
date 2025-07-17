@@ -499,7 +499,9 @@ return new class extends clsDetalhe
 
     public function permissaoEnturmar()
     {
-        return $this->getPermissaoVisualizar(683);
+        // a tela de enturmaçoes pode enturmar e desenturmar
+        return $this->getPermissaoVisualizar(Process::ENROLLMENT) ||
+            $this->getPermissaoVisualizar(Process::UNENROLLMENT);
     }
 
     public function permissaoModalidadeEnsino()
@@ -566,12 +568,12 @@ return new class extends clsDetalhe
 
     public function permissaoRemanejar()
     {
-        return $this->getPermissaoVisualizar(695);
+        return $this->getPermissaoVisualizar(Process::RELOCATE);
     }
 
     public function permissaoDesenturmar()
     {
-        return $this->getPermissaoVisualizar(696);
+        return $this->getPermissaoVisualizar(Process::UNENROLLMENT);
     }
 
     public function Formular()

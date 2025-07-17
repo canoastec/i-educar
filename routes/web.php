@@ -43,10 +43,13 @@ Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.
     Route::get('/matricula/{registration}/enturmar/{schoolClass}', 'EnrollmentController@viewEnroll')
         ->name('enrollments.enroll.create');
     Route::post('/matricula/{registration}/enturmar/{schoolClass}', 'EnrollmentController@enroll')
+        ->middleware('can:modify:' . Process::ENROLLMENT)
         ->name('enrollments.enroll');
     Route::get('/matricula/{registration}/remanejar/{schoolClass}', 'EnrollmentController@viewRelocate')
+        ->middleware('can:view:' . Process::RELOCATE)
         ->name('enrollments.relocate.create');
     Route::post('/matricula/{registration}/remanejar/{schoolClass}', 'EnrollmentController@relocate')
+        ->middleware('can:modify:' . Process::RELOCATE)
         ->name('enrollments.relocate');
     Route::get('/enrollment-history/{id}', 'EnrollmentHistoryController@show')
         ->name('enrollments.enrollment-history');

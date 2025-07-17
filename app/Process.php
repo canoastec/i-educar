@@ -81,4 +81,10 @@ class Process
     public const BLOCK_ENROLLMENT = 9999115;
 
     public const STAGE = 9999116;
+
+    public const ENROLLMENT = 683;
+
+    public const RELOCATE = 695;
+
+    public const UNENROLLMENT = 696;
 }
