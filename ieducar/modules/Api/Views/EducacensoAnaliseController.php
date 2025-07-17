@@ -870,6 +870,9 @@ class EducacensoAnaliseController extends ApiCoreController
             }
 
             $exists = !empty(array_filter($docentes, function ($docente) use ($turma) {
+                if (str_contains($docente->codigoTurma, '-')) {
+                    $docente->codigoTurma = explode('-', $docente->codigoTurma)[0];
+                }
                 return $turma->codTurma == $docente->codigoTurma;
             }));
 
