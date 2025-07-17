@@ -43,7 +43,7 @@ class Portabilis_Report_ReportFactoryPHPJasper extends Portabilis_Report_ReportF
         }
 
         if (filter_var($logo, FILTER_VALIDATE_URL)) {
-            $tmpFile = sys_get_temp_dir() . '/logo_' . md5($logo) . '.png';
+            $tmpFile = sys_get_temp_dir() . '/logo_' . hash('sha256', $logo) . '.png';
 
             if (!file_exists($tmpFile)) {
                 $imageData = file_get_contents($logo);
