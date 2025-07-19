@@ -144,6 +144,11 @@ Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.
     Route::get('/atualiza-etapa', 'StageController@edit')->middleware('can:modify:' . Process::STAGE)->name('stage.edit');
     Route::post('/atualiza-etapa', 'StageController@update')->middleware('can:modify:' . Process::STAGE)->name('stage.update');
 
+    Route::get('/atualizacao-em-lote-series-escola', 'SchoolGradeBatchUpdateController@index')->middleware('can:view:' . Process::SCHOOL_GRADE)->name('school-grade.batch-update.index');
+    Route::post('/atualizacao-em-lote-series-escola', 'SchoolGradeBatchUpdateController@update')->middleware('can:modify:' . Process::SCHOOL_GRADE)->name('school-grade.batch-update.update');
+    Route::post('/atualizacao-em-lote-series-escola/process', 'SchoolGradeBatchUpdateController@process')->middleware('can:modify:' . Process::SCHOOL_GRADE)->name('school-grade.batch-update.process');
+    Route::get('/atualizacao-em-lote-series-escola/status', 'SchoolGradeBatchUpdateController@status')->middleware('can:view:' . Process::SCHOOL_GRADE)->name('school-grade.batch-update.status');
+
     Route::get('/bloquear-enturmacao', 'BlockEnrollmentController@edit')->middleware('can:modify:' . Process::BLOCK_ENROLLMENT)->name('block-enrollment.edit');
     Route::post('/bloquear-enturmacao', 'BlockEnrollmentController@update')->middleware('can:modify:' . Process::BLOCK_ENROLLMENT)->name('block-enrollment.update');
 
