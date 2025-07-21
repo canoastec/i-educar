@@ -191,12 +191,33 @@
 
             const TemplateManager = {
                 counter: 1,
+                escolasData: [],
+                seriesData: [],
 
                 init() {
-                        this.bindEvents();
-                        this.updateButtons();
+                    this.loadStaticData();
+                    this.bindEvents();
+                    this.updateButtons();
                     this.initChosen();
-                    },
+                },
+
+                loadStaticData() {
+                    $(config.selectors.schools).find('option').each(function() {
+                        const $option = $(this);
+                        TemplateManager.escolasData.push({
+                            value: $option.val(),
+                            text: $option.text()
+                        });
+                    });
+
+                    $(config.selectors.grades).find('option').each(function() {
+                        const $option = $(this);
+                        TemplateManager.seriesData.push({
+                            value: $option.val(),
+                            text: $option.text()
+                        });
+                    });
+                },
 
                 createRowHTML() {
                         this.counter++;
@@ -232,45 +253,44 @@
                     const $newRow = $(this.createRowHTML());
 
                         $tbody.append($newRow);
-                    this.copyOptions($newRow.find(`select[name="escola_serie[${this.counter}][escolas][]"]`), config.selectors.schools, 'Selecione as escolas');
-                    this.copyOptions($newRow.find(`select[name="escola_serie[${this.counter}][series][]"]`), config.selectors.grades, 'Selecione as séries');
+                    this.copyOptions($newRow.find(`select[name="escola_serie[${this.counter}][escolas][]"]`), 'escolas', 'Selecione as escolas');
+                    this.copyOptions($newRow.find(`select[name="escola_serie[${this.counter}][series][]"]`), 'series', 'Selecione as séries');
                         this.updateButtons();
                     },
 
-                copyOptions($target, sourceSelector, placeholder) {
-                    const $source = $(sourceSelector);
-
-                    if ($source.length && $target.length) {
+                copyOptions($target, dataType, placeholder) {
+                    if ($target.length) {
                         $target.find('option:not(:first)').remove();
 
-                        $source.find('option').each(function () {
-                            const $option = $(this);
-                            const value = $option.val();
-                            const text = $option.text();
+                        const data = dataType === 'escolas' ? this.escolasData : this.seriesData;
 
-                            if (value !== '' || $target.find('option[value=""]').length === 0) {
-                                $target.append(`<option value="${value}">${text}</option>`);
+                        data.forEach(item => {
+                            if (item.value !== '' || $target.find('option[value=""]').length === 0) {
+                                $target.append(`<option value="${item.value}">${item.text}</option>`);
                             }
                         });
 
                         $target.chosen({
                             ...config.chosen,
                             placeholder_text_multiple: placeholder
-                            });
-                        }
-                    },
+                        });
+
+                        $target.trigger('chosen:updated');
+                    }
+                },
 
                 removeRow($row) {
-                        if ($('.formmdtd.dd').length > 1) {
+                    if ($('.formmdtd.dd').length > 1) {
                         $row.find('select').each(function() {
-                            if ($(this).hasClass('chosen-select')) {
-                                $(this).chosen('destroy');
+                            const $select = $(this);
+                            if ($select.hasClass('chosen-select') || $select.next('.chosen-container').length > 0) {
+                                $select.chosen('destroy');
                             }
                         });
-                            $row.remove();
-                            this.updateButtons();
-                        }
-                    },
+                        $row.remove();
+                        this.updateButtons();
+                    }
+                },
 
                 updateButtons() {
                     const $rows = $('.formmdtd.dd');
