@@ -34,7 +34,7 @@ return new class extends clsListagem
 
     public $ato_poder_publico;
 
-    public $habilitacao;
+    public $habilitacao; // TODO: remover no futuro
 
     public $objetivo_curso;
 
@@ -134,6 +134,7 @@ return new class extends clsListagem
                 return $query->where('nm_curso', 'ILIKE', '%' . request('nm_curso') . '%');
             })
             ->orderBy('nm_curso')
+            ->active()
             ->paginate(
                 perPage: $this->limite,
                 pageName: 'pagina_' . $this->nome

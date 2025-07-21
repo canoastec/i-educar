@@ -52,6 +52,8 @@ class QueryAllCsvCommand extends Command
                 $data[$connection] = $connectionData;
             } catch (Exception) {
                 continue;
+            } finally {
+                DB::purge($connection);
             }
         }
 

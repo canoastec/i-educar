@@ -60,6 +60,8 @@ class LegacyEvaluationRule extends Model
         'tipo_nota',
         'tipo_progressao',
         'tipo_presenca',
+        'pontos',
+        'tipo_recuperacao_paralela',
     ];
 
     /**
@@ -103,6 +105,11 @@ class LegacyEvaluationRule extends Model
     public function isSpecificRetake(): bool
     {
         return $this->tipo_recuperacao_paralela == self::PARALLEL_REMEDIAL_PER_SPECIFIC_STAGE;
+    }
+
+    public function isNone(): bool
+    {
+        return $this->tipo_recuperacao_paralela == self::PARALLEL_REMEDIAL_NONE;
     }
 
     public function isByStage(): bool

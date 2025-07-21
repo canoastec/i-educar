@@ -189,7 +189,12 @@ return new class extends clsCadastro
         $obj_permissoes->permissao_cadastra(int_processo_ap: 578, int_idpes_usuario: $this->pessoa_logada, int_soma_nivel_acesso: 7, str_pagina_redirecionar: "educar_matricula_det.php?cod_matricula={$this->ref_cod_matricula}");
 
         $this->data_cancel = Portabilis_Date_Utils::brToPgSQL(date: $this->data_cancel);
-        $obj = new clsPmieducarMatricula(cod_matricula: $this->ref_cod_matricula, ref_cod_reserva_vaga: null, ref_ref_cod_escola: null, ref_ref_cod_serie: null, ref_usuario_exc: $this->pessoa_logada);
+        $obj = new clsPmieducarMatricula(
+            cod_matricula: $this->ref_cod_matricula,
+            ref_ref_cod_escola: null,
+            ref_ref_cod_serie: null,
+            ref_usuario_exc: $this->pessoa_logada
+        );
         $det_matricula = $obj->detalhe();
 
         if (is_null(value: $det_matricula['data_matricula'])) {
@@ -214,7 +219,18 @@ return new class extends clsCadastro
         $aprovado = $det_matricula['aprovado'];
 
         if ($aprovado == 3) {
-            $obj = new clsPmieducarMatricula(cod_matricula: $this->ref_cod_matricula, ref_cod_reserva_vaga: null, ref_ref_cod_escola: null, ref_ref_cod_serie: null, ref_usuario_exc: $this->pessoa_logada, ref_usuario_cad: null, ref_cod_aluno: null, aprovado: 4, data_cadastro: null, data_exclusao: null, ativo: 1);
+            $obj = new clsPmieducarMatricula(
+                cod_matricula: $this->ref_cod_matricula,
+                ref_ref_cod_escola: null,
+                ref_ref_cod_serie: null,
+                ref_usuario_exc: $this->pessoa_logada,
+                ref_usuario_cad: null,
+                ref_cod_aluno: null,
+                aprovado: 4,
+                data_cadastro: null,
+                data_exclusao: null,
+                ativo: 1
+            );
             $obj->data_cancel = $this->data_cancel;
             $editou = $obj->edita();
             if (!$editou) {

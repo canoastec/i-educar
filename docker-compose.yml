@@ -1,29 +1,52 @@
+x-php: &php
+  build:
+    context: docker/php
+    args:
+      PHP_VERSION: 8.4
+      COMPOSER_VERSION: 2.8
+  image: php:8.4-ieducar
+  working_dir: /var/www/ieducar
+  volumes:
+    - ./:/var/www/ieducar
+  links:
+    - postgres
+    - redis
+  depends_on:
+    postgres:
+      condition: service_started
+    redis:
+      condition: service_started
+  environment:
+    CACHE_DRIVER: redis
+    REDIS_HOST: redis
+    DB_HOST: postgres
+    PGPASSWORD: ${DB_PASSWORD}
+  extra_hosts:
+    - host.docker.internal:host-gateway
+
 services:
 
   php:
+    <<: *php
     container_name: ieducar-php
-    build:
-      context: docker/php
-      args:
-        PHP_VERSION: 8.3
-        COMPOSER_VERSION: 2.7
-    links:
-      - postgres
-      - redis
-    environment:
-      CACHE_DRIVER: redis
-      REDIS_HOST: redis
-      DB_HOST: postgres
-      PGPASSWORD: ieducar
-    working_dir: /var/www/ieducar
-    volumes:
-      - ./:/var/www/ieducar
+    command: tail -f /dev/null
+    depends_on: []
+
+  fpm:
+    <<: *php
+    container_name: ieducar-fpm
+
+  horizon:
+    <<: *php
+    container_name: ieducar-horizon
+    command: /var/www/ieducar/artisan horizon
+    restart: always
 
   nginx:
     container_name: ieducar-nginx
-    image: nginx:1.26-alpine
+    image: nginx:1.28-alpine
     links:
-      - php
+      - fpm
     working_dir: /var/www/ieducar
     volumes:
       - ./:/var/www/ieducar
@@ -34,11 +57,12 @@ services:
 
   postgres:
     container_name: ieducar-postgres
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     environment:
-      POSTGRES_DB: ieducar
-      POSTGRES_USER: ieducar
-      POSTGRES_PASSWORD: ieducar
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGUSER: ${DB_USERNAME}
     volumes:
       - postgres:/var/lib/postgresql/data
     ports:
@@ -46,7 +70,7 @@ services:
 
   redis:
     container_name: ieducar-redis
-    image: redis:7-alpine
+    image: redis:8-alpine
     restart: always
     ports:
       - ${DOCKER_REDIS_PORT:-6379}:6379

@@ -3,7 +3,6 @@
 use App\Models\LegacyAbandonmentType;
 use App\Process;
 use iEducar\Modules\Educacenso\Model\TipoAtendimentoTurma;
-use iEducar\Modules\Educacenso\Model\UnidadesCurriculares;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -12,8 +11,6 @@ return new class extends clsDetalhe
     public $titulo;
 
     public $ref_cod_matricula;
-
-    public $ref_cod_reserva_vaga;
 
     public $ref_ref_cod_escola;
 
@@ -132,6 +129,10 @@ return new class extends clsDetalhe
             $this->addDetalhe(detalhe: ['Série', $registro['ref_ref_cod_serie']]);
         }
 
+        if ($registro['observacoes']) {
+            $this->addDetalhe(detalhe: ['Observações', $registro['observacoes']]);
+        }
+
         // Nome da turma
         $enturmacoes = new clsPmieducarMatriculaTurma;
 
@@ -144,7 +145,6 @@ return new class extends clsDetalhe
         $existeTurmaMulti = false;
         $existeTurmaTurnoIntegral = false;
         $existeAtendimentoEspecializado = false;
-        $existeTurmaItineraria = false;
         $nomesTurmas = [];
         $datasEnturmacoes = [];
         $nomesTurnos = [];
@@ -162,17 +162,8 @@ return new class extends clsDetalhe
                 $existeTurmaMulti = true;
             }
 
-            $estruturaCurricular = transformStringFromDBInArray(string: $turma['estrutura_curricular']) ?? [];
-            $unidadeCurricular = transformStringFromDBInArray(string: $turma['unidade_curricular']) ?? [];
-            $turmaItineraria = in_array(needle: 2, haystack: $estruturaCurricular);
-            $turmaFormacaoBasica = in_array(needle: 1, haystack: $estruturaCurricular);
+            $tipoAtendimento = transformStringFromDBInArray(string: $turma['tipo_atendimento']) ?? [];
             $etapasItinerario = [25, 26, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 67, 71, 74];
-
-            if (in_array(UnidadesCurriculares::TRILHAS_DE_APROFUNDAMENTO_APRENDIZAGENS, $unidadeCurricular) &&
-                in_array($turma['etapa_educacenso'], $etapasItinerario)
-            ) {
-                $existeTurmaItineraria = true;
-            }
 
             $nomesTurmas[] = $turma['nm_turma'];
             $datasEnturmacoes[] = Portabilis_Date_Utils::pgSQLToBr(timestamp: $enturmacao['data_enturmacao']);
@@ -181,7 +172,7 @@ return new class extends clsDetalhe
                 $existeTurmaTurnoIntegral = true;
             }
 
-            if ($turma['tipo_atendimento'] == TipoAtendimentoTurma::AEE) {
+            if (in_array(TipoAtendimentoTurma::AEE, $tipoAtendimento)) {
                 $existeAtendimentoEspecializado = true;
             }
 
@@ -218,10 +209,6 @@ return new class extends clsDetalhe
             $this->addDetalhe(detalhe: ['Turma', '']);
             $this->addDetalhe(detalhe: ['Turno', '']);
             $this->addDetalhe(detalhe: ['Data Enturmação', '']);
-        }
-
-        if ($registro['ref_cod_reserva_vaga']) {
-            $this->addDetalhe(detalhe: ['Número Reserva Vaga', $registro['ref_cod_reserva_vaga']]);
         }
 
         $situacao = App_Model_MatriculaSituacao::getSituacao(id: $registro['aprovado']);
@@ -368,12 +355,6 @@ return new class extends clsDetalhe
                 $this->array_botao_url_script[] = "go(\"educar_matricula_turma_turno_cad.php?ref_cod_matricula={$registro['cod_matricula']}&ref_cod_aluno={$registro['ref_cod_aluno']}\")";
             }
 
-            if ($this->permissaoItinerarioFormativo() && $existeTurmaItineraria) {
-                $this->array_botao[] = 'Itinerário formativo';
-                $link = route(name: 'registration.formative-itinerary.index', parameters: $registro['cod_matricula']);
-                $this->array_botao_url_script[] = "go(\"{$link}\")";
-            }
-
             if ($registro['aprovado'] != 4 && $registro['aprovado'] != 6) {
                 if ($this->permissaoSolicitarTransferencia()) {
                     if (is_array(value: $lst_transferencia) && isset($data_transferencia)) {
@@ -417,6 +398,9 @@ return new class extends clsDetalhe
             }
 
             if ($this->permissaoAbandono() && $registro['aprovado'] == App_Model_MatriculaSituacao::ABANDONO && $this->permissaoAbandono()) {
+                $this->array_botao[] = 'Turno';
+                $this->array_botao_url_script[] = 'showAlertTurnoDeixouFrequentar()';
+
                 $this->array_botao[] = 'Desfazer deixou de frequentar';
                 $this->array_botao_url_script[] = "deleteAbandono({$registro['cod_matricula']})";
             }
@@ -546,11 +530,6 @@ return new class extends clsDetalhe
     public function permissaoTurno()
     {
         return $this->getPermissaoVisualizar(689);
-    }
-
-    public function permissaoItinerarioFormativo()
-    {
-        return $this->getPermissaoVisualizar(690);
     }
 
     public function permissaoSolicitarTransferencia()

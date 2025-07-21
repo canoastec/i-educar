@@ -47,6 +47,10 @@ return new class extends clsCadastro
         $enturmacao->sequencial = $this->sequencial;
         $enturmacao = $enturmacao->detalhe();
 
+        if (!$enturmacao) {
+            $this->simpleRedirect(url: "/enrollment-history/{$this->ref_cod_matricula}");
+        }
+
         $matricula = new clsPmieducarMatricula(cod_matricula: $this->ref_cod_matricula);
         $matricula = $matricula->detalhe();
 
