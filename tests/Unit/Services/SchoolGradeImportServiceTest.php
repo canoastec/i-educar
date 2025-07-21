@@ -6,7 +6,6 @@ use App\Models\LegacySchoolGrade;
 use App\Models\LegacySchoolGradeDiscipline;
 use App\Services\SchoolGradeImportService;
 use Database\Factories\LegacyDisciplineAcademicYearFactory;
-use Database\Factories\LegacyDisciplineFactory;
 use Database\Factories\LegacyGradeFactory;
 use Database\Factories\LegacySchoolAcademicYearFactory;
 use Database\Factories\LegacySchoolCourseFactory;
@@ -50,14 +49,25 @@ class SchoolGradeImportServiceTest extends TestCase
             'ativo' => 1,
         ]);
 
+        LegacyDisciplineAcademicYearFactory::new()->create([
+            'ano_escolar_id' => $grade->cod_serie,
+            'anos_letivos' => '{' . $year . '}',
+        ]);
+
         $params = [
             'schools' => [$school->cod_escola],
             'grades' => [$grade->cod_serie],
             'year' => $year,
             'user' => $user,
+            'escola_serie_data' => [
+                1 => [
+                    'escolas' => [$school->cod_escola],
+                    'series' => [$grade->cod_serie],
+                ],
+            ],
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('completed', $result['status']);
         $this->assertEquals(1, $result['processed']);
@@ -82,7 +92,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertNotEmpty($result['errors']);
@@ -109,7 +119,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertNotEmpty($result['errors']);
@@ -130,7 +140,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertNotEmpty($result['errors']);
@@ -165,7 +175,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertNotEmpty($result['errors']);
@@ -200,7 +210,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertNotEmpty($result['errors']);
@@ -228,11 +238,84 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertNotEmpty($result['errors']);
         $this->assertStringContainsString('não possui o ano', $result['errors'][0]['error']);
+    }
+
+    public function test_process_batch_update_with_school_without_grade_course()
+    {
+        $user = LegacyUserFactory::new()->create();
+        $school = LegacySchoolFactory::new()->create();
+        $grade = LegacyGradeFactory::new()->create();
+        $differentGrade = LegacyGradeFactory::new()->create();
+        $year = now()->year;
+
+        LegacySchoolAcademicYearFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ano' => $year,
+            'ativo' => 1,
+            'andamento' => 1,
+        ]);
+
+        LegacySchoolCourseFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ref_cod_curso' => $differentGrade->ref_cod_curso,
+            'anos_letivos' => '{' . $year . '}',
+            'ativo' => 1,
+        ]);
+
+        $params = [
+            'schools' => [$school->cod_escola],
+            'grades' => [$grade->cod_serie],
+            'year' => $year,
+            'user' => $user,
+        ];
+
+        $result = $this->service->processSchoolGradeUpdate($params);
+
+        $this->assertEquals('failed', $result['status']);
+        $this->assertNotEmpty($result['errors']);
+        $this->assertStringContainsString('não possui o curso da série', $result['errors'][0]['error']);
+        $this->assertStringContainsString($grade->nm_serie, $result['errors'][0]['error']);
+    }
+
+    public function test_process_batch_update_with_grade_without_disciplines()
+    {
+        $user = LegacyUserFactory::new()->create();
+        $school = LegacySchoolFactory::new()->create();
+        $grade = LegacyGradeFactory::new()->create();
+        $year = now()->year;
+
+        LegacySchoolAcademicYearFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ano' => $year,
+            'ativo' => 1,
+            'andamento' => 1,
+        ]);
+
+        LegacySchoolCourseFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ref_cod_curso' => $grade->ref_cod_curso,
+            'anos_letivos' => '{' . $year . '}',
+            'ativo' => 1,
+        ]);
+
+        $params = [
+            'schools' => [$school->cod_escola],
+            'grades' => [$grade->cod_serie],
+            'year' => $year,
+            'user' => $user,
+        ];
+
+        $result = $this->service->processSchoolGradeUpdate($params);
+
+        $this->assertEquals('failed', $result['status']);
+        $this->assertNotEmpty($result['errors']);
+        $this->assertStringContainsString('não possui componentes curriculares cadastrados', $result['errors'][0]['error']);
+        $this->assertStringContainsString($grade->nm_serie, $result['errors'][0]['error']);
     }
 
     public function test_process_batch_update_multiple_schools_and_grades()
@@ -261,6 +344,16 @@ class SchoolGradeImportServiceTest extends TestCase
             }
         }
 
+        LegacyDisciplineAcademicYearFactory::new()->create([
+            'ano_escolar_id' => $grade1->cod_serie,
+            'anos_letivos' => '{' . $year . '}',
+        ]);
+
+        LegacyDisciplineAcademicYearFactory::new()->create([
+            'ano_escolar_id' => $grade2->cod_serie,
+            'anos_letivos' => '{' . $year . '}',
+        ]);
+
         $params = [
             'schools' => [$school1->cod_escola, $school2->cod_escola],
             'grades' => [$grade1->cod_serie, $grade2->cod_serie],
@@ -268,7 +361,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('completed', $result['status']);
         $this->assertEquals(4, $result['processed']);
@@ -296,6 +389,11 @@ class SchoolGradeImportServiceTest extends TestCase
             'ativo' => 1,
         ]);
 
+        LegacyDisciplineAcademicYearFactory::new()->create([
+            'ano_escolar_id' => $grade->cod_serie,
+            'anos_letivos' => '{' . $year . '}',
+        ]);
+
         LegacySchoolGradeFactory::new()->create([
             'ref_cod_escola' => $school->cod_escola,
             'ref_cod_serie' => $grade->cod_serie,
@@ -310,7 +408,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('completed', $result['status']);
         $this->assertEquals(1, $result['processed']);
@@ -332,7 +430,7 @@ class SchoolGradeImportServiceTest extends TestCase
         $user = LegacyUserFactory::new()->create();
         $school = LegacySchoolFactory::new()->create();
         $grade = LegacyGradeFactory::new()->create();
-        $discipline = LegacyDisciplineFactory::new()->create();
+
         $year = now()->year;
 
         LegacySchoolAcademicYearFactory::new()->create([
@@ -349,8 +447,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'ativo' => 1,
         ]);
 
-        LegacyDisciplineAcademicYearFactory::new()->create([
-            'componente_curricular_id' => $discipline->id,
+        $disciplineAcademicYear = LegacyDisciplineAcademicYearFactory::new()->create([
             'ano_escolar_id' => $grade->cod_serie,
             'anos_letivos' => '{' . $year . '}',
         ]);
@@ -362,7 +459,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('completed', $result['status']);
         $this->assertEquals(1, $result['processed']);
@@ -371,7 +468,7 @@ class SchoolGradeImportServiceTest extends TestCase
         $this->assertDatabaseHas('pmieducar.escola_serie_disciplina', [
             'ref_ref_cod_serie' => $grade->cod_serie,
             'ref_ref_cod_escola' => $school->cod_escola,
-            'ref_cod_disciplina' => $discipline->id,
+            'ref_cod_disciplina' => $disciplineAcademicYear->componente_curricular_id,
             'ativo' => 1,
         ]);
     }
@@ -388,7 +485,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertNotEmpty($result['errors']);
@@ -408,7 +505,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertStringContainsString('obrigatórios', $result['message']);
@@ -427,7 +524,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertStringContainsString('obrigatórios', $result['message']);
@@ -446,7 +543,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertStringContainsString('obrigatórios', $result['message']);
@@ -465,7 +562,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertStringContainsString('devem ser arrays', $result['message']);
@@ -484,7 +581,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertStringContainsString('devem ser arrays', $result['message']);
@@ -495,6 +592,7 @@ class SchoolGradeImportServiceTest extends TestCase
         $user = LegacyUserFactory::new()->create();
         $school = LegacySchoolFactory::new()->create();
         $grade = LegacyGradeFactory::new()->create();
+
         $year = now()->year;
 
         LegacySchoolAcademicYearFactory::new()->create([
@@ -511,6 +609,12 @@ class SchoolGradeImportServiceTest extends TestCase
             'ativo' => 1,
         ]);
 
+        LegacyDisciplineAcademicYearFactory::new()->create([
+
+            'ano_escolar_id' => $grade->cod_serie,
+            'anos_letivos' => '{' . $year . '}',
+        ]);
+
         $params = [
             'schools' => [$school->cod_escola],
             'grades' => [$grade->cod_serie],
@@ -518,7 +622,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('completed', $result['status']);
         $this->assertEquals(1, $result['processed']);
@@ -537,7 +641,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertStringContainsString('número inteiro', $result['message']);
@@ -556,7 +660,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('failed', $result['status']);
         $this->assertStringContainsString('número inteiro', $result['message']);
@@ -567,6 +671,7 @@ class SchoolGradeImportServiceTest extends TestCase
         $user = LegacyUserFactory::new()->create();
         $school = LegacySchoolFactory::new()->create();
         $grade = LegacyGradeFactory::new()->create();
+
         $year = now()->year;
 
         LegacySchoolAcademicYearFactory::new()->create([
@@ -583,6 +688,12 @@ class SchoolGradeImportServiceTest extends TestCase
             'ativo' => 1,
         ]);
 
+        LegacyDisciplineAcademicYearFactory::new()->create([
+
+            'ano_escolar_id' => $grade->cod_serie,
+            'anos_letivos' => '{' . $year . '}',
+        ]);
+
         $params = [
             'schools' => [$school->cod_escola],
             'grades' => [$grade->cod_serie],
@@ -592,7 +703,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'bloquear_cadastro_turma_para_serie_com_vagas' => 1,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('completed', $result['status']);
         $this->assertEquals(1, $result['processed']);
@@ -612,6 +723,7 @@ class SchoolGradeImportServiceTest extends TestCase
         $user = LegacyUserFactory::new()->create();
         $school = LegacySchoolFactory::new()->create();
         $grade = LegacyGradeFactory::new()->create();
+
         $year = now()->year;
 
         LegacySchoolAcademicYearFactory::new()->create([
@@ -628,6 +740,12 @@ class SchoolGradeImportServiceTest extends TestCase
             'ativo' => 1,
         ]);
 
+        LegacyDisciplineAcademicYearFactory::new()->create([
+
+            'ano_escolar_id' => $grade->cod_serie,
+            'anos_letivos' => '{' . $year . '}',
+        ]);
+
         $params = [
             'schools' => [$school->cod_escola],
             'grades' => [$grade->cod_serie],
@@ -637,7 +755,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'bloquear_cadastro_turma_para_serie_com_vagas' => 0,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('completed', $result['status']);
         $this->assertEquals(1, $result['processed']);
@@ -657,6 +775,7 @@ class SchoolGradeImportServiceTest extends TestCase
         $user = LegacyUserFactory::new()->create();
         $school = LegacySchoolFactory::new()->create();
         $grade = LegacyGradeFactory::new()->create();
+
         $year = now()->year;
 
         LegacySchoolAcademicYearFactory::new()->create([
@@ -673,6 +792,12 @@ class SchoolGradeImportServiceTest extends TestCase
             'ativo' => 1,
         ]);
 
+        LegacyDisciplineAcademicYearFactory::new()->create([
+
+            'ano_escolar_id' => $grade->cod_serie,
+            'anos_letivos' => '{' . $year . '}',
+        ]);
+
         $params = [
             'schools' => [$school->cod_escola],
             'grades' => [$grade->cod_serie],
@@ -680,7 +805,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('completed', $result['status']);
         $this->assertEquals(1, $result['processed']);
@@ -700,7 +825,54 @@ class SchoolGradeImportServiceTest extends TestCase
         $user = LegacyUserFactory::new()->create();
         $school = LegacySchoolFactory::new()->create();
         $grade = LegacyGradeFactory::new()->create();
-        $discipline = LegacyDisciplineFactory::new()->create();
+
+        $year = now()->year;
+
+        LegacySchoolAcademicYearFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ano' => $year,
+            'ativo' => 1,
+            'andamento' => 1,
+        ]);
+
+        LegacySchoolCourseFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ref_cod_curso' => $grade->ref_cod_curso,
+            'anos_letivos' => '{' . $year . '}',
+            'ativo' => 1,
+        ]);
+
+        $disciplineAcademicYear = LegacyDisciplineAcademicYearFactory::new()->create([
+            'ano_escolar_id' => $grade->cod_serie,
+        ]);
+
+        $params = [
+            'schools' => [$school->cod_escola],
+            'grades' => [$grade->cod_serie],
+            'year' => $year,
+            'user' => $user,
+        ];
+
+        $result = $this->service->processSchoolGradeUpdate($params);
+
+        $this->assertEquals('completed', $result['status']);
+        $this->assertEquals(1, $result['processed']);
+        $this->assertEmpty($result['errors']);
+
+        $this->assertDatabaseHas('pmieducar.escola_serie_disciplina', [
+            'ref_ref_cod_serie' => $grade->cod_serie,
+            'ref_ref_cod_escola' => $school->cod_escola,
+            'ref_cod_disciplina' => $disciplineAcademicYear->componente_curricular_id,
+            'ativo' => 1,
+        ]);
+    }
+
+    public function test_process_batch_update_updates_existing_school_grade()
+    {
+        $user = LegacyUserFactory::new()->create();
+        $school = LegacySchoolFactory::new()->create();
+        $grade = LegacyGradeFactory::new()->create();
+
         $year = now()->year;
 
         LegacySchoolAcademicYearFactory::new()->create([
@@ -718,50 +890,9 @@ class SchoolGradeImportServiceTest extends TestCase
         ]);
 
         LegacyDisciplineAcademicYearFactory::new()->create([
-            'componente_curricular_id' => $discipline->id,
+
             'ano_escolar_id' => $grade->cod_serie,
-        ]);
-
-        $params = [
-            'schools' => [$school->cod_escola],
-            'grades' => [$grade->cod_serie],
-            'year' => $year,
-            'user' => $user,
-        ];
-
-        $result = $this->service->processBatchUpdate($params);
-
-        $this->assertEquals('completed', $result['status']);
-        $this->assertEquals(1, $result['processed']);
-        $this->assertEmpty($result['errors']);
-
-        $this->assertDatabaseHas('pmieducar.escola_serie_disciplina', [
-            'ref_ref_cod_serie' => $grade->cod_serie,
-            'ref_ref_cod_escola' => $school->cod_escola,
-            'ref_cod_disciplina' => $discipline->id,
-            'ativo' => 1,
-        ]);
-    }
-
-    public function test_process_batch_update_updates_existing_school_grade()
-    {
-        $user = LegacyUserFactory::new()->create();
-        $school = LegacySchoolFactory::new()->create();
-        $grade = LegacyGradeFactory::new()->create();
-        $year = now()->year;
-
-        LegacySchoolAcademicYearFactory::new()->create([
-            'ref_cod_escola' => $school->cod_escola,
-            'ano' => $year,
-            'ativo' => 1,
-            'andamento' => 1,
-        ]);
-
-        LegacySchoolCourseFactory::new()->create([
-            'ref_cod_escola' => $school->cod_escola,
-            'ref_cod_curso' => $grade->ref_cod_curso,
             'anos_letivos' => '{' . $year . '}',
-            'ativo' => 1,
         ]);
 
         $existingSchoolGrade = LegacySchoolGradeFactory::new()->create([
@@ -782,7 +913,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'bloquear_cadastro_turma_para_serie_com_vagas' => 1,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('completed', $result['status']);
         $this->assertEquals(1, $result['processed']);
@@ -804,7 +935,7 @@ class SchoolGradeImportServiceTest extends TestCase
         $user = LegacyUserFactory::new()->create();
         $school = LegacySchoolFactory::new()->create();
         $grade = LegacyGradeFactory::new()->create();
-        $discipline = LegacyDisciplineFactory::new()->create();
+
         $year = now()->year;
 
         LegacySchoolAcademicYearFactory::new()->create([
@@ -828,15 +959,14 @@ class SchoolGradeImportServiceTest extends TestCase
             'anos_letivos' => '{' . ($year - 1) . '}',
         ]);
 
-        LegacyDisciplineAcademicYearFactory::new()->create([
-            'componente_curricular_id' => $discipline->id,
+        $disciplineAcademicYear = LegacyDisciplineAcademicYearFactory::new()->create([
             'ano_escolar_id' => $grade->cod_serie,
         ]);
 
         $existingDiscipline = LegacySchoolGradeDisciplineFactory::new()->create([
             'ref_ref_cod_serie' => $grade->cod_serie,
             'ref_ref_cod_escola' => $school->cod_escola,
-            'ref_cod_disciplina' => $discipline->id,
+            'ref_cod_disciplina' => $disciplineAcademicYear->componente_curricular_id,
             'ativo' => 1,
             'anos_letivos' => '{' . ($year - 1) . '}',
         ]);
@@ -848,7 +978,7 @@ class SchoolGradeImportServiceTest extends TestCase
             'user' => $user,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('completed', $result['status']);
         $this->assertEquals(1, $result['processed']);
@@ -865,29 +995,33 @@ class SchoolGradeImportServiceTest extends TestCase
     public function test_process_batch_update_with_mixed_blocking_parameters()
     {
         $user = LegacyUserFactory::new()->create();
-        $school1 = LegacySchoolFactory::new()->create();
-        $school2 = LegacySchoolFactory::new()->create();
+        $school = LegacySchoolFactory::new()->create();
         $grade = LegacyGradeFactory::new()->create();
+
         $year = now()->year;
 
-        foreach ([$school1, $school2] as $school) {
-            LegacySchoolAcademicYearFactory::new()->create([
-                'ref_cod_escola' => $school->cod_escola,
-                'ano' => $year,
-                'ativo' => 1,
-                'andamento' => 1,
-            ]);
+        LegacySchoolAcademicYearFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ano' => $year,
+            'ativo' => 1,
+            'andamento' => 1,
+        ]);
 
-            LegacySchoolCourseFactory::new()->create([
-                'ref_cod_escola' => $school->cod_escola,
-                'ref_cod_curso' => $grade->ref_cod_curso,
-                'anos_letivos' => '{' . $year . '}',
-                'ativo' => 1,
-            ]);
-        }
+        LegacySchoolCourseFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ref_cod_curso' => $grade->ref_cod_curso,
+            'anos_letivos' => '{' . $year . '}',
+            'ativo' => 1,
+        ]);
+
+        LegacyDisciplineAcademicYearFactory::new()->create([
+
+            'ano_escolar_id' => $grade->cod_serie,
+            'anos_letivos' => '{' . $year . '}',
+        ]);
 
         $params = [
-            'schools' => [$school1->cod_escola, $school2->cod_escola],
+            'schools' => [$school->cod_escola],
             'grades' => [$grade->cod_serie],
             'year' => $year,
             'user' => $user,
@@ -895,20 +1029,138 @@ class SchoolGradeImportServiceTest extends TestCase
             'bloquear_cadastro_turma_para_serie_com_vagas' => 0,
         ];
 
-        $result = $this->service->processBatchUpdate($params);
+        $result = $this->service->processSchoolGradeUpdate($params);
 
         $this->assertEquals('completed', $result['status']);
-        $this->assertEquals(2, $result['processed']);
+        $this->assertEquals(1, $result['processed']);
+        $this->assertEmpty($result['errors']);
+        $this->assertDatabaseHas('pmieducar.escola_serie', [
+            'ref_cod_escola' => $school->cod_escola,
+            'ref_cod_serie' => $grade->cod_serie,
+            'ativo' => 1,
+            'bloquear_enturmacao_sem_vagas' => 1,
+            'bloquear_cadastro_turma_para_serie_com_vagas' => 0,
+        ]);
+    }
+
+    public function test_process_batch_update_reactivates_inactive_school_grade()
+    {
+        $user = LegacyUserFactory::new()->create();
+        $school = LegacySchoolFactory::new()->create();
+        $grade = LegacyGradeFactory::new()->create();
+
+        $year = now()->year;
+
+        LegacySchoolAcademicYearFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ano' => $year,
+            'ativo' => 1,
+            'andamento' => 1,
+        ]);
+
+        LegacySchoolCourseFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ref_cod_curso' => $grade->ref_cod_curso,
+            'anos_letivos' => '{' . $year . '}',
+            'ativo' => 1,
+        ]);
+
+        LegacyDisciplineAcademicYearFactory::new()->create([
+            'ano_escolar_id' => $grade->cod_serie,
+            'anos_letivos' => '{' . $year . '}',
+        ]);
+
+        LegacySchoolGradeFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ref_cod_serie' => $grade->cod_serie,
+            'ativo' => 0,
+            'anos_letivos' => '{' . ($year - 1) . '}',
+            'bloquear_enturmacao_sem_vagas' => 0,
+            'bloquear_cadastro_turma_para_serie_com_vagas' => 0,
+        ]);
+
+        $params = [
+            'schools' => [$school->cod_escola],
+            'grades' => [$grade->cod_serie],
+            'year' => $year,
+            'user' => $user,
+            'bloquear_enturmacao_sem_vagas' => 1,
+            'bloquear_cadastro_turma_para_serie_com_vagas' => 1,
+        ];
+
+        $result = $this->service->processSchoolGradeUpdate($params);
+
+        $this->assertEquals('completed', $result['status']);
+        $this->assertEquals(1, $result['processed']);
         $this->assertEmpty($result['errors']);
 
-        foreach ([$school1, $school2] as $school) {
-            $this->assertDatabaseHas('pmieducar.escola_serie', [
-                'ref_cod_escola' => $school->cod_escola,
-                'ref_cod_serie' => $grade->cod_serie,
-                'ativo' => 1,
-                'bloquear_enturmacao_sem_vagas' => 1,
-                'bloquear_cadastro_turma_para_serie_com_vagas' => 0,
-            ]);
-        }
+        $this->assertDatabaseHas('pmieducar.escola_serie', [
+            'ref_cod_escola' => $school->cod_escola,
+            'ref_cod_serie' => $grade->cod_serie,
+            'ativo' => 1,
+            'bloquear_enturmacao_sem_vagas' => 1,
+            'bloquear_cadastro_turma_para_serie_com_vagas' => 1,
+        ]);
+
+        $updatedSchoolGrade = LegacySchoolGrade::where('ref_cod_escola', $school->cod_escola)
+            ->where('ref_cod_serie', $grade->cod_serie)
+            ->first();
+
+        $this->assertNotNull($updatedSchoolGrade);
+
+        $anosLetivosArray = transformStringFromDBInArray($updatedSchoolGrade->anos_letivos);
+        $this->assertIsArray($anosLetivosArray);
+        $this->assertContains((string) $year, $anosLetivosArray, "Ano atual {$year} não encontrado nos anos letivos: " . json_encode($anosLetivosArray));
+        $this->assertContains((string) ($year - 1), $anosLetivosArray, 'Ano anterior ' . ($year - 1) . ' não encontrado nos anos letivos: ' . json_encode($anosLetivosArray));
+    }
+
+    public function test_process_batch_update_message_indicates_created_or_updated()
+    {
+        $user = LegacyUserFactory::new()->create();
+        $school = LegacySchoolFactory::new()->create();
+        $grade = LegacyGradeFactory::new()->create();
+
+        $year = now()->year;
+
+        LegacySchoolAcademicYearFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ano' => $year,
+            'ativo' => 1,
+            'andamento' => 1,
+        ]);
+
+        LegacySchoolCourseFactory::new()->create([
+            'ref_cod_escola' => $school->cod_escola,
+            'ref_cod_curso' => $grade->ref_cod_curso,
+            'anos_letivos' => '{' . $year . '}',
+            'ativo' => 1,
+        ]);
+
+        LegacyDisciplineAcademicYearFactory::new()->create([
+
+            'ano_escolar_id' => $grade->cod_serie,
+            'anos_letivos' => '{' . $year . '}',
+        ]);
+
+        $params = [
+            'schools' => [$school->cod_escola],
+            'grades' => [$grade->cod_serie],
+            'year' => $year,
+            'user' => $user,
+        ];
+
+        $result = $this->service->processSchoolGradeUpdate($params);
+
+        $this->assertEquals('completed', $result['status']);
+        $this->assertEquals(1, $result['processed']);
+        $this->assertNotEmpty($result['details']);
+        $this->assertStringContainsString('criada', $result['details'][0]['message']);
+
+        $result2 = $this->service->processSchoolGradeUpdate($params);
+
+        $this->assertEquals('completed', $result2['status']);
+        $this->assertEquals(1, $result2['processed']);
+        $this->assertNotEmpty($result2['details']);
+        $this->assertStringContainsString('atualizada', $result2['details'][0]['message']);
     }
 }

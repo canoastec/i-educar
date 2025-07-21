@@ -68,8 +68,29 @@
                             <strong style="margin: 0 0 10px 0;">✅ Processamentos Realizados ({{ count($result['details']) }}):</strong>
                             <div style="max-height: 200px; overflow-y: auto;">
                                 @foreach($result['details'] as $detail)
+                                    @php
+                                        $message = $detail['message'];
+                                        $message = str_replace(' processadas com sucesso.', '', $message);
+
+                                        $schoolId = $detail['school_id'] ?? null;
+                                        $gradeId = $detail['grade_id'] ?? null;
+
+                                        if ($schoolId && $gradeId) {
+                                            $link = "/intranet/educar_escola_serie_cad.php?ref_cod_escola={$schoolId}&ref_cod_serie={$gradeId}";
+                                            $displayText = $message;
+                                        } else {
+                                            $link = null;
+                                            $displayText = $message;
+                                        }
+                                    @endphp
                                     <div style="margin: 5px 0; padding: 5px; background-color: rgba(255,255,255,0.5); border-radius: 3px;">
-                                        {{ $detail['message'] }}
+                                        @if($link)
+                                            <a href="{{ $link }}" target="_blank" style="color: #0066cc; text-decoration: none;">
+                                                {{ $displayText }} <span style="font-size: 0.8em;">🔗</span>
+                                            </a>
+                                        @else
+                                            {{ $displayText }}
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>
@@ -116,4 +137,4 @@
             </tr>
         </table>
     </div>
-@endsection 
+@endsection
