@@ -2,13 +2,13 @@
 
 namespace App\Listeners;
 
-use App\Models\LegacyTransferRequest;
+use App\Events\ActiveLookingCreated;
 use App\Models\NotificationType;
 use App\Process;
 use App\Services\NotificationService;
 use App\Traits\HasNotificationUsers;
 
-class TransferNotificationListener
+class ActiveLookingNotificationListener
 {
     use HasNotificationUsers;
 
@@ -25,17 +25,16 @@ class TransferNotificationListener
     /**
      * Handle the event.
      *
-     * @param object $event
+     * @param ActiveLookingCreated $event
      * @return void
      */
-    public function handle($event)
+    public function handle(ActiveLookingCreated $event)
     {
-        /** @var LegacyTransferRequest $transfer */
-        $transfer = $event->transfer;
-        $registration = $transfer->oldRegistration;
+        $activeLooking = $event->activeLooking;
+        $registration = $activeLooking->registration;
 
         $message = sprintf(
-            'O(a) aluno(a) %s, %s, %s, %s, %s foi transferido(a) da rede.',
+            'O(a) aluno(a) %s, %s, %s, %s, %s foi registrado em Busca Ativa.',
             $registration->student->person->name,
             $registration->school->name,
             $registration->grade->name,
@@ -43,12 +42,12 @@ class TransferNotificationListener
             $registration->ano
         );
 
-        $link = '/intranet/educar_matricula_det.php?cod_matricula=' . $registration->getKey();
+        $link = '/intranet/educar_busca_ativa_cad.php?id=' . $activeLooking->getKey() . '&ref_cod_matricula=' . $registration->getKey();
 
-        $users = $this->getUsers(Process::NOTIFY_TRANSFER, $registration->school->getKey());
+        $users = $this->getUsers(Process::ACTIVE_LOOKING, $registration->school->getKey());
 
         foreach ($users as $user) {
-            $this->service->createByUser($user->cod_usuario, $message, $link, NotificationType::TRANSFER);
+            $this->service->createByUser($user->cod_usuario, $message, $link, NotificationType::ACTIVE_LOOKING);
         }
     }
 }

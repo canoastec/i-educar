@@ -8,6 +8,7 @@ use App\Events\ReportIssued;
 use App\Events\TransferEvent;
 use App\Events\UserDeleted;
 use App\Events\UserUpdated;
+use App\Events\ActiveLookingCreated;
 use App\Listeners\AcceptTransferRequestListener;
 use App\Listeners\AuthenticatedUser;
 use App\Listeners\ConfigureAuthenticatedUserForAudit;
@@ -19,6 +20,7 @@ use App\Listeners\NotificationWhenResetPassword;
 use App\Listeners\RegistrationCopyListener;
 use App\Listeners\ReportIssuedListener;
 use App\Listeners\TransferNotificationListener;
+use App\Listeners\ActiveLookingNotificationListener;
 use App\Models\LegacyRegistrationDisciplinaryOccurrenceType;
 use App\Models\SchoolManager;
 use App\Observers\LegacyRegistrationDisciplinaryOccurrenceTypeObserver;
@@ -73,6 +75,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         ReportIssued::class => [
             ReportIssuedListener::class,
+        ],
+        ActiveLookingCreated::class => [
+            ActiveLookingNotificationListener::class,
         ],
     ];
 
