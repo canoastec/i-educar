@@ -118,8 +118,8 @@ class CheckMandatoryCensoFields implements Rule
 
         if ($params->tipo_mediacao_didatico_pedagogico == App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA &&
             isset($params->etapa_educacenso) &&
-            !in_array((int) $params->etapa_educacenso, [25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 70, 71], true)) {
-            $this->message = 'Quando o campo: Tipo de mediação didático-pedagógica é: Educação a Distância, o campo: Etapa de ensino deve ser uma das seguintes opções: 25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 70, 71, ou 64';
+            !in_array((int) $params->etapa_educacenso, [25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 68, 67, 70, 71, 73], true)) {
+            $this->message = 'Quando o campo: Tipo de mediação didático-pedagógica é: Educação a Distância, o campo: Etapa de ensino deve ser uma das seguintes opções: 25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 68, 67, 70, 71 ou 73';
 
             return false;
         }
@@ -279,19 +279,19 @@ class CheckMandatoryCensoFields implements Rule
 
         $validOptionCorrelationForEtapaEnsino = [
             FormaOrganizacaoTurma::SERIE_ANO => [
-                14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 41, 25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 56, 69, 70, 71, 72,
+                14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 41, 56, 64, 68, 69, 70, 71, 72, 73, 74,
             ],
             FormaOrganizacaoTurma::SEMESTRAL => [
-                25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 69, 70, 71, 72,
+                25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 68, 69, 70, 71, 72, 73, 74,
             ],
             FormaOrganizacaoTurma::CICLOS => [
-                14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 41, 56, 25, 26, 27, 28, 29, 35, 36, 37, 38,
+                14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 35, 36, 37, 38, 41, 56,
             ],
             FormaOrganizacaoTurma::NAO_SERIADO => [
-                14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 41, 25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 56, 69, 70, 71, 72,
+                14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 41, 56, 25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 68, 69, 70, 71, 72, 73, 74,
             ],
             FormaOrganizacaoTurma::MODULES => [
-                14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 41, 25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 56, 69, 70, 71, 72,
+                14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 41, 25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 56, 68, 69, 70, 71, 72, 73, 74,
             ],
         ];
 

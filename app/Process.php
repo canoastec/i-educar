@@ -82,6 +82,8 @@ class Process
 
     public const STAGE = 9999116;
 
+    public const FINAL_STATUS_IMPORT = 9999118;
+
     public const ENROLLMENT = 683;
 
     public const RELOCATE = 695;
