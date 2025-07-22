@@ -816,6 +816,12 @@ class EducacensoAnaliseController extends ApiCoreController
 
         $turmas = $registro20->getData($escola, $ano);
 
+        $registro50Model = new Registro50;
+        $registro50 = new Registro50Data($educacensoRepository, $registro50Model);
+
+        /** @var Registro50[] $docentes */
+        $docentes = $registro50->getData($escola, $ano);
+
         if (empty($turmas)) {
             $this->messenger->append('Nenhuma turma localizada na escola selecionada para exportação.');
 
@@ -857,6 +863,22 @@ class EducacensoAnaliseController extends ApiCoreController
             if (!$turma->possuiServidor) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} não possui nenhum docente vinculado.",
+                    'path' => '(Servidores > Cadastros > Servidores)',
+                    'linkPath' => '/intranet/educar_servidor_lst.php',
+                    'fail' => true,
+                ];
+            }
+
+            $exists = !empty(array_filter($docentes, function ($docente) use ($turma) {
+                if (str_contains($docente->codigoTurma, '-')) {
+                    $docente->codigoTurma = explode('-', $docente->codigoTurma)[0];
+                }
+                return $turma->codTurma == $docente->codigoTurma;
+            }));
+
+            if (!empty($turma->etapaEducacenso) && $turma->etapaEducacenso != 1 && !$exists) {
+                $mensagem[] = [
+                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} não possui nenhum docente vinculado, ou as datas de início e término da alocação estão fora do período de referência da exportação.",
                     'path' => '(Servidores > Cadastros > Servidores)',
                     'linkPath' => '/intranet/educar_servidor_lst.php',
                     'fail' => true,
