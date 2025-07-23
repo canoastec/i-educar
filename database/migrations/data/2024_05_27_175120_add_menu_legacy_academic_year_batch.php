@@ -21,15 +21,15 @@ return new class extends Migration
 
         Menu::query()->create([
             'parent_id' => $menu->getKey(),
-            'process' => 1051,
+            'process' => Process::ACADEMIC_YEAR_IMPORT,
             'title' => 'Ano Letivo em Lote',
-            'link' => '/intranet/educar_ano_letivo_modulo_lote_cad.php',
+            'link' => '/ano-letivo-em-lote',
         ]);
     }
 
     public function down(): void
     {
+        Menu::query()->where('process', Process::ACADEMIC_YEAR_IMPORT)->delete();
         Menu::query()->where('process', Process::ON_BOARDING)->delete();
-        Menu::query()->where('process', 1051)->delete();
     }
 };

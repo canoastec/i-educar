@@ -151,6 +151,10 @@ Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.
     Route::get('/atualiza-etapa', 'StageController@edit')->middleware('can:modify:' . Process::STAGE)->name('stage.edit');
     Route::post('/atualiza-etapa', 'StageController@update')->middleware('can:modify:' . Process::STAGE)->name('stage.update');
 
+    Route::get('/ano-letivo-em-lote', 'AcademicYearBatchController@edit')->middleware('can:modify:' . Process::ACADEMIC_YEAR_IMPORT)->name('academic-year.edit');
+    Route::post('/ano-letivo-em-lote/processar', 'AcademicYearBatchController@process')->middleware('can:modify:' . Process::ACADEMIC_YEAR_IMPORT)->name('academic-year.process');
+    Route::get('/ano-letivo-em-lote/status', 'AcademicYearBatchController@status')->middleware('can:view:' . Process::ACADEMIC_YEAR_IMPORT)->name('academic-year.status');
+
     Route::get('/bloquear-enturmacao', 'BlockEnrollmentController@edit')->middleware('can:modify:' . Process::BLOCK_ENROLLMENT)->name('block-enrollment.edit');
     Route::post('/bloquear-enturmacao', 'BlockEnrollmentController@update')->middleware('can:modify:' . Process::BLOCK_ENROLLMENT)->name('block-enrollment.update');
 

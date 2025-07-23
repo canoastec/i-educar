@@ -78,6 +78,8 @@ class Process
 
     public const ON_BOARDING = 1050;
 
+    public const ACADEMIC_YEAR_IMPORT = 1051;
+
     public const ANNOUNCEMENT = 9999114;
 
     public const BLOCK_ENROLLMENT = 9999115;
