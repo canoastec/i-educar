@@ -613,6 +613,8 @@ return new class extends clsCadastro
             $newSchoolClassTeacher = $schoolClassTeacher->replicate();
             $newSchoolClassTeacher->ano = $destinationYear;
             $newSchoolClassTeacher->turma_id = $destinationSchoolClassId;
+            $newSchoolClassTeacher->data_inicial = null;
+            $newSchoolClassTeacher->data_fim = null;
 
             $newSchoolClassTeacher->save();
 
@@ -680,6 +682,8 @@ return new class extends clsCadastro
 
             $newEmployeeAllocation = $employeeAllocation->replicate();
             $newEmployeeAllocation->ano = $anoDestino;
+            $newEmployeeAllocation->data_admissao = null;
+            $newEmployeeAllocation->data_saida = null;
 
             $newEmployeeAllocation->save();
         }
