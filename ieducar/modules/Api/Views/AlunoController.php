@@ -2235,9 +2235,6 @@ class AlunoController extends ApiCoreController
         // Pega os códigos das deficiências do censo
         $deficiencias = $this->replaceByEducacensoDeficiencies(array_filter(explode(',', $this->getRequest()->deficiencias)));
 
-        // Remove "Altas Habilidades"
-        $deficiencias = Registro30::removeAltasHabilidadesArrayDeficiencias($deficiencias);
-
         return [
             'result' => !empty($deficiencias),
         ];
