@@ -294,23 +294,6 @@ class Registro30 implements RegistroEducacenso
     }
 
     /**
-     * Remove "Altas habilidades/Superdotação" do array de deficiências informado
-     *
-     *
-     * @return string
-     */
-    public static function removeAltasHabilidadesArrayDeficiencias($arrayDeficiencias)
-    {
-        $altasHabilidadesKey = array_search(Deficiencias::ALTAS_HABILIDADES_SUPERDOTACAO, $arrayDeficiencias);
-
-        if ($altasHabilidadesKey !== false) {
-            unset($arrayDeficiencias[$altasHabilidadesKey]);
-        }
-
-        return $arrayDeficiencias;
-    }
-
-    /**
      * Remove "Transtornos" do array de deficiências informado
      *
      *
