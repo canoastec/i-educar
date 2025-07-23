@@ -869,20 +869,23 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
-            $exists = !empty(array_filter($docentes, function ($docente) use ($turma) {
-                if (str_contains($docente->codigoTurma, '-')) {
-                    $docente->codigoTurma = explode('-', $docente->codigoTurma)[0];
-                }
-                return $turma->codTurma == $docente->codigoTurma;
-            }));
+            if (is_array($docentes)) {
+                $exists = !empty(array_filter($docentes, function ($docente) use ($turma) {
+                    if (str_contains($docente->codigoTurma, '-')) {
+                        $docente->codigoTurma = explode('-', $docente->codigoTurma)[0];
+                    }
 
-            if (!empty($turma->etapaEducacenso) && $turma->etapaEducacenso != 1 && !$exists) {
-                $mensagem[] = [
-                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} não possui nenhum docente vinculado, ou as datas de início e término da alocação estão fora do período de referência da exportação.",
-                    'path' => '(Servidores > Cadastros > Servidores)',
-                    'linkPath' => '/intranet/educar_servidor_lst.php',
-                    'fail' => true,
-                ];
+                    return $turma->codTurma == $docente->codigoTurma;
+                }));
+
+                if (!empty($turma->etapaEducacenso) && $turma->etapaEducacenso != 1 && !$exists) {
+                    $mensagem[] = [
+                        'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} não possui nenhum docente vinculado, ou as datas de início e término da alocação estão fora do período de referência da exportação.",
+                        'path' => '(Servidores > Cadastros > Servidores)',
+                        'linkPath' => '/intranet/educar_servidor_lst.php',
+                        'fail' => true,
+                    ];
+                }
             }
 
             if (!empty($turma->etapaEducacenso) && $turma->etapaEducacenso != 1 && !$turma->possuiServidorDocente) {
