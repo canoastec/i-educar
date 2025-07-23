@@ -266,7 +266,10 @@ class Registro30 implements RegistroEducacenso
             $this->deficienciaVisaoMonocular,
         ];
 
-        if (empty($this->arrayDeficiencias)) {
+        if (
+            empty($this->arrayDeficiencias) ||
+            count(Registro30::removeTranstornosArrayDeficiencias(transformStringFromDBInArray($this->arrayDeficiencias))) === 0
+        ) {
             return null;
         }
 
@@ -288,23 +291,6 @@ class Registro30 implements RegistroEducacenso
             '999991' => 'Outro curso de formação superior - Bacharelado',
             '999992' => 'Outro curso de formação superior - Tecnológico',
         ];
-    }
-
-    /**
-     * Remove "Altas habilidades/Superdotação" do array de deficiências informado
-     *
-     *
-     * @return string
-     */
-    public static function removeAltasHabilidadesArrayDeficiencias($arrayDeficiencias)
-    {
-        $altasHabilidadesKey = array_search(Deficiencias::ALTAS_HABILIDADES_SUPERDOTACAO, $arrayDeficiencias);
-
-        if ($altasHabilidadesKey !== false) {
-            unset($arrayDeficiencias[$altasHabilidadesKey]);
-        }
-
-        return $arrayDeficiencias;
     }
 
     /**
