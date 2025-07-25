@@ -33,7 +33,7 @@ class FinalStatusImportServiceTest extends TestCase
     {
         $statusRequiringExitDate = $this->service->getStatusRequiringExitDate();
 
-        $expected = [RegistrationStatus::TRANSFERRED, RegistrationStatus::ABANDONED, RegistrationStatus::DECEASED , RegistrationStatus::RECLASSIFIED];
+        $expected = [RegistrationStatus::TRANSFERRED, RegistrationStatus::ABANDONED, RegistrationStatus::DECEASED, RegistrationStatus::RECLASSIFIED];
         $this->assertEqualsCanonicalizing($expected, $statusRequiringExitDate);
     }
 

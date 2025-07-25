@@ -2,6 +2,7 @@
 
 namespace Tests\Api;
 
+use Carbon\Carbon;
 use Database\Factories\EmployeeFactory;
 use Database\Factories\LegacyCourseFactory;
 use Database\Factories\LegacyDisciplineAcademicYearFactory;
@@ -17,7 +18,6 @@ use Database\Factories\LegacySchoolFactory;
 use Database\Factories\LegacySchoolGradeFactory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
-use Carbon\Carbon;
 
 class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCase
 {
@@ -546,11 +546,11 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
         // Professor tem 3 disciplinas, apenas 1 é modificada
         // Comportamento CORRETO: Deve retornar TODAS as 3 disciplinas do vínculo
         // (não apenas a disciplina modificada)
-        
+
         $dataAntiga = Carbon::now()->subDays(2);
         $dataRecente = Carbon::now()->subDay();
         $dataModified = $dataRecente->copy()->subHour(); // Entre a data antiga e recente
-        
+
         $school = LegacySchoolFactory::new()->create();
         $course = LegacyCourseFactory::new()->standardAcademicYear()->create();
         $grade = LegacyGradeFactory::new()->create([
@@ -670,19 +670,19 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
 
         // COMPORTAMENTO CORRETO: Deve retornar TODAS as 3 disciplinas do vínculo
         // (mesmo que apenas 1 tenha sido modificada)
-        $this->assertCount(3, $vinculo['disciplinas'], 
+        $this->assertCount(3, $vinculo['disciplinas'],
             'Deve retornar todas as 3 disciplinas do vínculo, mesmo que apenas 1 tenha sido modificada');
 
         // Verifica se todas as disciplinas estão presentes
         $disciplinasIds = array_column($vinculo['disciplinas'], 'id');
         sort($disciplinasIds); // Ordena para comparação
-        
+
         $expectedIds = [$discipline1->getKey(), $discipline2->getKey(), $discipline3->getKey()];
         sort($expectedIds); // Ordena para comparação
-        
+
         $this->assertEquals($expectedIds, $disciplinasIds,
             'Todas as disciplinas do vínculo devem estar presentes');
-            
+
         // Verifica individualmente cada disciplina
         $this->assertContains($discipline1->getKey(), $disciplinasIds,
             'Disciplina 1 (não modificada) deve estar presente');
@@ -697,11 +697,11 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
         // TESTE: Modificar APENAS professor_turma (pt.updated_at)
         // ccae.updated_at permanece antigo
         // Deve retornar o vínculo pois greatest(pt.updated_at, ccae.updated_at) >= modified
-        
+
         $dataAntiga = Carbon::now()->subDays(2);
         $dataRecente = Carbon::now()->subDay();
         $dataModified = $dataRecente->copy()->subHour(); // Entre a data antiga e recente
-        
+
         $school = LegacySchoolFactory::new()->create();
         $course = LegacyCourseFactory::new()->standardAcademicYear()->create();
         $grade = LegacyGradeFactory::new()->create([
@@ -773,7 +773,7 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
         // Deve retornar o vínculo pois greatest(dataRecente, dataAntiga) = dataRecente >= modified
         $response->assertSuccessful()
             ->assertJsonCount(1, 'vinculos');
-            
+
         $vinculos = $response->json('vinculos');
         $this->assertEquals($legacySchoolClassTeacher->getKey(), $vinculos[0]['id']);
     }
@@ -783,11 +783,11 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
         // TESTE: Modificar APENAS ccae (ccae.updated_at)
         // pt.updated_at permanece antigo
         // Deve retornar o vínculo pois greatest(pt.updated_at, ccae.updated_at) >= modified
-        
+
         $dataAntiga = Carbon::now()->subDays(2);
         $dataRecente = Carbon::now()->subDay();
         $dataModified = $dataRecente->copy()->subHour(); // Entre a data antiga e recente
-        
+
         $school = LegacySchoolFactory::new()->create();
         $course = LegacyCourseFactory::new()->standardAcademicYear()->create();
         $grade = LegacyGradeFactory::new()->create([
@@ -859,7 +859,7 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
         // Deve retornar o vínculo pois greatest(dataAntiga, dataRecente) = dataRecente >= modified
         $response->assertSuccessful()
             ->assertJsonCount(1, 'vinculos');
-            
+
         $vinculos = $response->json('vinculos');
         $this->assertEquals($legacySchoolClassTeacher->getKey(), $vinculos[0]['id']);
     }
@@ -869,10 +869,10 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
         // TESTE: professor_turma antigo, ccae antigo, modified recente
         // Nenhum foi modificado após a data do modified
         // Não deve retornar vínculos
-        
+
         $dataAntiga = Carbon::now()->subDays(2);
         $dataModified = Carbon::now()->subDay(); // Mais recente que ambos
-        
+
         $school = LegacySchoolFactory::new()->create();
         $course = LegacyCourseFactory::new()->standardAcademicYear()->create();
         $grade = LegacyGradeFactory::new()->create([
@@ -950,11 +950,11 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
     {
         // TESTE: 2 professores, apenas 1 tem vínculo modificado
         // Deve retornar apenas o vínculo modificado
-        
+
         $dataAntiga = Carbon::now()->subDays(2);
         $dataRecente = Carbon::now()->subDay();
         $dataModified = $dataRecente->copy()->subHour(); // Entre a data antiga e recente
-        
+
         $school = LegacySchoolFactory::new()->create();
         $course = LegacyCourseFactory::new()->standardAcademicYear()->create();
         $grade = LegacyGradeFactory::new()->create([
@@ -1040,7 +1040,7 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
         // Deve retornar apenas 1 vínculo (o modificado)
         $response->assertSuccessful()
             ->assertJsonCount(1, 'vinculos');
-            
+
         $vinculos = $response->json('vinculos');
         // Deve ser o professor 2 (o modificado)
         $this->assertEquals($legacySchoolClassTeacher2->getKey(), $vinculos[0]['id']);
@@ -1051,9 +1051,9 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
     {
         // TESTE: modified com data EXATAMENTE igual ao updated_at
         // Deve retornar o vínculo (>= inclui igualdade)
-        
+
         $dataExata = Carbon::now()->subDay();
-        
+
         $school = LegacySchoolFactory::new()->create();
         $course = LegacyCourseFactory::new()->standardAcademicYear()->create();
         $grade = LegacyGradeFactory::new()->create([
@@ -1129,12 +1129,12 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
     {
         // TESTE: Ambos pt.updated_at e ccae.updated_at são recentes
         // Deve retornar o vínculo (greatest pega qualquer um dos dois)
-        
+
         $dataAntiga = Carbon::now()->subDays(3);
         $dataRecente1 = Carbon::now()->subDays(2);
         $dataRecente2 = Carbon::now()->subDay();
         $dataModified = $dataAntiga->copy()->addHour(); // Entre antiga e recente
-        
+
         $school = LegacySchoolFactory::new()->create();
         $course = LegacyCourseFactory::new()->standardAcademicYear()->create();
         $grade = LegacyGradeFactory::new()->create([
@@ -1212,9 +1212,9 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
     {
         // TESTE: Sem parâmetro modified deve retornar todos os vínculos
         // (independente das datas de updated_at)
-        
+
         $dataAntiga = Carbon::now()->subDays(2);
-        
+
         $school = LegacySchoolFactory::new()->create();
         $course = LegacyCourseFactory::new()->standardAcademicYear()->create();
         $grade = LegacyGradeFactory::new()->create([
@@ -1293,12 +1293,12 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
         // TESTE: Professor com múltiplas disciplinas, cada ccae com updated_at diferente
         // Apenas algumas disciplinas modificadas após o modified
         // Deve retornar TODAS as disciplinas do vínculo (comportamento correto pós-correção)
-        
+
         $dataAntiga = Carbon::now()->subDays(3);
         $dataMedia = Carbon::now()->subDays(2);
         $dataRecente = Carbon::now()->subDay();
         $dataModified = $dataMedia->copy()->subHour(); // Entre média e recente
-        
+
         $school = LegacySchoolFactory::new()->create();
         $course = LegacyCourseFactory::new()->standardAcademicYear()->create();
         $grade = LegacyGradeFactory::new()->create([
@@ -1419,16 +1419,16 @@ class DiarioRecuperaServidoresComVinculosDeTurmasEDisciplinasTest extends TestCa
         $vinculo = $vinculos[0];
 
         // Deve retornar TODAS as 3 disciplinas do vínculo
-        $this->assertCount(3, $vinculo['disciplinas'], 
+        $this->assertCount(3, $vinculo['disciplinas'],
             'Deve retornar todas as disciplinas do vínculo, mesmo que apenas algumas tenham sido modificadas');
 
         // Verifica se todas as disciplinas estão presentes
         $disciplinasIds = array_column($vinculo['disciplinas'], 'id');
         sort($disciplinasIds);
-        
+
         $expectedIds = [$discipline1->getKey(), $discipline2->getKey(), $discipline3->getKey()];
         sort($expectedIds);
-        
+
         $this->assertEquals($expectedIds, $disciplinasIds,
             'Todas as disciplinas do vínculo devem estar presentes');
     }
