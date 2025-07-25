@@ -1030,9 +1030,10 @@ class EditController extends Core_Controller_Page_EditController
         }
 
         // Validação da regra de avaliação
-        $validator = new RegraAvaliacao_Validators_RegraAvaliacaoValidator();
+        $validator = new RegraAvaliacao_Validators_RegraAvaliacaoValidator;
         if (!$validator->isValid($this->getEntity())) {
             $this->mensagem = implode('<br>', $validator->getMessages());
+
             return false;
         }
 
