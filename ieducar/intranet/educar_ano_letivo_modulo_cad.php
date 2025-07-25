@@ -280,9 +280,10 @@ return new class extends clsCadastro
                 nome: 'atencao',
                 campo: 'Atenção ao utilizar o recurso de cópia:',
                 descricao: '
-                    As alocações e vínculos copiados poderão ser editados ou excluídos posteriormente, se necessário; <br/>
-                    Todos os campos de data dos novos registros serão copiados em branco e deverão ser ajustados manualmente após a criação.
-                ',
+                    <ul>
+                        <li>As alocações e vínculos copiados poderão ser editados ou excluídos posteriormente, se necessário;</li>
+                        <li>Todos os campos de data dos novos registros serão copiados em branco e deverão ser ajustados manualmente após a criação.</li>
+                    </ul>',
                 separador: null
             );
         }
