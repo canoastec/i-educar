@@ -275,6 +275,16 @@ return new class extends clsCadastro
                 campo: 'As alocações e vínculos podem depois ser editadas e excluídas, caso necessário',
                 separador: null
             );
+
+            $this->campoRotulo(
+                nome: 'atencao',
+                campo: 'Atenção ao utilizar o recurso de cópia:',
+                descricao: '
+                    As alocações e vínculos copiados poderão ser editados ou excluídos posteriormente, se necessário; <br/>
+                    Todos os campos de data dos novos registros serão copiados em branco e deverão ser ajustados manualmente após a criação.
+                ',
+                separador: null
+            );
         }
 
         Portabilis_View_Helper_Application::loadJavascript(viewInstance: $this, files: [
