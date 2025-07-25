@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\DeficiencyType;
-use App\Models\Educacenso\Registro30;
 use App\Models\Individual;
 use App\Models\LegacyDeficiency;
 use App\Models\LegacyIndividual;

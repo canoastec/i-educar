@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\RegistrationStatus;
 use App\Services\FinalStatusImportService;
 use Database\Factories\LegacyEnrollmentFactory;
 use Database\Factories\LegacyRegistrationFactory;
