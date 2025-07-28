@@ -275,6 +275,17 @@ return new class extends clsCadastro
                 campo: 'As alocações e vínculos podem depois ser editadas e excluídas, caso necessário',
                 separador: null
             );
+
+            $this->campoRotulo(
+                nome: 'atencao',
+                campo: 'Atenção ao utilizar o recurso de cópia:',
+                descricao: '
+                    <ul>
+                        <li>As alocações e vínculos copiados poderão ser editados ou excluídos posteriormente, se necessário;</li>
+                        <li>Todos os campos de data dos novos registros serão copiados em branco e deverão ser ajustados manualmente após a criação.</li>
+                    </ul>',
+                separador: null
+            );
         }
 
         Portabilis_View_Helper_Application::loadJavascript(viewInstance: $this, files: [
@@ -613,6 +624,8 @@ return new class extends clsCadastro
             $newSchoolClassTeacher = $schoolClassTeacher->replicate();
             $newSchoolClassTeacher->ano = $destinationYear;
             $newSchoolClassTeacher->turma_id = $destinationSchoolClassId;
+            $newSchoolClassTeacher->data_inicial = null;
+            $newSchoolClassTeacher->data_fim = null;
 
             $newSchoolClassTeacher->save();
 
@@ -680,6 +693,8 @@ return new class extends clsCadastro
 
             $newEmployeeAllocation = $employeeAllocation->replicate();
             $newEmployeeAllocation->ano = $anoDestino;
+            $newEmployeeAllocation->data_admissao = null;
+            $newEmployeeAllocation->data_saida = null;
 
             $newEmployeeAllocation->save();
         }
