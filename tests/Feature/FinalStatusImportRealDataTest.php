@@ -3,13 +3,13 @@
 namespace Tests\Feature;
 
 use App\Services\FinalStatusImportService;
+use Database\Factories\LegacyEnrollmentFactory;
 use Database\Factories\LegacyRegistrationFactory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\LoginFirstUser;
 use Tests\TestCase;
-use Database\Factories\LegacyEnrollmentFactory;
 
 class FinalStatusImportRealDataTest extends TestCase
 {

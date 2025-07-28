@@ -39,11 +39,31 @@ Clone o repositório:
 git clone git@github.com:portabilis/i-educar.git && cd i-educar
 ```
 
-Configura as variáveis de ambiente que desejar:
+Configure as variáveis de ambiente que desejar:
 
 ```bash
 cp .env.example .env
 ```
+
+**Evitar problemas de permissão dos arquivos**
+
+Ao utilizar Docker, os arquivos criados dentro do container (como `vendor/`, `storage/logs`, etc.) podem acabar sendo 
+atribuídos ao usuário `root`, causando erros de permissão durante o desenvolvimento no host (ex: `Permission denied` ao
+escrever logs).
+
+Para evitar esse problema, o ambiente Docker do i-Educar permite configurar o **UID e GID do usuário do host** (por 
+exemplo, `ieducar`) no momento do build da imagem.
+
+Esses valores devem ser definidos no seu arquivo `.env`, da seguinte forma:
+
+```env
+HOST_UID=1001  # Use `id -u` para descobrir o UID do seu usuário local
+HOST_GID=1001  # Use `id -g` para descobrir o GID do seu grupo local
+```
+
+Esses valores são utilizados durante o build do container para criar um usuário interno com o mesmo UID e GID, garantindo que os arquivos gerados dentro do container sejam acessíveis normalmente no seu host.
+
+> Importante: caso você não defina essas variáveis, valores padrão como 1001 serão utilizados. Isso evita que os arquivos sejam criados como root (UID 0), mas ainda assim pode gerar erros de permissão se o UID/GID do container não corresponder ao do seu usuário local.
 
 Faça o build das imagens Docker utilizadas no projeto e inicie os containers da aplicação (pode levar alguns minutos):
 
@@ -151,8 +171,8 @@ cp /var/www/ieducar/.env.example /var/www/ieducar/.env
 Copie os arquivos de configuração do Nginx:
 
 ```bash 
-cp /var/www/ieducar/docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-cp /var/www/ieducar/docker/nginx/upstream.conf /etc/nginx/conf.d/upstream.conf
+cp /var/www/ieducar/docker/nginx/conf.d/* /etc/nginx/conf.d/
+cp /var/www/ieducar/docker/nginx/snippets/* /etc/nginx/snippets/
 sed -i 's/fpm:9000/unix:\/run\/php\/php-fpm.sock/g' /etc/nginx/conf.d/upstream.conf
 rm /etc/nginx/sites-enabled/default
 nginx -s reload

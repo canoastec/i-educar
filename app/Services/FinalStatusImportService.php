@@ -57,6 +57,7 @@ class FinalStatusImportService
         foreach ($this->requiredColumns as $column) {
             $translations[$column] = $this->expectedColumns[$column] ?? $column;
         }
+
         return $translations;
     }
 
@@ -375,6 +376,7 @@ class FinalStatusImportService
                     'row' => $rowNumber,
                     'error' => $idValidation,
                 ];
+
                 return null;
             }
 
@@ -384,6 +386,7 @@ class FinalStatusImportService
                     'row' => $rowNumber,
                     'error' => 'Situação final é obrigatória',
                 ];
+
                 return null;
             }
 
@@ -395,6 +398,7 @@ class FinalStatusImportService
                     'row' => $rowNumber,
                     'error' => "Matrícula {$registrationId} com situação final inválida: '{$finalStatus}'",
                 ];
+
                 return null;
             }
 
@@ -405,6 +409,7 @@ class FinalStatusImportService
                     'row' => $rowNumber,
                     'error' => $exitDateValidation,
                 ];
+
                 return null;
             }
             $processedExitDate = !empty($exitDate) ? Carbon::createFromFormat('d/m/Y', $exitDate)->format('Y-m-d') : null;
@@ -415,6 +420,7 @@ class FinalStatusImportService
                     'row' => $rowNumber,
                     'error' => "Matrícula não encontrada: {$registrationId}",
                 ];
+
                 return null;
             }
 
@@ -437,6 +443,7 @@ class FinalStatusImportService
                         'row' => $rowNumber,
                         'error' => "Matrícula {$registrationId} possui {$activeCount} enturmações ativas. Não é possível alterar a situação final para '{$finalStatus}' enquanto houver mais de uma enturmação ativa.",
                     ];
+
                     return null;
                 }
 
@@ -446,6 +453,7 @@ class FinalStatusImportService
                         'row' => $rowNumber,
                         'error' => "Matrícula {$registrationId} com situação '{$finalStatus}' não possui enturmação. É necessário ter uma enturmação para atualizar a situação.",
                     ];
+
                     return null;
                 }
 
@@ -458,6 +466,7 @@ class FinalStatusImportService
                         'row' => $rowNumber,
                         'error' => "Matrícula {$registrationId} com situação '{$finalStatus}' possui enturmação inativa com status incompatível. Não é possível atualizar.",
                     ];
+
                     return null;
                 }
 
@@ -482,6 +491,7 @@ class FinalStatusImportService
                 'row' => $rowNumber,
                 'error' => $msg,
             ];
+
             return null;
         }
     }
@@ -495,9 +505,10 @@ class FinalStatusImportService
         if ($trimmed === '' || $trimmed === null) {
             return 'ID da matrícula é obrigatório';
         }
-        if (!is_numeric($trimmed) || (int)$trimmed != $trimmed || (int)$trimmed <= 0) {
+        if (!is_numeric($trimmed) || (int) $trimmed != $trimmed || (int) $trimmed <= 0) {
             return "Matrícula ID tem valor inválido para matrícula: '{$registrationId}'";
         }
+
         return true;
     }
 
@@ -519,6 +530,7 @@ class FinalStatusImportService
                 return "Matrícula {$registrationId} com data de saída inválida: '{$exitDate}'. Use formato DD/MM/AAAA";
             }
         }
+
         return true;
     }
 
@@ -599,6 +611,7 @@ class FinalStatusImportService
 
         // Se inativa, só pode se não tiver status ou se for o mesmo status
         $currentStatus = $this->getEnrollmentCurrentStatus($enrollment);
+
         return $currentStatus === null || $currentStatus === $newStatusCode;
     }
 

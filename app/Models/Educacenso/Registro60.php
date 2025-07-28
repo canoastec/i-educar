@@ -193,7 +193,7 @@ class Registro60 implements ItemOfRegistro30, RegistroEducacenso
             TipoMediacaoDidaticoPedagogico::SEMIPRESENCIAL,
         ];
 
-        return $this->tipoAtendimentoTurma == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO
+        return in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $this->tipoAtendimentoTurma)
             && in_array($this->tipoMediacaoTurma, $tiposMediacaoPresencial)
             && $this->paisResidenciaAluno == PaisResidencia::BRASIL;
     }
@@ -213,8 +213,8 @@ class Registro60 implements ItemOfRegistro30, RegistroEducacenso
 
     public function isAtividadeComplementarOrAee()
     {
-        return $this->tipoAtendimentoTurma == TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR ||
-            $this->tipoAtendimentoTurma == TipoAtendimentoTurma::AEE;
+        return in_array(TipoAtendimentoTurma::ATIVIDADE_COMPLEMENTAR, $this->tipoAtendimentoTurma) ||
+            in_array(TipoAtendimentoTurma::AEE, $this->tipoAtendimentoTurma);
     }
 
     /**
@@ -222,7 +222,7 @@ class Registro60 implements ItemOfRegistro30, RegistroEducacenso
      */
     public function recebeEscolarizacaoOutroEspacoIsRequired()
     {
-        return $this->tipoAtendimentoTurma == TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO &&
+        return in_array(TipoAtendimentoTurma::CURRICULAR_ETAPA_ENSINO, $this->tipoAtendimentoTurma) &&
             $this->tipoMediacaoTurma == TipoMediacaoDidaticoPedagogico::PRESENCIAL &&
             $this->localFuncionamentoDiferenciadoTurma == \App_Model_LocalFuncionamentoDiferenciado::NAO_ESTA &&
             $this->localFuncionamentoDiferenciadoTurma == \App_Model_LocalFuncionamentoDiferenciado::SALA_ANEXA;
