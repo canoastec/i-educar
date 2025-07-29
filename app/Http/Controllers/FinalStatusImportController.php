@@ -145,10 +145,10 @@ class FinalStatusImportController extends Controller
 
             if (!empty($missingColumns)) {
                 $columnTranslations = $this->service->getRequiredColumnsTranslations();
-                $missingColumnNames = array_map(function($column) use ($columnTranslations) {
+                $missingColumnNames = array_map(function ($column) use ($columnTranslations) {
                     return $columnTranslations[$column] ?? $column;
                 }, $missingColumns);
-                
+
                 return redirect()->back()
                     ->withErrors(['column_mapping' => 'Campos obrigatórios não mapeados: ' . implode(', ', $missingColumnNames)])
                     ->withInput();

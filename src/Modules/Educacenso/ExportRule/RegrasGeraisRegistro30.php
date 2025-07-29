@@ -87,10 +87,7 @@ class RegrasGeraisRegistro30 implements EducacensoExportRule
             $registro30->posGraduacaoNaoPossui = null;
         }
 
-        // Remove "Altas Habilidades"
-        $arrayDeficiencias = $registro30::removeAltasHabilidadesArrayDeficiencias(
-            Portabilis_Utils_Database::pgArrayToArray($registro30->arrayDeficiencias)
-        );
+        $arrayDeficiencias = Portabilis_Utils_Database::pgArrayToArray($registro30->arrayDeficiencias);
 
         if (empty($arrayDeficiencias)) {
             $registro30->recursoLedor = null;
