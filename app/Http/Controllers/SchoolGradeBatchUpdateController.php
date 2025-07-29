@@ -82,6 +82,7 @@ class SchoolGradeBatchUpdateController extends Controller
             return $this->handleServiceResult($result);
         } catch (\Exception $e) {
             error_log('Erro ao processar atualização em lote de séries: ' . $e->getMessage());
+
             return $this->errorResponse('Erro ao processar atualização. Por favor, tente novamente.');
         }
     }
@@ -107,8 +108,8 @@ class SchoolGradeBatchUpdateController extends Controller
         $schoolGradeData = $request->get('escola_serie', []);
 
         $cleanedSchoolGradeData = collect($schoolGradeData)
-            ->filter(fn($line) => !empty($line['escolas'] ?? []) && !empty($line['series'] ?? []))
-            ->map(fn($line) => [
+            ->filter(fn ($line) => !empty($line['escolas'] ?? []) && !empty($line['series'] ?? []))
+            ->map(fn ($line) => [
                 'escolas' => $line['escolas'],
                 'series' => $line['series'],
             ])
@@ -143,9 +144,9 @@ class SchoolGradeBatchUpdateController extends Controller
     private function processSchoolGradeData(array $schoolGradeData): array
     {
         $validLines = collect($schoolGradeData)
-            ->filter(fn($line) => !empty($line['escolas'] ?? []) && !empty($line['series'] ?? []));
+            ->filter(fn ($line) => !empty($line['escolas'] ?? []) && !empty($line['series'] ?? []));
 
-        $lineData = $validLines->map(fn($line, $lineNumber) => [
+        $lineData = $validLines->map(fn ($line, $lineNumber) => [
             'line' => $lineNumber,
             'schools' => $line['escolas'],
             'grades' => $line['series'],
@@ -154,7 +155,7 @@ class SchoolGradeBatchUpdateController extends Controller
         $allSchools = $validLines->pluck('escolas')->flatten()->unique()->values();
         $allGrades = $validLines->pluck('series')->flatten()->unique()->values();
 
-        $totalCombinations = $validLines->sum(fn($line) => count($line['escolas']) * count($line['series']));
+        $totalCombinations = $validLines->sum(fn ($line) => count($line['escolas']) * count($line['series']));
 
         return [
             'allSchools' => $allSchools,

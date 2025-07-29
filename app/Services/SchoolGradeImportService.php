@@ -50,9 +50,9 @@ class SchoolGradeImportService
     {
         if (!empty($params['escola_serie_data'])) {
             return collect($params['escola_serie_data'])
-                ->sum(fn($line) => count($line['escolas'] ?? []) * count($line['series'] ?? []));
+                ->sum(fn ($line) => count($line['escolas'] ?? []) * count($line['series'] ?? []));
         }
-        
+
         return count($params['schools']) * count($params['grades']);
     }
 
