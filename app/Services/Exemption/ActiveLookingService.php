@@ -2,7 +2,7 @@
 
 namespace App\Services\Exemption;
 
-use App\Events\ActiveLookingCreated;
+use App\Events\ActiveLookingChanged;
 use App\Models\LegacyActiveLooking;
 use App\Models\LegacyRegistration;
 use App\Rules\CanStoreActiveLooking;
@@ -19,10 +19,12 @@ class ActiveLookingService
             ],
             ['active_looking' => new CanStoreActiveLooking]
         )->validate();
-
         $activeLooking->save();
 
-        event(new ActiveLookingCreated($activeLooking));
+        event(new ActiveLookingChanged(
+            activeLooking: $activeLooking,
+            action: $activeLooking->getKey() === null ? ActiveLookingChanged::ACTION_CREATED : ActiveLookingChanged::ACTION_UPDATED
+        ));
 
         return $activeLooking;
     }

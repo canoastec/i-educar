@@ -8,7 +8,7 @@ use App\Events\ReportIssued;
 use App\Events\TransferEvent;
 use App\Events\UserDeleted;
 use App\Events\UserUpdated;
-use App\Events\ActiveLookingCreated;
+use App\Events\ActiveLookingChanged;
 use App\Listeners\AcceptTransferRequestListener;
 use App\Listeners\AuthenticatedUser;
 use App\Listeners\ConfigureAuthenticatedUserForAudit;
@@ -76,7 +76,7 @@ class EventServiceProvider extends ServiceProvider
         ReportIssued::class => [
             ReportIssuedListener::class,
         ],
-        ActiveLookingCreated::class => [
+        ActiveLookingChanged::class => [
             ActiveLookingNotificationListener::class,
         ],
     ];

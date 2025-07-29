@@ -1,12 +1,12 @@
 @php
-    $is_poli = Auth::user() && Auth::user()->isAdmin();
+    $isInstitucional = Auth::user() && (Auth::user()->isAdmin() || Auth::user()->isInstitutional());
 @endphp
 
-<tr id="tr_messages">
-    <td class="formmdtd" valign="top" style="vertical-align: top !important;">
+<tr class="formlttd">
+    <td class="formlttd" valign="top" style="vertical-align: top !important;">
         <span class="form">Observações</span>
     </td>
-    <td class="formmdtd" valign="top" style="vertical-align: top !important;">
+    <td class="formlttd" valign="top" style="vertical-align: top !important;">
         @if($activeLookingId)
             <div class="new-message-container">
                 <textarea
@@ -35,72 +35,79 @@
                 ></textarea>
             </div>
         @endif
-
-        @if($activeLookingId)
-            <div class="messages" role="region" aria-label="Lista de observações">
-                @forelse($messages as $message)
-                    @php
-                        $canEdit = $is_poli || $message->user_id === Auth::id();
-                    @endphp
-
-                    <article class="message-item" id="message-{{ $message->id }}" role="article">
-                        <div class="message-content-wrapper">
-                            <div class="message-content" id="message-content-{{ $message->id }}">
-                                {!! nl2br(htmlspecialchars($message->description)) !!}
-                            </div>
-
-                            <footer class="message-footer">
-                                <div class="message-info">
-                                    @if($message->user)
-                                        <span class="message-author">
-                                            <i class="fa fa-user" aria-hidden="true"></i>
-                                            {{ $message->user->name }}
-                                        </span>
-                                        <span class="message-date">
-                                            | {{ $message->created_at->format('d/m/Y H:i') }}
-                                        </span>
-                                    @else
-                                        <span class="message-date">
-                                            {{ $message->created_at->format('d/m/Y H:i') }}
-                                        </span>
-                                    @endif
-                                </div>
-
-                                @if($canEdit)
-                                    <div class="message-actions">
-                                        <button
-                                            type="button"
-                                            class="edit-message-modal"
-                                            data-message-id="{{ $message->id }}"
-                                            data-message-text="{{ htmlspecialchars($message->description) }}"
-                                            title="Editar observação"
-                                            aria-label="Editar observação"
-                                        >
-                                            Editar
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="delete-message-modal"
-                                            data-message-id="{{ $message->id }}"
-                                            title="Excluir observação"
-                                            aria-label="Excluir observação"
-                                        >
-                                            Excluir
-                                        </button>
-                                    </div>
-                                @endif
-                            </footer>
-                        </div>
-                    </article>
-                @empty
-                    <div class="no-messages">
-                        <p>Nenhuma observação registrada.</p>
-                    </div>
-                @endforelse
-            </div>
-        @endif
     </td>
 </tr>
+
+@if($activeLookingId)
+<tr class="formmdtd">
+    <td class="formmdtd" valign="top" style="vertical-align: top !important;">
+        <span class="form">Histórico de Observações</span>
+    </td>
+    <td class="formmdtd" valign="top" style="vertical-align: top !important;">
+        <div class="messages" role="region" aria-label="Lista de observações">
+            @forelse($messages as $message)
+                @php
+                    $canEdit = $isInstitucional || $message->user_id === Auth::id();
+                @endphp
+
+                <article class="message-item" id="message-{{ $message->id }}" role="article">
+                    <div class="message-content-wrapper">
+                        <div class="message-content" id="message-content-{{ $message->id }}">
+                            {!! nl2br(htmlspecialchars($message->description)) !!}
+                        </div>
+
+                        <footer class="message-footer">
+                            <div class="message-info">
+                                @if($message->user)
+                                    <span class="message-author">
+                                        <i class="fa fa-user" aria-hidden="true"></i>
+                                        {{ $message->user->name }}
+                                    </span>
+                                    <span class="message-date">
+                                        | {{ $message->created_at->format('d/m/Y H:i') }}
+                                    </span>
+                                @else
+                                    <span class="message-date">
+                                        {{ $message->created_at->format('d/m/Y H:i') }}
+                                    </span>
+                                @endif
+                            </div>
+
+                            @if($canEdit)
+                                <div class="message-actions">
+                                    <button
+                                        type="button"
+                                        class="edit-message-modal"
+                                        data-message-id="{{ $message->id }}"
+                                        data-message-text="{{ htmlspecialchars($message->description) }}"
+                                        title="Editar observação"
+                                        aria-label="Editar observação"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="delete-message-modal"
+                                        data-message-id="{{ $message->id }}"
+                                        title="Excluir observação"
+                                        aria-label="Excluir observação"
+                                    >
+                                        Excluir
+                                    </button>
+                                </div>
+                            @endif
+                        </footer>
+                    </div>
+                </article>
+            @empty
+                <div class="no-messages">
+                    <p>Nenhuma observação registrada.</p>
+                </div>
+            @endforelse
+        </div>
+    </td>
+</tr>
+@endif
 
 <div id="edit-message-modal" style="display: none;">
     <p><label for="edit-message-textarea">Observação:</label></p>
@@ -125,6 +132,17 @@
 }
 
 #tr_messages td:first-child .form {
+    display: block;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+#tr_messages_history td:first-child {
+    vertical-align: top !important;
+    padding-top: 8px !important;
+}
+
+#tr_messages_history td:first-child .form {
     display: block;
     margin-top: 0 !important;
     padding-top: 0 !important;
