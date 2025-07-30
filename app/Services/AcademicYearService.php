@@ -438,9 +438,9 @@ class AcademicYearService
 
         $schoolClasses = $this->getSchoolClasses($schoolId, $lastSchoolAcademicYear);
 
-        foreach ($schoolClasses as $class) {
+        foreach ($schoolClasses as $schoolClass) {
             $this->copySchoolClass(
-                originClass: (array) $class,
+                originSchoolClass: (array) $schoolClass,
                 originYear: $lastSchoolAcademicYear,
                 destinationYear: $destinationYear,
                 copyTeacherData: $copyTeacherData,
@@ -454,27 +454,27 @@ class AcademicYearService
     }
 
     private function copySchoolClass(
-        array $originClass,
-        int $originYear,
-        int $destinationYear,
-        bool $copyTeacherData = true,
-        ?int $userId = null
+        array $originSchoolClass,
+        int   $originYear,
+        int   $destinationYear,
+        bool  $copyTeacherData = true,
+        ?int  $userId = null
     ): void {
-        if ($this->schoolClassExists($originClass, $destinationYear)) {
+        if ($this->schoolClassExists($originSchoolClass, $destinationYear)) {
             return;
         }
 
-        $class = LegacySchoolClass::query()->find($originClass['cod_turma']);
-        if (!$class) {
+        $schoolClass = LegacySchoolClass::query()->find($originSchoolClass['cod_turma']);
+        if (!$schoolClass) {
             return;
         }
 
-        $destinationClass = $this->replicateClass($class, $destinationYear, $userId);
-        $destinationClassId = $destinationClass->getKey();
+        $destinationSchoolClass = $this->replicateSchoolClass($schoolClass, $destinationYear, $userId);
+        $destinationSchoolClassId = $destinationSchoolClass->getKey();
 
         $this->copySchoolClassRelatedData(
-            originClass: $originClass,
-            destinationClassId: $destinationClassId,
+            originSchoolClass: $originSchoolClass,
+            destinationSchoolClassId: $destinationSchoolClassId,
             originYear: $originYear,
             destinationYear: $destinationYear,
             copyTeacherData: $copyTeacherData
@@ -504,14 +504,14 @@ class AcademicYearService
         }
     }
 
-    private function copySchoolClassDisciplines(int $originClassId, int $destinationClassId): void
+    private function copySchoolClassDisciplines(int $originSchoolClassId, int $destinationSchoolClassId): void
     {
         $disciplines = LegacyDisciplineSchoolClass::query()
-            ->where('turma_id', $originClassId)
+            ->where('turma_id', $originSchoolClassId)
             ->get();
 
         $existingSchoolClassDisciplines = LegacyDisciplineSchoolClass::query()
-            ->where('turma_id', $destinationClassId)
+            ->where('turma_id', $destinationSchoolClassId)
             ->pluck('componente_curricular_id')
             ->toArray();
 
@@ -519,29 +519,29 @@ class AcademicYearService
             fn ($discipline) => !in_array($discipline->componente_curricular_id, $existingSchoolClassDisciplines)
         );
 
-        $this->bulkCreateDisciplines($disciplinesToCreate, $destinationClassId);
+        $this->bulkCreateDisciplines($disciplinesToCreate, $destinationSchoolClassId);
     }
 
     private function copySchoolClassModules(
-        int $originClassId,
-        int $destinationClassId,
+        int $originSchoolClassId,
+        int $destinationSchoolClassId,
         int $originYear,
         int $destinationYear
     ): void {
-        $classModules = LegacySchoolClassStage::query()
-            ->where('ref_cod_turma', $originClassId)
+        $schoolClassModules = LegacySchoolClassStage::query()
+            ->where('ref_cod_turma', $originSchoolClassId)
             ->get();
 
         $existingSchoolClassModules = LegacySchoolClassStage::query()
-            ->where('ref_cod_turma', $destinationClassId)
+            ->where('ref_cod_turma', $destinationSchoolClassId)
             ->pluck('sequencial')
             ->toArray();
 
-        $modulesToCreate = $classModules->filter(
+        $modulesToCreate = $schoolClassModules->filter(
             fn ($module) => !in_array($module->sequencial, $existingSchoolClassModules)
         );
 
-        $this->bulkCreateClassModules($modulesToCreate, $destinationClassId, $originYear, $destinationYear);
+        $this->bulkCreateSchoolClassModules($modulesToCreate, $destinationSchoolClassId, $originYear, $destinationYear);
     }
 
     private function validateAcademicYearModuleData(array $data): bool
@@ -593,9 +593,9 @@ class AcademicYearService
             ->exists();
     }
 
-    private function replicateClass(LegacySchoolClass $class, int $destinationYear, ?int $userId): LegacySchoolClass
+    private function replicateSchoolClass(LegacySchoolClass $schoolClass, int $destinationYear, ?int $userId): LegacySchoolClass
     {
-        $replicatedClass = $class->replicate([
+        $replicatedSchoolClass = $schoolClass->replicate([
             'data_cadastro', 'updated_at', 'data_exclusao',
             'parecer_1_etapa', 'parecer_2_etapa', 'parecer_3_etapa', 'parecer_4_etapa',
         ])->fill([
@@ -604,33 +604,33 @@ class AcademicYearService
             'ref_usuario_exc' => $userId,
         ]);
 
-        $replicatedClass->save();
+        $replicatedSchoolClass->save();
 
-        return $replicatedClass;
+        return $replicatedSchoolClass;
     }
 
     private function copySchoolClassRelatedData(
-        array $originClass,
-        int $destinationClassId,
-        int $originYear,
-        int $destinationYear,
-        bool $copyTeacherData
+        array $originSchoolClass,
+        int   $destinationSchoolClassId,
+        int   $originYear,
+        int   $destinationYear,
+        bool  $copyTeacherData
     ): void {
-        $this->copySchoolClassDisciplines($originClass['cod_turma'], $destinationClassId);
-        $this->copySchoolClassModules($originClass['cod_turma'], $destinationClassId, $originYear, $destinationYear);
+        $this->copySchoolClassDisciplines($originSchoolClass['cod_turma'], $destinationSchoolClassId);
+        $this->copySchoolClassModules($originSchoolClass['cod_turma'], $destinationSchoolClassId, $originYear, $destinationYear);
 
-        if ($originClass['multiseriada'] === 1) {
-            $this->createMultiGradeClass($originClass, $destinationClassId);
+        if ($originSchoolClass['multiseriada'] === 1) {
+            $this->createMultiGradeSchoolClass($originSchoolClass, $destinationSchoolClassId);
         }
 
         if ($copyTeacherData) {
-            $this->copySchoolClassTeachers($originClass['cod_turma'], $destinationClassId, $originYear, $destinationYear);
+            $this->copySchoolClassTeachers($originSchoolClass['cod_turma'], $destinationSchoolClassId, $originYear, $destinationYear);
         }
     }
 
     private function copySchoolClassTeachers(int $originClassId, int $destinationClassId, int $originYear, int $destinationYear): void
     {
-        $classTeachers = LegacySchoolClassTeacher::query()
+        $schoolClassTeachers = LegacySchoolClassTeacher::query()
             ->where(['ano' => $originYear, 'turma_id' => $originClassId])
             ->get();
 
@@ -639,30 +639,32 @@ class AcademicYearService
             ->pluck('servidor_id')
             ->toArray();
 
-        foreach ($classTeachers as $classTeacher) {
-            if (in_array($classTeacher->servidor_id, $existingSchoolClassTeachers)) {
+        foreach ($schoolClassTeachers as $schoolClassTeacher) {
+            if (in_array($schoolClassTeacher->servidor_id, $existingSchoolClassTeachers)) {
                 continue;
             }
 
-            $newClassTeacher = $classTeacher->replicate();
-            $newClassTeacher->ano = $destinationYear;
-            $newClassTeacher->turma_id = $destinationClassId;
-            $newClassTeacher->save();
+            $newSchoolClassTeacher = $schoolClassTeacher->replicate();
+            $newSchoolClassTeacher->ano = $destinationYear;
+            $newSchoolClassTeacher->turma_id = $destinationClassId;
+            $newSchoolClassTeacher->data_inicial = null;
+            $newSchoolClassTeacher->data_fim = null;
+            $newSchoolClassTeacher->save();
 
-            $this->copySchoolClassTeacherDisciplines($classTeacher, $newClassTeacher);
+            $this->copySchoolClassTeacherDisciplines($schoolClassTeacher, $newSchoolClassTeacher);
         }
     }
 
     private function copySchoolClassTeacherDisciplines(
-        LegacySchoolClassTeacher $originClassTeacher,
-        LegacySchoolClassTeacher $destinationClassTeacher
+        LegacySchoolClassTeacher $originSchoolClassTeacher,
+        LegacySchoolClassTeacher $destinationSchoolClassTeacher
     ): void {
         $teacherDisciplines = LegacySchoolClassTeacherDiscipline::query()
-            ->where('professor_turma_id', $originClassTeacher->getKey())
+            ->where('professor_turma_id', $originSchoolClassTeacher->getKey())
             ->get();
 
         $existingTeacherDisciplines = LegacySchoolClassTeacherDiscipline::query()
-            ->where('professor_turma_id', $destinationClassTeacher->getKey())
+            ->where('professor_turma_id', $destinationSchoolClassTeacher->getKey())
             ->pluck('componente_curricular_id')
             ->toArray();
 
@@ -672,7 +674,7 @@ class AcademicYearService
             }
 
             $newDiscipline = $discipline->replicate();
-            $newDiscipline->professor_turma_id = $destinationClassTeacher->getKey();
+            $newDiscipline->professor_turma_id = $destinationSchoolClassTeacher->getKey();
             $newDiscipline->save();
         }
     }
@@ -711,33 +713,35 @@ class AcademicYearService
     {
         $newAllocation = $allocation->replicate();
         $newAllocation->ano = $destinationYear;
+        $newAllocation->data_admissao = null;
+        $newAllocation->data_saida = null;
         $newAllocation->save();
     }
 
-    private function createMultiGradeClass(array $originClass, int $destinationClassId): void
+    private function createMultiGradeSchoolClass(array $originSchoolClass, int $destinationSchoolClassId): void
     {
-        $classGrades = LegacySchoolClassGrade::query()
-            ->where(['escola_id' => $originClass['ref_ref_cod_escola'], 'turma_id' => $originClass['cod_turma']])
+        $schoolClassGrades = LegacySchoolClassGrade::query()
+            ->where(['escola_id' => $originSchoolClass['ref_ref_cod_escola'], 'turma_id' => $originSchoolClass['cod_turma']])
             ->get();
 
-        foreach ($classGrades as $classGrade) {
+        foreach ($schoolClassGrades as $schoolClassGrade) {
             LegacySchoolClassGrade::create([
-                'escola_id' => $originClass['ref_ref_cod_escola'],
-                'serie_id' => $classGrade->serie_id,
-                'turma_id' => $destinationClassId,
-                'boletim_id' => $classGrade->boletim_id,
-                'boletim_diferenciado_id' => $classGrade->boletim_diferenciado_id,
+                'escola_id' => $originSchoolClass['ref_ref_cod_escola'],
+                'serie_id' => $schoolClassGrade->serie_id,
+                'turma_id' => $destinationSchoolClassId,
+                'boletim_id' => $schoolClassGrade->boletim_id,
+                'boletim_diferenciado_id' => $schoolClassGrade->boletim_diferenciado_id,
             ]);
         }
     }
 
-    private function bulkCreateDisciplines(Collection $disciplines, int $destinationClassId): void
+    private function bulkCreateDisciplines(Collection $disciplines, int $destinationSchoolClassId): void
     {
         $disciplinesData = $disciplines->map(fn ($discipline) => [
             'componente_curricular_id' => $discipline->componente_curricular_id,
             'escola_id' => $discipline->escola_id,
             'carga_horaria' => $discipline->carga_horaria,
-            'turma_id' => $destinationClassId,
+            'turma_id' => $destinationSchoolClassId,
             'ano_escolar_id' => $discipline->ano_escolar_id,
         ])->toArray();
 
@@ -746,16 +750,16 @@ class AcademicYearService
         }
     }
 
-    private function bulkCreateClassModules(Collection $modules, int $destinationClassId, int $originYear, int $destinationYear): void
+    private function bulkCreateSchoolClassModules(Collection $modules, int $destinationSchoolClassId, int $originYear, int $destinationYear): void
     {
-        $modulesData = $modules->map(function ($module) use ($destinationClassId, $originYear, $destinationYear) {
+        $modulesData = $modules->map(function ($module) use ($originYear, $destinationYear, $destinationSchoolClassId) {
             $dataInicio = $this->adjustDateForYear($module->data_inicio, $originYear, $destinationYear);
             $dataFim = $this->adjustDateForYear($module->data_fim, $originYear, $destinationYear);
 
             return [
                 'ref_cod_modulo' => $module->ref_cod_modulo,
                 'sequencial' => $module->sequencial,
-                'ref_cod_turma' => $destinationClassId,
+                'ref_cod_turma' => $destinationSchoolClassId,
                 'data_inicio' => $dataInicio,
                 'data_fim' => $dataFim,
                 'dias_letivos' => $module->dias_letivos,

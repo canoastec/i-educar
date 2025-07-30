@@ -76,10 +76,6 @@ class Process
 
     public const ACTIVE_LOOKING = 9998921;
 
-    public const ON_BOARDING = 1050;
-
-    public const ACADEMIC_YEAR_IMPORT = 1051;
-
     public const ANNOUNCEMENT = 9999114;
 
     public const BLOCK_ENROLLMENT = 9999115;
@@ -87,4 +83,6 @@ class Process
     public const STAGE = 9999116;
 
     public const FINAL_STATUS_IMPORT = 9999118;
+
+    public const ACADEMIC_YEAR_IMPORT = 9999120;
 }
