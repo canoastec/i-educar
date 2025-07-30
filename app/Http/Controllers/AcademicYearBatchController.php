@@ -23,10 +23,7 @@ class AcademicYearBatchController extends Controller
      */
     public function process(Request $request): JsonResponse
     {
-        $this->authorize('create', LegacySchoolAcademicYear::class);
-
         try {
-            $this->cleanRequestData($request);
             $this->validateRequest($request);
 
             $processedData = $this->processAcademicYearData($request);
@@ -38,8 +35,8 @@ class AcademicYearBatchController extends Controller
                 'moduleId' => $request->get('ref_cod_modulo'),
                 'user' => $request->user(),
                 'copySchoolClasses' => $processedData['copySchoolClasses'],
-                'copyTeacherData' => $request->boolean('copiar_alocacoes_e_vinculos_professores'),
-                'copyEmployeeData' => $request->boolean('copiar_alocacoes_demais_servidores'),
+                'copyTeacherData' => $processedData['copyTeacherData'],
+                'copyEmployeeData' => $processedData['copyEmployeeData'],
             ];
 
             $result = $this->academicYearService->processAcademicYearBatch($params);
@@ -145,12 +142,18 @@ class AcademicYearBatchController extends Controller
         $periodos = collect($this->filterValidPeriodos($request->get('periodos', [])));
 
         $isAdmin = Auth::check() ? Auth::user()->isAdmin() : false;
+        
+        // Processar checkboxes de forma consistente
         $copySchoolClasses = !$isAdmin || $request->boolean('copiar_turmas');
+        $copyTeacherData = $request->boolean('copiar_alocacoes_e_vinculos_professores');
+        $copyEmployeeData = $request->boolean('copiar_alocacoes_demais_servidores');
 
         return [
             'allSchools' => $schools,
             'periodos' => $periodos->toArray(),
             'copySchoolClasses' => $copySchoolClasses,
+            'copyTeacherData' => $copyTeacherData,
+            'copyEmployeeData' => $copyEmployeeData,
         ];
     }
 
@@ -188,8 +191,6 @@ class AcademicYearBatchController extends Controller
 
     public function status()
     {
-        $this->authorize('view', LegacySchoolAcademicYear::class);
-
         $result = session('academic_year_batch_result', []);
 
         session()->forget('academic_year_batch_result');
@@ -206,8 +207,6 @@ class AcademicYearBatchController extends Controller
 
     public function edit()
     {
-        $this->authorize('create', LegacySchoolAcademicYear::class);
-
         $this->menu(Process::ACADEMIC_YEAR_IMPORT);
         $this->breadcrumb('Ano Letivo em Lote', [
             url('intranet/educar_configuracoes_index.php') => 'Configurações',

@@ -75,8 +75,8 @@ return new class extends clsCadastro
                     $this->fexcluir = true;
                 }
 
-                $this->copiar_alocacoes_demais_servidores = $schoolAcademicYear->copia_dados_professor;
-                $this->copiar_alocacoes_e_vinculos_professores = $schoolAcademicYear->copia_dados_demais_servidores;
+                $this->copiar_alocacoes_e_vinculos_professores = $schoolAcademicYear->copia_dados_professor;
+                $this->copiar_alocacoes_demais_servidores = $schoolAcademicYear->copia_dados_demais_servidores;
                 $this->copiar_turmas = $schoolAcademicYear->copia_turmas;
 
                 $retorno = 'Editar';
@@ -340,12 +340,16 @@ return new class extends clsCadastro
                                 
                                 function toggleAlocacoesFields() {
                                     const isTurmasChecked = copiarTurmasCheckbox.is(":checked");
+                                    
+                                    // Apenas o checkbox de professores depende de "Copiar turmas"
                                     copiarProfessoresCheckbox.prop("disabled", !isTurmasChecked);
-                                    copiarServidoresCheckbox.prop("disabled", !isTurmasChecked);
+                                    
+                                    // O checkbox de servidores é independente
+                                    copiarServidoresCheckbox.prop("disabled", false);
                                     
                                     if (!isTurmasChecked) {
                                         copiarProfessoresCheckbox.prop("checked", false);
-                                        copiarServidoresCheckbox.prop("checked", false);
+                                        // Não desmarca o checkbox de servidores
                                     }
                                 }
                                 

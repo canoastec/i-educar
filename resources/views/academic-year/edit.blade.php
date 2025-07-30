@@ -190,7 +190,7 @@
                 <td class="formlttd" valign="top">
                     <span class="form">
                         <label for="copiar_alocacoes_e_vinculos_professores_">
-                            <input type="checkbox" checked id="copiar_alocacoes_e_vinculos_professores" name="copiar_alocacoes_e_vinculos_professores" style="opacity: 1;">
+                            <input type="checkbox" id="copiar_alocacoes_e_vinculos_professores" name="copiar_alocacoes_e_vinculos_professores" style="opacity: 1;">
                             <label for="copiar_alocacoes_e_vinculos_professores">Copiar alocações e vínculos dos professores</label>
                         </label>
                     </span>
@@ -203,7 +203,7 @@
                 <td class="formmdtd" valign="top">
                     <span class="form">
                         <label for="copiar_alocacoes_demais_servidores_">
-                            <input type="checkbox" checked id="copiar_alocacoes_demais_servidores" name="copiar_alocacoes_demais_servidores" style="opacity: 1;">
+                            <input type="checkbox" id="copiar_alocacoes_demais_servidores" name="copiar_alocacoes_demais_servidores" style="opacity: 1;">
                             <label for="copiar_alocacoes_demais_servidores">Copiar alocações dos demais servidores</label>
                         </label>
                     </span>
@@ -273,14 +273,17 @@
                         return;
                     }
                     
-                    const isTurmasChecked = copiarTurmasCheckbox ? copiarTurmasCheckbox.checked : true;
+                    const isTurmasChecked = copiarTurmasCheckbox ? copiarTurmasCheckbox.checked : false;
                     
+                    // Apenas o checkbox de professores depende de "Copiar turmas"
                     copiarProfessoresCheckbox.disabled = !isTurmasChecked;
-                    copiarServidoresCheckbox.disabled = !isTurmasChecked;
+                    
+                    // O checkbox de servidores é independente
+                    copiarServidoresCheckbox.disabled = false;
                     
                     if (!isTurmasChecked) {
                         copiarProfessoresCheckbox.checked = false;
-                        copiarServidoresCheckbox.checked = false;
+                        // Não desmarca o checkbox de servidores
                     }
                 }
                 
