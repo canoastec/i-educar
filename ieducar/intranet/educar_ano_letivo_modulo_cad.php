@@ -37,14 +37,6 @@ return new class extends clsCadastro
 
     public $copiar_turmas;
 
-    private AcademicYearService $academicYearService;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->academicYearService = app(AcademicYearService::class);
-    }
-
     public function Inicializar()
     {
         $retorno = 'Novo';
@@ -378,7 +370,7 @@ return new class extends clsCadastro
         );
 
         try {
-            $this->academicYearService->validateAcademicYearDates(
+            app(AcademicYearService::class)->validateAcademicYearDates(
                 startDates: $this->data_inicio,
                 endDates: $this->data_fim,
                 year: $this->ref_ano,
@@ -401,7 +393,7 @@ return new class extends clsCadastro
 
         if ($this->ref_cod_modulo && $this->data_inicio && $this->data_fim) {
             try {
-                $this->academicYearService->createAcademicYearForSchool(
+                app(AcademicYearService::class)->createAcademicYearForSchool(
                     schoolId: $this->ref_ref_cod_escola,
                     year: $this->ref_ano,
                     startDates: $this->data_inicio,
@@ -441,7 +433,7 @@ return new class extends clsCadastro
         );
 
         try {
-            $this->academicYearService->validateAcademicYearDates(
+            app(AcademicYearService::class)->validateAcademicYearDates(
                 startDates: $this->data_inicio,
                 endDates: $this->data_fim,
                 year: $this->ref_ano,
@@ -457,13 +449,14 @@ return new class extends clsCadastro
 
         if ($this->ref_cod_modulo && $this->data_inicio && $this->data_fim) {
             try {
-                $this->academicYearService->validateAcademicYearModules(
+                $academicYearService = app(AcademicYearService::class);
+                $academicYearService->validateAcademicYearModules(
                     year: $this->ref_ano,
                     schoolId: $this->ref_ref_cod_escola,
                     stagesCount: count($this->data_inicio)
                 );
 
-                $this->academicYearService->updateAcademicYearStages(
+                $academicYearService->updateAcademicYearStages(
                     schoolId: $this->ref_ref_cod_escola,
                     year: $this->ref_ano,
                     startDates: $this->data_inicio,
@@ -501,7 +494,7 @@ return new class extends clsCadastro
         );
 
         try {
-            $excluiu = $this->academicYearService->deleteAcademicYear(
+            app(AcademicYearService::class)->deleteAcademicYear(
                 schoolId: $this->ref_ref_cod_escola,
                 year: $this->ref_ano,
                 userId: $this->pessoa_logada
