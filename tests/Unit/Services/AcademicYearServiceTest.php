@@ -6,22 +6,24 @@ use App\Exceptions\AcademicYearServiceException;
 use App\Models\EmployeeAllocation;
 use App\Models\LegacyAcademicYearStage;
 use App\Models\LegacyDisciplineSchoolClass;
+use App\Models\LegacyEvaluationRuleGradeYear;
 use App\Models\LegacySchool;
 use App\Models\LegacySchoolAcademicYear;
 use App\Models\LegacySchoolClass;
 use App\Models\LegacySchoolClassGrade;
 use App\Models\LegacySchoolClassStage;
 use App\Models\LegacySchoolClassTeacher;
+use App\Models\LegacySchoolCourse;
+use App\Models\LegacySchoolGrade;
 use App\Models\LegacyUser;
 use App\Services\AcademicYearService;
-use App\Services\iDiarioService;
 use Database\Factories\EmployeeAllocationFactory;
 use Database\Factories\EmployeeFactory;
 use Database\Factories\LegacyAcademicYearStageFactory;
 use Database\Factories\LegacyCourseFactory;
+use Database\Factories\LegacyDisciplineAcademicYearFactory;
 use Database\Factories\LegacyDisciplineFactory;
 use Database\Factories\LegacyDisciplineSchoolClassFactory;
-use Database\Factories\LegacyDisciplineAcademicYearFactory;
 use Database\Factories\LegacyEmployeeRoleFactory;
 use Database\Factories\LegacyEvaluationRuleFactory;
 use Database\Factories\LegacyEvaluationRuleGradeYearFactory;
@@ -42,10 +44,6 @@ use Database\Factories\LegacyUserFactory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use RuntimeException;
 use Tests\TestCase;
-use Illuminate\Support\Facades\DB;
-use App\Models\LegacySchoolGrade;
-use App\Models\LegacySchoolCourse;
-use App\Models\LegacyEvaluationRuleGradeYear;
 
 class AcademicYearServiceTest extends TestCase
 {
@@ -69,8 +67,7 @@ class AcademicYearServiceTest extends TestCase
     {
         parent::setUp();
 
-        $iDiarioService = $this->createMock(iDiarioService::class);
-        $this->service = new AcademicYearService($iDiarioService);
+        $this->service = new AcademicYearService;
 
         $this->setupTestData();
     }

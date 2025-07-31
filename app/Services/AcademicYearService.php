@@ -29,10 +29,6 @@ use App\Models\LegacyEvaluationRuleGradeYear;
 
 class AcademicYearService
 {
-    public function __construct(
-        private readonly iDiarioService $iDiarioService
-    ) {}
-
     /**
      * Valida se as datas das etapas do ano letivo não conflitam com outros anos letivos da escola.
      * Usado tanto na criação quanto na edição de anos letivos.
@@ -785,8 +781,10 @@ class AcademicYearService
             return false;
         }
 
+        $iDiarioService = app(iDiarioService::class);
+
         foreach ($stagesToRemove as $stage) {
-            if ($this->iDiarioService->getStepActivityByUnit($schoolId, $year, $stage)) {
+            if ($iDiarioService->getStepActivityByUnit($schoolId, $year, $stage)) {
                 return true;
             }
         }
