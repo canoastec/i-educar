@@ -24,6 +24,7 @@ class AcademicYearBatchController extends Controller
     public function process(Request $request): JsonResponse
     {
         try {
+            $this->cleanRequestData($request);
             $this->validateRequest($request);
 
             $processedData = $this->processAcademicYearData($request);
