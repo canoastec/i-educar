@@ -319,6 +319,11 @@ return new class extends clsDetalhe
                     $this->array_botao_url_script[] = "go(\"educar_matricula_turma_lst.php?ref_cod_matricula={$registro['cod_matricula']}&ano_letivo={$registro['ano']}\")";
                 }
 
+                if ($this->permissaoRemanejar()) {
+                    $this->array_botao[] = 'Remanejar';
+                    $this->array_botao_url_script[] = "go(\"educar_matricula_turma_lst.php?ref_cod_matricula={$registro['cod_matricula']}&ano_letivo={$registro['ano']}&acao=remanejar\")";
+                }
+
                 if ($this->permissaoModalidadeEnsino()) {
                     $this->array_botao[] = 'Modalidade de ensino';
                     $this->array_botao_url_script[] = "go(\"educar_matricula_modalidade_ensino.php?ref_cod_matricula={$registro['cod_matricula']}&ref_cod_aluno={$registro['ref_cod_aluno']}\")";
@@ -494,7 +499,9 @@ return new class extends clsDetalhe
 
     public function permissaoEnturmar()
     {
-        return $this->getPermissaoVisualizar(683);
+        // a tela de enturmaçoes pode enturmar e desenturmar
+        return $this->getPermissaoVisualizar(Process::ENROLLMENT) ||
+            $this->getPermissaoVisualizar(Process::UNENROLLMENT);
     }
 
     public function permissaoModalidadeEnsino()
@@ -557,6 +564,16 @@ return new class extends clsDetalhe
         $db = new clsBanco;
 
         return $db->CampoUnico(consulta: $sql);
+    }
+
+    public function permissaoRemanejar()
+    {
+        return $this->getPermissaoVisualizar(Process::RELOCATE);
+    }
+
+    public function permissaoDesenturmar()
+    {
+        return $this->getPermissaoVisualizar(Process::UNENROLLMENT);
     }
 
     public function Formular()

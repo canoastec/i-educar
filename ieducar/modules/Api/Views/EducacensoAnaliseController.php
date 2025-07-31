@@ -816,6 +816,12 @@ class EducacensoAnaliseController extends ApiCoreController
 
         $turmas = $registro20->getData($escola, $ano);
 
+        $registro50Model = new Registro50;
+        $registro50 = new Registro50Data($educacensoRepository, $registro50Model);
+
+        /** @var Registro50[] $docentes */
+        $docentes = $registro50->getData($escola, $ano);
+
         if (empty($turmas)) {
             $this->messenger->append('Nenhuma turma localizada na escola selecionada para exportação.');
 
@@ -863,6 +869,25 @@ class EducacensoAnaliseController extends ApiCoreController
                 ];
             }
 
+            if (is_array($docentes)) {
+                $exists = !empty(array_filter($docentes, function ($docente) use ($turma) {
+                    if (str_contains($docente->codigoTurma, '-')) {
+                        $docente->codigoTurma = explode('-', $docente->codigoTurma)[0];
+                    }
+
+                    return $turma->codTurma == $docente->codigoTurma;
+                }));
+
+                if (!empty($turma->etapaEducacenso) && $turma->etapaEducacenso != 1 && !$exists) {
+                    $mensagem[] = [
+                        'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} não possui nenhum docente vinculado, ou as datas de início e término da alocação estão fora do período de referência da exportação.",
+                        'path' => '(Servidores > Cadastros > Servidores)',
+                        'linkPath' => '/intranet/educar_servidor_lst.php',
+                        'fail' => true,
+                    ];
+                }
+            }
+
             if (!empty($turma->etapaEducacenso) && $turma->etapaEducacenso != 1 && !$turma->possuiServidorDocente) {
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que a turma {$nomeTurma} não possui nenhum Docente ou Docente titular - coordenador de tutoria (de módulo ou disciplina) - EAD vinculado.",
@@ -894,6 +919,15 @@ class EducacensoAnaliseController extends ApiCoreController
                 $mensagem[] = [
                     'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. possui valor inválido. Insira no máximo 80 letras no nome da turma {$nomeTurma}.",
                     'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados gerais > Campo: Nome da turma)',
+                    'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
+                    'fail' => true,
+                ];
+            }
+
+            if ($turma->formacaoAlternancia == 1 && !in_array($turma->etapaEducacenso, [19, 20, 21, 41, 22, 23, 25, 26, 27, 28, 29, 35, 36, 37, 38, 69, 70, 71, 72, 73, 74, 39, 40, 64, 68])) {
+                $mensagem[] = [
+                    'text' => "Dados para formular o registro 20 da escola {$turma->nomeEscola} não encontrados. Verificamos que na turma {$nomeTurma} o campo Turma de Formação por Alternância (proposta pedagógica de formação por alternância: tempo-escola e tempo-comunidade) foi preenchido, porém a etapa de ensino informada não é compatível com essa informação.",
+                    'path' => '(Escola > Cadastros > Turmas > Editar > Aba: Dados gerais > Campo: Turma de Formação por Alternância (proposta pedagógica de formação por alternância: tempo-escola e tempo-comunidade))',
                     'linkPath' => "/intranet/educar_turma_cad.php?cod_turma={$turma->codTurma}",
                     'fail' => true,
                 ];
@@ -1139,8 +1173,8 @@ class EducacensoAnaliseController extends ApiCoreController
 
                         break;
                     case App_Model_TipoMediacaoDidaticoPedagogico::EDUCACAO_A_DISTANCIA:
-                        if (!in_array($turma->etapaEducacenso, [25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 70, 71, 64])) {
-                            $opcoesEtapaEducacenso = '25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 70, 71, 64';
+                        if (!in_array($turma->etapaEducacenso, [25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 68, 67, 70, 71, 73])) {
+                            $opcoesEtapaEducacenso = '25, 26, 27, 28, 29, 35, 36, 37, 38, 39, 40, 64, 68, 67, 70, 71, 73';
                             $valid = false;
                         }
 
