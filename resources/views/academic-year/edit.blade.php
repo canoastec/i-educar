@@ -39,6 +39,7 @@
 @php
     $stageTypes = App\Models\LegacyStageType::where('ativo', 1)->get(['cod_modulo', 'nm_tipo', 'num_etapas']);
     $stageTypesData = $stageTypes->pluck('num_etapas', 'cod_modulo')->toArray();
+    $isAdmin = Auth::user() && Auth::user()->isAdmin();
 @endphp
 
 @section('content')
@@ -171,20 +172,20 @@
                     <span class="form"></span>
                 </td>
             </tr>
-            @if(Auth::user() && Auth::user()->isAdmin())
-            <tr id="tr_copiar_turmas_">
-                <td class="formmdtd" valign="top">
-                    <span class="form">
-                        <label for="copiar_turmas_">
-                            <input type="checkbox" checked id="copiar_turmas" name="copiar_turmas">
-                            <label for="copiar_turmas">Copiar turmas do ano anterior</label>
-                        </label>
-                    </span>
-                </td>
-                <td class="formmdtd" valign="top">
-                    <span class="form"></span>
-                </td>
-            </tr>
+            @if($isAdmin)
+                <tr id="tr_copiar_turmas_">
+                    <td class="formmdtd" valign="top">
+                        <span class="form">
+                            <label for="copiar_turmas_">
+                                <input type="checkbox" checked id="copiar_turmas" name="copiar_turmas">
+                                <label for="copiar_turmas">Copiar turmas do ano anterior</label>
+                            </label>
+                        </span>
+                    </td>
+                    <td class="formmdtd" valign="top">
+                        <span class="form"></span>
+                    </td>
+                </tr>
             @endif
             <tr id="tr_copiar_alocacoes_e_vinculos_professores_">
                 <td class="formlttd" valign="top">
@@ -228,19 +229,19 @@
         (function($) {
             $(document).ready(function() {
                 const stageTypesData = @json($stageTypesData);
-                
+
                 function updateEtapasRows() {
                     const selectedValue = $('#ref_cod_eref_cod_moduloscola').val();
                     const etapasRows = $('.tr_modulos_ano_letivo');
-                    
+
                     if (!selectedValue) {
                         etapasRows.show();
                         etapasRows.find('input[name*="data_inicio"], input[name*="data_fim"]').addClass('obrigatorio');
                         return;
                     }
-                    
+
                     const numEtapas = stageTypesData[selectedValue] || 4;
-                    
+
                     etapasRows.each(function(index) {
                         if (index < numEtapas) {
                             $(this).show();
@@ -251,42 +252,41 @@
                         }
                     });
                 }
-                
+
                 $('#ref_cod_eref_cod_moduloscola').change(function() {
                     updateEtapasRows();
                 });
-                
+
                 updateEtapasRows();
-                
+
                 const copiarTurmasCheckbox = document.getElementById("copiar_turmas");
                 const copiarProfessoresCheckbox = document.getElementById("copiar_alocacoes_e_vinculos_professores");
                 const copiarServidoresCheckbox = document.getElementById("copiar_alocacoes_demais_servidores");
-                
+
                 function toggleAlocacoesFields() {
-                    const isAdmin = {{ Auth::user() && Auth::user()->isAdmin() ? 'true' : 'false' }};
-                    
+                    const isAdmin = {{ $isAdmin ? 'true' : 'false' }};
+
                     if (!isAdmin) {
-                        copiarProfessoresCheckbox.disabled = true;
-                        copiarServidoresCheckbox.disabled = true;
-                        copiarProfessoresCheckbox.checked = false;
-                        copiarServidoresCheckbox.checked = false;
+                        // Se não é admin, "Copiar turmas" é sempre true, então os outros checkboxes devem estar habilitados
+                        copiarProfessoresCheckbox.disabled = false;
+                        copiarServidoresCheckbox.disabled = false;
                         return;
                     }
-                    
+
                     const isTurmasChecked = copiarTurmasCheckbox ? copiarTurmasCheckbox.checked : false;
-                    
+
                     // Apenas o checkbox de professores depende de "Copiar turmas"
                     copiarProfessoresCheckbox.disabled = !isTurmasChecked;
-                    
+
                     // O checkbox de servidores é independente
                     copiarServidoresCheckbox.disabled = false;
-                    
+
                     if (!isTurmasChecked) {
                         copiarProfessoresCheckbox.checked = false;
                         // Não desmarca o checkbox de servidores
                     }
                 }
-                
+
                 if (copiarTurmasCheckbox) {
                     copiarTurmasCheckbox.addEventListener("change", toggleAlocacoesFields);
                 }
@@ -295,26 +295,26 @@
 
             document.addEventListener('DOMContentLoaded', function() {
                 const form = document.getElementById('formcadastro');
-                
+
                 if (form) {
                     form.addEventListener('submit', function(e) {
                         e.preventDefault();
-                        
+
                         if (validationUtils.validatesFields(true)) {
                             processForm();
                         }
                     });
                 }
-                
+
                 function processForm() {
                     const submitButton = form.querySelector('button[type="submit"]');
                     const originalText = submitButton.innerHTML;
-                    
+
                     submitButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processando...';
                     submitButton.disabled = true;
-                    
+
                     const formData = new FormData(form);
-                    
+
                     fetch('{{ route("academic-year.process") }}', {
                         method: 'POST',
                         body: formData,
@@ -343,10 +343,10 @@
                         submitButton.disabled = false;
                     });
                 }
-                
+
                 function showErrorModal(response) {
                     let errorHtml = '<div style="max-height: 400px; overflow-y: auto;">';
-                    
+
                     if (response.errors && response.errors.length > 0) {
                         response.errors.forEach(error => {
                             errorHtml += `
@@ -356,16 +356,16 @@
                             `;
                         });
                     }
-                    
+
                     errorHtml += '</div>';
-                    
+
                     if (typeof $j !== 'undefined' && $j.fn.dialog) {
                         let container = $j('#error-dialog');
                         if (container.length < 1) {
                             $j('body').append('<div id="error-dialog"></div>');
                             container = $j('#error-dialog');
                         }
-                        
+
                         container.html(errorHtml).dialog({
                             title: 'Erro ao processar ano letivo em lote',
                             width: 600,

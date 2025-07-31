@@ -37,6 +37,8 @@ return new class extends clsCadastro
 
     public $copiar_turmas;
 
+    private $isAdmin;
+
     public function Inicializar()
     {
         $retorno = 'Novo';
@@ -250,7 +252,7 @@ return new class extends clsCadastro
             $checkedDemaisServidores = ($this->copiar_alocacoes_demais_servidores) ? 'checked' : '';
             $checkedTurmas = ($this->copiar_turmas || $this->tipoacao == 'Novo') ? 'checked' : '';
 
-            $isAdmin = Auth::user() ? Auth::user()->isAdmin() : false;
+            $isAdmin = $this->getIsAdmin();
 
             if ($isAdmin) {
                 $this->campoRotulo(
@@ -267,7 +269,8 @@ return new class extends clsCadastro
             $disabledServidores = '';
 
             if ($this->tipoacao == 'Novo') {
-                if (!$isAdmin || !$checkedTurmas) {
+                // Se não é admin, "Copiar turmas" é sempre true, então os checkboxes devem estar habilitados
+                if ($isAdmin && !$checkedTurmas) {
                     $disabledProfessores = 'disabled';
                     $disabledServidores = 'disabled';
                 }
@@ -387,7 +390,7 @@ return new class extends clsCadastro
         $this->copiar_alocacoes_e_vinculos_professores = !is_null(value: $this->copiar_alocacoes_e_vinculos_professores);
         $this->copiar_alocacoes_demais_servidores = !is_null(value: $this->copiar_alocacoes_demais_servidores);
 
-        $isAdmin = Auth::user() ? Auth::user()->isAdmin() : false;
+        $isAdmin = $this->getIsAdmin();
 
         $this->copiar_turmas = $isAdmin ? !is_null(value: $this->copiar_turmas) : true;
 
@@ -515,6 +518,14 @@ return new class extends clsCadastro
 
             return false;
         }
+    }
+
+    private function getIsAdmin(): bool
+    {
+        if ($this->isAdmin === null) {
+            $this->isAdmin = Auth::user() ? Auth::user()->isAdmin() : false;
+        }
+        return $this->isAdmin;
     }
 
     public function gerarJsonDosModulos()
