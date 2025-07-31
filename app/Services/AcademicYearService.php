@@ -36,12 +36,6 @@ class AcademicYearService
     /**
      * Valida se as datas das etapas do ano letivo não conflitam com outros anos letivos da escola.
      * Usado tanto na criação quanto na edição de anos letivos.
-     *
-     * @param array $startDates Array com datas de início das etapas (formato d/m/Y)
-     * @param array $endDates Array com datas de fim das etapas (formato d/m/Y)
-     * @param int $year Ano letivo
-     * @param int $schoolId ID da escola
-     * @throws AcademicYearServiceException Se houver conflito de datas
      */
     public function validateAcademicYearDates(
         array $startDates,
@@ -60,12 +54,6 @@ class AcademicYearService
 
     /**
      * Valida datas do ano letivo para múltiplas escolas.
-     *
-     * @param array $schoolIds Array com IDs das escolas
-     * @param array $startDates Array com datas de início das etapas (formato d/m/Y)
-     * @param array $endDates Array com datas de fim das etapas (formato d/m/Y)
-     * @param int $year Ano letivo
-     * @throws AcademicYearServiceException Se houver conflito de datas em qualquer escola
      */
     public function validateAcademicYearDatesForMultipleSchools(
         array $schoolIds,
@@ -81,11 +69,6 @@ class AcademicYearService
     /**
      * Valida se é possível reduzir o número de etapas do ano letivo.
      * Usado apenas na edição, pois verifica se há dados nas etapas que serão removidas.
-     *
-     * @param int $year Ano letivo
-     * @param int $schoolId ID da escola
-     * @param int $stagesCount Novo número de etapas
-     * @throws AcademicYearServiceException Se houver dados nas etapas que serão removidas
      */
     public function validateAcademicYearModules(
         int $year,
@@ -112,11 +95,6 @@ class AcademicYearService
     /**
      * Valida módulos do ano letivo para múltiplas escolas.
      * Usado apenas na edição em lote.
-     *
-     * @param array $schoolIds Array com IDs das escolas
-     * @param int $year Ano letivo
-     * @param int $stagesCount Novo número de etapas
-     * @throws AcademicYearServiceException Se houver dados nas etapas que serão removidas em qualquer escola
      */
     public function validateAcademicYearModulesForMultipleSchools(
         array $schoolIds,
@@ -130,10 +108,6 @@ class AcademicYearService
 
     /**
      * Valida se o número de etapas informado confere com o módulo selecionado.
-     *
-     * @param int $moduleId ID do módulo/etapa
-     * @param int $stagesCount Número de etapas informado
-     * @throws AcademicYearServiceException Se o número de etapas não confere com o módulo
      */
     public function validateStageCountWithModule(int $moduleId, int $stagesCount): void
     {
@@ -151,18 +125,6 @@ class AcademicYearService
     /**
      * Cria um ano letivo completo para uma escola, incluindo etapas e cópia de dados do ano anterior.
      * Usado na criação de anos letivos.
-     *
-     * @param int $schoolId ID da escola
-     * @param int $year Ano letivo
-     * @param array $startDates Array com datas de início das etapas (formato d/m/Y)
-     * @param array $endDates Array com datas de fim das etapas (formato d/m/Y)
-     * @param array $schoolDays Array com dias letivos de cada etapa
-     * @param int $moduleId ID do módulo/etapa
-     * @param bool $copySchoolClasses Se deve copiar turmas do ano anterior
-     * @param bool $copyTeacherData Se deve copiar dados dos professores
-     * @param bool $copyEmployeeData Se deve copiar dados dos demais servidores
-     * @param int|null $userId ID do usuário que está criando
-     * @return LegacySchoolAcademicYear Ano letivo criado
      */
     public function createAcademicYearForSchool(
         int $schoolId,
@@ -189,10 +151,6 @@ class AcademicYearService
     /**
      * Retorna as escolas que já possuem ano letivo ativo para o ano especificado.
      * Usado para identificar escolas que devem ser ignoradas em processamentos em lote.
-     *
-     * @param array $schoolIds Array com IDs das escolas
-     * @param int $year Ano letivo
-     * @return array Array com IDs das escolas que já possuem ano letivo ativo
      */
     public function getExistingAcademicYearSchools(array $schoolIds, int $year): array
     {
@@ -207,9 +165,6 @@ class AcademicYearService
     /**
      * Executa a cópia de configurações do ano anterior para o novo ano letivo.
      * Atualiza cursos, séries, disciplinas e regras de avaliação para incluir o novo ano.
-     *
-     * @param int $year Ano letivo de destino
-     * @param int $schoolId ID da escola
      */
     public function executeCopyAcademicYears(int $year, int $schoolId): void
     {
@@ -267,17 +222,6 @@ class AcademicYearService
     /**
      * Processa a criação de anos letivos em lote para múltiplas escolas.
      * Valida parâmetros, escolas e executa a criação para cada escola válida.
-     *
-     * @param array $params Parâmetros do processamento em lote:
-     *                      - 'schools': Array com IDs das escolas
-     *                      - 'periodos': Array com períodos das etapas
-     *                      - 'year': Ano letivo
-     *                      - 'moduleId': ID do módulo/etapa
-     *                      - 'copySchoolClasses': Se deve copiar turmas
-     *                      - 'copyTeacherData': Se deve copiar dados dos professores
-     *                      - 'copyEmployeeData': Se deve copiar dados dos demais servidores
-     *                      - 'user': Usuário que está executando
-     * @return array Resultado do processamento com status, estatísticas e detalhes
      */
     public function processAcademicYearBatch(array $params): array
     {
@@ -303,18 +247,6 @@ class AcademicYearService
     /**
      * Cria anos letivos para múltiplas escolas simultaneamente.
      * Usado na criação em lote de anos letivos.
-     *
-     * @param array $schoolIds Array com IDs das escolas
-     * @param int $year Ano letivo
-     * @param array $startDates Array com datas de início das etapas (formato d/m/Y)
-     * @param array $endDates Array com datas de fim das etapas (formato d/m/Y)
-     * @param array $schoolDays Array com dias letivos de cada etapa
-     * @param int $moduleId ID do módulo/etapa
-     * @param bool $copySchoolClasses Se deve copiar turmas do ano anterior
-     * @param bool $copyTeacherData Se deve copiar dados dos professores
-     * @param bool $copyEmployeeData Se deve copiar dados dos demais servidores
-     * @param int|null $userId ID do usuário que está criando
-     * @return array Array com escolas processadas e ignoradas
      */
     public function createAcademicYearForMultipleSchools(
         array $schoolIds,
@@ -369,14 +301,6 @@ class AcademicYearService
     /**
      * Atualiza as etapas de um ano letivo existente.
      * Usado na edição de anos letivos.
-     *
-     * @param int $schoolId ID da escola
-     * @param int $year Ano letivo
-     * @param array $startDates Array com datas de início das etapas (formato d/m/Y)
-     * @param array $endDates Array com datas de fim das etapas (formato d/m/Y)
-     * @param array $schoolDays Array com dias letivos de cada etapa
-     * @param int $moduleId ID do módulo/etapa
-     * @throws AcademicYearServiceException Se o ano letivo não for encontrado
      */
     public function updateAcademicYearStages(
         int $schoolId,
@@ -399,11 +323,6 @@ class AcademicYearService
 
     /**
      * Exclui um ano letivo, marcando como inativo e removendo as etapas.
-     *
-     * @param int $schoolId ID da escola
-     * @param int $year Ano letivo
-     * @param int $userId ID do usuário que está excluindo
-     * @return bool True se excluiu com sucesso, false se não encontrou
      */
     public function deleteAcademicYear(int $schoolId, int $year, int $userId): bool
     {
