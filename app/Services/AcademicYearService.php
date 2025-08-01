@@ -134,6 +134,8 @@ class AcademicYearService
         bool $copyEmployeeData = false,
         ?int $userId = null
     ): LegacySchoolAcademicYear {
+        $this->initializeCopyCounters($schoolId);
+
         if ($copySchoolClasses) {
             $this->performDataCopy($schoolId, $year, $copyTeacherData, $copyEmployeeData, $userId);
         }
@@ -410,12 +412,14 @@ class AcademicYearService
         $employeeAllocations = $this->getEmployeeAllocations($schoolId, $lastSchoolAcademicYear, $onlyTeachers);
         $existingAllocations = $this->getExistingAllocations($schoolId, $destinationYear);
 
+        $type = $onlyTeachers ? 'alocacoes_professores' : 'alocacoes_servidores';
+
         foreach ($employeeAllocations as $allocation) {
             if ($this->allocationExists($allocation, $existingAllocations)) {
                 continue;
             }
 
-            $this->replicateAllocation($allocation, $destinationYear);
+            $this->replicateAllocation($allocation, $destinationYear, $type);
         }
     }
 
@@ -521,6 +525,8 @@ class AcademicYearService
 
         $replicatedSchoolClass->save();
 
+        $this->incrementCopyCounter($schoolClass->ref_ref_cod_escola, 'turmas');
+
         return $replicatedSchoolClass;
     }
 
@@ -539,11 +545,17 @@ class AcademicYearService
         }
 
         if ($copyTeacherData) {
-            $this->copySchoolClassTeachers($originSchoolClass['cod_turma'], $destinationSchoolClassId, $originYear, $destinationYear);
+            $this->copySchoolClassTeachers(
+                $originSchoolClass['cod_turma'], 
+                $destinationSchoolClassId, 
+                $originYear, 
+                $destinationYear, 
+                $originSchoolClass['ref_ref_cod_escola']
+            );
         }
     }
 
-    private function copySchoolClassTeachers(int $originClassId, int $destinationClassId, int $originYear, int $destinationYear): void
+    private function copySchoolClassTeachers(int $originClassId, int $destinationClassId, int $originYear, int $destinationYear, int $schoolId): void
     {
         $schoolClassTeachers = LegacySchoolClassTeacher::query()
             ->where(['ano' => $originYear, 'turma_id' => $originClassId])
@@ -565,6 +577,8 @@ class AcademicYearService
             $newSchoolClassTeacher->data_inicial = null;
             $newSchoolClassTeacher->data_fim = null;
             $newSchoolClassTeacher->save();
+
+            $this->incrementCopyCounter($schoolId, 'vinculos_professores');
 
             $this->copySchoolClassTeacherDisciplines($schoolClassTeacher, $newSchoolClassTeacher);
         }
@@ -627,13 +641,15 @@ class AcademicYearService
         });
     }
 
-    private function replicateAllocation(EmployeeAllocation $allocation, int $destinationYear): void
+    private function replicateAllocation(EmployeeAllocation $allocation, int $destinationYear, string $type = 'alocacoes_servidores'): void
     {
         $newAllocation = $allocation->replicate();
         $newAllocation->ano = $destinationYear;
         $newAllocation->data_admissao = null;
         $newAllocation->data_saida = null;
         $newAllocation->save();
+
+        $this->incrementCopyCounter($allocation->ref_cod_escola, $type);
     }
 
     private function createMultiGradeSchoolClass(array $originSchoolClass, int $destinationSchoolClassId): void
@@ -991,6 +1007,32 @@ class AcademicYearService
 
     private Collection $batchSchools;
 
+    private array $copyCounters = [];
+
+    private function initializeCopyCounters(int $schoolId): void
+    {
+        $this->copyCounters[$schoolId] = [
+            'turmas' => 0,
+            'alocacoes_professores' => 0,
+            'alocacoes_servidores' => 0,
+            'vinculos_professores' => 0,
+        ];
+    }
+
+    private function resetCopyCounters(): void
+    {
+        $this->copyCounters = [];
+    }
+
+    private function incrementCopyCounter(int $schoolId, string $type): void
+    {
+        if (!isset($this->copyCounters[$schoolId])) {
+            $this->initializeCopyCounters($schoolId);
+        }
+        
+        $this->copyCounters[$schoolId][$type]++;
+    }
+
     private function loadBatchCollections(array $params): void
     {
         $schoolIds = array_map('intval', $params['schools']);
@@ -1099,6 +1141,9 @@ class AcademicYearService
         $processed = 0;
         $errors = [];
         $details = [];
+        
+        $this->resetCopyCounters();
+        
         foreach ($skippedSchools as $skipped) {
             $details[] = [
                 'type' => 'skipped',
@@ -1178,38 +1223,25 @@ class AcademicYearService
 
     private function getCopyResults(int $schoolId, int $year, array $params): array
     {
-        $lastYear = $year - 1;
         $copyResults = [];
 
-        $lastAcademicYear = LegacySchoolAcademicYear::query()
-            ->where(['ref_cod_escola' => $schoolId, 'ano' => $lastYear])
-            ->active()
-            ->exists();
-
-        if (!$lastAcademicYear) {
+        if (!isset($this->copyCounters[$schoolId])) {
             return $copyResults;
         }
 
+        $counters = $this->copyCounters[$schoolId];
+
         if ($params['copySchoolClasses']) {
-            $copyResults['turmas'] = LegacySchoolClass::query()
-                ->where(['ref_ref_cod_escola' => $schoolId, 'ano' => $lastYear, 'ativo' => 1])
-                ->count();
+            $copyResults['turmas'] = $counters['turmas'];
+            $copyResults['vinculos_professores'] = $counters['vinculos_professores'];
         }
 
         if ($params['copyTeacherData']) {
-            $copyResults['alocacoes_professores'] = EmployeeAllocation::query()
-                ->active()
-                ->whereHas('employee', fn ($q) => $q->active()->professor(true))
-                ->where(['ano' => $lastYear, 'ref_cod_escola' => $schoolId])
-                ->count();
+            $copyResults['alocacoes_professores'] = $counters['alocacoes_professores'];
         }
 
         if ($params['copyEmployeeData']) {
-            $copyResults['alocacoes_servidores'] = EmployeeAllocation::query()
-                ->active()
-                ->whereHas('employee', fn ($q) => $q->active()->professor(false))
-                ->where(['ano' => $lastYear, 'ref_cod_escola' => $schoolId])
-                ->count();
+            $copyResults['alocacoes_servidores'] = $counters['alocacoes_servidores'];
         }
 
         return $copyResults;
@@ -1225,6 +1257,10 @@ class AcademicYearService
             'alocacoes_professores' => [
                 'positive' => 'copiadas {count} alocação(ões) de professor(es)',
                 'negative' => 'nenhuma alocação de professor copiada (não havia alocações no ano anterior)',
+            ],
+            'vinculos_professores' => [
+                'positive' => 'copiados {count} vínculo(s) de professor(es) com turmas',
+                'negative' => 'nenhum vínculo de professor copiado (não havia vínculos no ano anterior)',
             ],
             'alocacoes_servidores' => [
                 'positive' => 'copiadas {count} alocação(ões) dos demais servidor(es)',
