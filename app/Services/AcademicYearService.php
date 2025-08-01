@@ -546,10 +546,10 @@ class AcademicYearService
 
         if ($copyTeacherData) {
             $this->copySchoolClassTeachers(
-                $originSchoolClass['cod_turma'], 
-                $destinationSchoolClassId, 
-                $originYear, 
-                $destinationYear, 
+                $originSchoolClass['cod_turma'],
+                $destinationSchoolClassId,
+                $originYear,
+                $destinationYear,
                 $originSchoolClass['ref_ref_cod_escola']
             );
         }
@@ -1029,7 +1029,7 @@ class AcademicYearService
         if (!isset($this->copyCounters[$schoolId])) {
             $this->initializeCopyCounters($schoolId);
         }
-        
+
         $this->copyCounters[$schoolId][$type]++;
     }
 
@@ -1141,9 +1141,9 @@ class AcademicYearService
         $processed = 0;
         $errors = [];
         $details = [];
-        
+
         $this->resetCopyCounters();
-        
+
         foreach ($skippedSchools as $skipped) {
             $details[] = [
                 'type' => 'skipped',
@@ -1252,19 +1252,19 @@ class AcademicYearService
         $messages = [
             'turmas' => [
                 'positive' => 'copiadas {count} turma(s)',
-                'negative' => 'nenhuma turma copiada (não havia turmas no ano anterior)',
+                'negative' => 'nenhuma turma copiada',
             ],
             'alocacoes_professores' => [
                 'positive' => 'copiadas {count} alocação(ões) de professor(es)',
-                'negative' => 'nenhuma alocação de professor copiada (não havia alocações no ano anterior)',
+                'negative' => 'nenhuma alocação de professor copiada',
             ],
             'vinculos_professores' => [
                 'positive' => 'copiados {count} vínculo(s) de professor(es) com turmas',
-                'negative' => 'nenhum vínculo de professor copiado (não havia vínculos no ano anterior)',
+                'negative' => 'nenhum vínculo de professor copiado',
             ],
             'alocacoes_servidores' => [
                 'positive' => 'copiadas {count} alocação(ões) dos demais servidor(es)',
-                'negative' => 'nenhuma alocação de servidor copiada (não havia alocações no ano anterior)',
+                'negative' => 'nenhuma alocação de servidor copiada',
             ],
         ];
 
