@@ -610,12 +610,12 @@ class AcademicYearService
             ->whereHas('employee', fn ($q) => $q->active())
             ->whereSchool($schoolId)
             ->whereYearEq($year)
+            ->active()
             ->get()
             ->map(fn ($allocation) => [
                 'ref_cod_servidor' => $allocation->ref_cod_servidor,
                 'ref_cod_servidor_funcao' => $allocation->ref_cod_servidor_funcao,
             ])
-            ->active()
             ->toArray();
     }
 
