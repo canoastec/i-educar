@@ -597,15 +597,17 @@ class AcademicYearService
     private function getEmployeeAllocations(int $schoolId, int $year, bool $onlyTeachers): Collection
     {
         return EmployeeAllocation::query()
-            ->whereHas('employee', fn ($q) => $q->professor($onlyTeachers))
+            ->whereHas('employee', fn ($q) => $q->active()->professor($onlyTeachers))
             ->whereSchool($schoolId)
             ->whereYearEq($year)
+            ->active()
             ->get();
     }
 
     private function getExistingAllocations(int $schoolId, int $year): array
     {
         return EmployeeAllocation::query()
+            ->whereHas('employee', fn ($q) => $q->active())
             ->whereSchool($schoolId)
             ->whereYearEq($year)
             ->get()
@@ -613,6 +615,7 @@ class AcademicYearService
                 'ref_cod_servidor' => $allocation->ref_cod_servidor,
                 'ref_cod_servidor_funcao' => $allocation->ref_cod_servidor_funcao,
             ])
+            ->active()
             ->toArray();
     }
 
@@ -1210,20 +1213,23 @@ class AcademicYearService
 
         if ($params['copySchoolClasses']) {
             $copyResults['turmas'] = LegacySchoolClass::query()
+                ->active()
                 ->where(['ref_ref_cod_escola' => $schoolId, 'ano' => $lastYear, 'ativo' => 1])
                 ->count();
         }
 
         if ($params['copyTeacherData']) {
             $copyResults['alocacoes_professores'] = EmployeeAllocation::query()
-                ->whereHas('employee', fn ($q) => $q->professor(true))
+                ->active()
+                ->whereHas('employee', fn ($q) => $q->active()->professor(true))
                 ->where(['ano' => $lastYear, 'ref_cod_escola' => $schoolId])
                 ->count();
         }
 
         if ($params['copyEmployeeData']) {
             $copyResults['alocacoes_servidores'] = EmployeeAllocation::query()
-                ->whereHas('employee', fn ($q) => $q->professor(false))
+                ->active()
+                ->whereHas('employee', fn ($q) => $q->active()->professor(false))
                 ->where(['ano' => $lastYear, 'ref_cod_escola' => $schoolId])
                 ->count();
         }
@@ -1243,7 +1249,7 @@ class AcademicYearService
                 'negative' => 'nenhuma alocação de professor copiada (não havia alocações no ano anterior)',
             ],
             'alocacoes_servidores' => [
-                'positive' => 'copiadas {count} alocação(ões) de servidor(es)',
+                'positive' => 'copiadas {count} alocação(ões) dos demais servidor(es)',
                 'negative' => 'nenhuma alocação de servidor copiada (não havia alocações no ano anterior)',
             ],
         ];
