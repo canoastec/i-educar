@@ -1099,7 +1099,6 @@ class AcademicYearService
         $processed = 0;
         $errors = [];
         $details = [];
-
         foreach ($skippedSchools as $skipped) {
             $details[] = [
                 'type' => 'skipped',
@@ -1108,62 +1107,42 @@ class AcademicYearService
                 'school_name' => $skipped['school_name'],
             ];
         }
-
         DB::beginTransaction();
-
-        try {
-            foreach ($validatedData as $data) {
-                $result = $this->processSchoolAcademicYear($data['school'], $data['params']);
-                $processed++;
-
-                $copyInfo = $this->buildCopyInfoMessage($result['copyResults'], $data['params']);
-                $message = "Escola '{$data['school']->nome}': Ano letivo {$params['year']} criado com sucesso";
-
-                if (!empty($copyInfo)) {
-                    $message .= '. ' . $copyInfo;
-                }
-
-                $details[] = [
-                    'type' => 'success',
-                    'message' => $message,
-                    'school_id' => $data['school']->cod_escola,
-                    'school_name' => $data['school']->nome,
-                ];
+        foreach ($validatedData as $data) {
+            $result = $this->processSchoolAcademicYear($data['school'], $data['params']);
+            $processed++;
+            $copyInfo = $this->buildCopyInfoMessage($result['copyResults'], $data['params']);
+            $message = "Escola '{$data['school']->nome}': Ano letivo {$params['year']} criado com sucesso";
+            if (!empty($copyInfo)) {
+                $message .= '. ' . $copyInfo;
             }
-
-            DB::commit();
-
-            $skippedCount = count($skippedSchools);
-            $message = 'Processamento concluído. ';
-            if ($processed > 0) {
-                $message .= "{$processed} escola(s) processada(s). ";
-            }
-            if ($skippedCount > 0) {
-                $message .= "{$skippedCount} escola(s) ignorada(s).";
-            }
-
-            return [
-                'status' => 'completed',
-                'total' => $total,
-                'processed' => $processed,
-                'skipped' => $skippedCount,
-                'year' => $params['year'],
-                'errors' => $errors,
-                'details' => $details,
+            $details[] = [
+                'type' => 'success',
                 'message' => $message,
+                'school_id' => $data['school']->cod_escola,
+                'school_name' => $data['school']->nome,
             ];
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return $this->createBatchFailureResult(
-                $total,
-                $processed,
-                [['school_id' => 0, 'error' => 'Erro crítico durante o processamento.']],
-                'Erro crítico durante o processamento.',
-                $params['year']
-            );
         }
+        DB::commit();
+        $skippedCount = count($skippedSchools);
+        $message = 'Processamento concluído. ';
+        if ($processed > 0) {
+            $message .= "{$processed} escola(s) processada(s). ";
+        }
+        if ($skippedCount > 0) {
+            $message .= "{$skippedCount} escola(s) ignorada(s).";
+        }
+
+        return [
+            'status' => 'completed',
+            'total' => $total,
+            'processed' => $processed,
+            'skipped' => $skippedCount,
+            'year' => $params['year'],
+            'errors' => $errors,
+            'details' => $details,
+            'message' => $message,
+        ];
     }
 
     private function processSchoolAcademicYear($school, array $params): array
@@ -1213,7 +1192,6 @@ class AcademicYearService
 
         if ($params['copySchoolClasses']) {
             $copyResults['turmas'] = LegacySchoolClass::query()
-                ->active()
                 ->where(['ref_ref_cod_escola' => $schoolId, 'ano' => $lastYear, 'ativo' => 1])
                 ->count();
         }
