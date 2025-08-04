@@ -41,6 +41,7 @@ use Database\Factories\LegacySchoolGradeFactory;
 use Database\Factories\LegacySchoolGradeDisciplineFactory;
 use Database\Factories\LegacyStageTypeFactory;
 use Database\Factories\LegacyUserFactory;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use RuntimeException;
 use Tests\TestCase;
@@ -1665,7 +1666,7 @@ class AcademicYearServiceTest extends TestCase
             ],
             'moduleId' => $this->stageType->cod_modulo,
             'user' => $this->createUser(),
-            'copySchoolClasses' => false,
+            'copySchoolClasses' => true,
             'copyTeacherData' => true,
             'copyEmployeeData' => false,
         ];
@@ -1691,7 +1692,7 @@ class AcademicYearServiceTest extends TestCase
             ],
             'moduleId' => $this->stageType->cod_modulo,
             'user' => $this->createUser(),
-            'copySchoolClasses' => false,
+            'copySchoolClasses' => true,
             'copyTeacherData' => false,
             'copyEmployeeData' => true,
         ];
@@ -1700,7 +1701,7 @@ class AcademicYearServiceTest extends TestCase
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(1);
-        expect($result['details'][0]['message'])->toContain('copiadas 1 alocação(ões) de servidor(es)');
+        expect($result['details'][0]['message'])->toContain('copiadas 1 alocação(ões) dos demais servidor(es)');
     }
 
     public function test_process_academic_year_batch_with_all_copy_options(): void
@@ -1731,7 +1732,7 @@ class AcademicYearServiceTest extends TestCase
         expect($result['processed'])->toBe(1);
         expect($result['details'][0]['message'])->toContain('copiadas 1 turma(s)');
         expect($result['details'][0]['message'])->toContain('copiadas 1 alocação(ões) de professor(es)');
-        expect($result['details'][0]['message'])->toContain('copiadas 1 alocação(ões) de servidor(es)');
+        expect($result['details'][0]['message'])->toContain('copiadas 1 alocação(ões) dos demais servidor(es)');
     }
 
     public function test_process_academic_year_batch_with_no_copy_options(): void
@@ -1769,18 +1770,14 @@ class AcademicYearServiceTest extends TestCase
             'periodos' => [
                 ['data_inicio' => '01/02/' . $this->currentYear, 'data_fim' => '30/04/' . $this->currentYear],
             ],
-            'moduleId' => 999999,
+            'moduleId' => 30000,
             'user' => $this->createUser(),
             'copySchoolClasses' => true,
             'copyTeacherData' => false,
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
-
-        expect($result['status'])->toBe('failed');
-        expect($result['errors'])->toBeArray();
-        expect($result['errors'])->not()->toBeEmpty();
+        expect(fn () => $this->service->processAcademicYearBatch($params))->toThrow(QueryException::class);
     }
 
     public function test_process_academic_year_batch_validates_stage_count(): void
