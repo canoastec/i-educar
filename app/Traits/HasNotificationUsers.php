@@ -17,7 +17,7 @@ trait HasNotificationUsers
     {
         return DB::table('pmieducar.usuario as u')
             ->select('u.cod_usuario')
-            ->join('pmieducar.menu_tipo_usuario as mtu', 'mtu.ref_cod_tipo_usuario', 'u.ref_cod_tipo_usuario')
+            ->join('pmieducar.menu_tipo_usuario as mtu', fn ($j) => $j->on('mtu.ref_cod_tipo_usuario', 'u.ref_cod_tipo_usuario')->where('mtu.visualiza', 1))
             ->join('pmieducar.tipo_usuario as tu', 'tu.cod_tipo_usuario', 'u.ref_cod_tipo_usuario')
             ->join('public.menus as m', 'm.id', 'mtu.menu_id')
             ->leftJoin('pmieducar.escola_usuario as eu', 'eu.ref_cod_usuario', 'u.cod_usuario')
