@@ -23,7 +23,7 @@ class MessageController extends Controller
 
     public function index(IndexMessageRequest $request)
     {
-        $messages = $this->messageService->getMessages(
+        $messages = $this->messageService->get(
             $request->query('messageable_type'),
             $request->query('messageable_id')
         );
@@ -33,7 +33,7 @@ class MessageController extends Controller
 
     public function store(StoreMessageRequest $request)
     {
-        $message = $this->messageService->createMessage(
+        $message = $this->messageService->create(
             $request->messageable_type,
             $request->messageable_id,
             Auth::id(),
@@ -47,7 +47,7 @@ class MessageController extends Controller
 
     public function show(int $messageId)
     {
-        $message = $this->messageService->findMessage($messageId);
+        $message = $this->messageService->find($messageId);
 
         if (!$message) {
             return response()->json(['message' => ucfirst($this->messageLabel) . ' não encontrada'], 404);
@@ -58,7 +58,7 @@ class MessageController extends Controller
 
     public function update(UpdateMessageRequest $request, int $messageId)
     {
-        $message = $this->messageService->updateMessage(
+        $message = $this->messageService->update(
             $messageId,
             Auth::id(),
             $request->description
@@ -71,7 +71,7 @@ class MessageController extends Controller
 
     public function destroy(int $messageId): JsonResponse
     {
-        $this->messageService->deleteMessage($messageId, Auth::id());
+        $this->messageService->delete($messageId, Auth::id());
 
         return response()->json(['message' => ucfirst($this->messageLabel) . ' excluída com sucesso']);
     }

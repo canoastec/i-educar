@@ -4,6 +4,7 @@ use App\Models\LegacyActiveLooking;
 use Database\Factories\LegacyActiveLookingFactory;
 use Database\Factories\MessageFactory;
 use Database\Factories\LegacyUserFactory;
+use Database\Factories\LegacyUserTypeFactory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -176,7 +177,9 @@ test('update message successfully', function () {
 
 test('update message without permission', function () {
     $user1 = LegacyUserFactory::new()->admin()->create();
-    $user2 = LegacyUserFactory::new()->institutional()->create();
+    $user2 = LegacyUserFactory::new()->state(['ref_cod_tipo_usuario' => function () {
+        return LegacyUserTypeFactory::new()->create(['nivel' => 4]); // ESCOLA
+    }])->create();
     $message = MessageFactory::new()->createdBy($user1)->create();
     $newObservation = 'Updated observation';
 
@@ -184,7 +187,7 @@ test('update message without permission', function () {
         'description' => $newObservation
     ]);
 
-    $response->assertStatus(500)
+    $response->assertStatus(403)
         ->assertJson([
             'message' => 'Você não tem permissão para editar esta mensagem'
         ]);
@@ -236,12 +239,14 @@ test('delete message successfully', function () {
 
 test('delete message without permission', function () {
     $user1 = LegacyUserFactory::new()->admin()->create();
-    $user2 = LegacyUserFactory::new()->institutional()->create();
+    $user2 = LegacyUserFactory::new()->state(['ref_cod_tipo_usuario' => function () {
+        return LegacyUserTypeFactory::new()->create(['nivel' => 4]); // ESCOLA
+    }])->create();
     $message = MessageFactory::new()->createdBy($user1)->create();
 
     $response = $this->actingAs($user2)->deleteJson("/api/messages/{$message->id}");
 
-    $response->assertStatus(500)
+    $response->assertStatus(403)
         ->assertJson([
             'message' => 'Você não tem permissão para excluir esta mensagem'
         ]);

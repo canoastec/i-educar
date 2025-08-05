@@ -4,12 +4,13 @@ namespace App\Services;
 
 use App\Models\Message;
 use App\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MessageService
 {
-    public function createMessage(string $messageableType, int $messageableId, int $userId, string $description): Message
+    public function create(string $messageableType, int $messageableId, int $userId, string $description): Message
     {
         return DB::transaction(function () use ($messageableType, $messageableId, $userId, $description) {
             $message = Message::create([
@@ -25,13 +26,13 @@ class MessageService
         });
     }
 
-    public function updateMessage(int $messageId, int $userId, string $description): Message
+    public function update(int $messageId, int $userId, string $description): Message
     {
         return DB::transaction(function () use ($messageId, $userId, $description) {
             $message = Message::findOrFail($messageId);
 
             if (!$this->canEditMessage($message, $userId)) {
-                throw new \InvalidArgumentException('Você não tem permissão para editar esta mensagem');
+                throw new AuthorizationException('Você não tem permissão para editar esta mensagem');
             }
 
             $message->update(['description' => $description]);
@@ -42,25 +43,25 @@ class MessageService
         });
     }
 
-    public function deleteMessage(int $messageId, int $userId): bool
+    public function delete(int $messageId, int $userId): bool
     {
         return DB::transaction(function () use ($messageId, $userId) {
             $message = Message::findOrFail($messageId);
 
             if (!$this->canDeleteMessage($message, $userId)) {
-                throw new \InvalidArgumentException('Você não tem permissão para excluir esta mensagem');
+                throw new AuthorizationException('Você não tem permissão para excluir esta mensagem');
             }
 
             return $message->delete();
         });
     }
 
-    public function findMessage(int $messageId): ?Message
+    public function find(int $messageId): ?Message
     {
         return Message::with('user')->find($messageId);
     }
 
-    public function getMessages(string $messageableType, int $messageableId): \Illuminate\Database\Eloquent\Collection
+    public function get(string $messageableType, int $messageableId): \Illuminate\Database\Eloquent\Collection
     {
         return Message::with('user')
             ->where('messageable_type', $messageableType)
@@ -71,15 +72,11 @@ class MessageService
 
     private function canEditMessage(Message $message, int $userId): bool
     {
-        if (is_null($message->user_id)) {
-            return $this->isPoliInstitutionalUser($userId);
-        }
-
         if ($message->user_id === $userId) {
             return true;
         }
 
-        return $this->isPoliInstitutionalUser($userId);
+        return $this->isPoliOrInstitutionalUser($userId);
     }
 
     private function canDeleteMessage(Message $message, int $userId): bool
@@ -87,13 +84,13 @@ class MessageService
         return $this->canEditMessage($message, $userId);
     }
 
-    private function isPoliInstitutionalUser(int $userId): bool
+    private function isPoliOrInstitutionalUser(int $userId): bool
     {
         if ($userId === Auth::id()) {
-            return Auth::user()->isAdmin();
+            return Auth::user()->isAdmin() || Auth::user()->isInstitutional();
         }
 
         $user = User::find($userId);
-        return $user && $user->isAdmin();
+        return $user && ($user->isAdmin() || $user->isInstitutional());
     }
 }

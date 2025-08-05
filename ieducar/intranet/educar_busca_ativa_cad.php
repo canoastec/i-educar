@@ -191,6 +191,8 @@ return new class extends clsCadastro
         $activeLookingService = new ActiveLookingService;
         $legacyActiveLooking = $this->buildObjectBeforeStore();
 
+        $isEditing = !empty($this->id);
+
         try {
             DB::beginTransaction();
             $activeLooking = $activeLookingService->store(activeLooking: $legacyActiveLooking, registration: $legacyRegistration);
@@ -234,7 +236,12 @@ return new class extends clsCadastro
 
             return false;
         }
-        $this->mensagem = 'Cadastro efetuado com sucesso.<br />';
+
+        if ($isEditing) {
+            $this->mensagem = 'Cadastro atualizado com sucesso.<br />';
+        } else {
+            $this->mensagem = 'Cadastro efetuado com sucesso.<br />';
+        }
 
         if ($this->resultado_busca_ativa == ActiveLooking::ACTIVE_LOOKING_ABANDONMENT_RESULT) {
             $this->simpleRedirect(url: 'educar_abandono_cad.php?ref_cod_matricula=' . $this->ref_cod_matricula . '&ref_cod_aluno=' . $this->ref_cod_aluno);

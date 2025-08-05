@@ -23,7 +23,7 @@ class ActiveLookingService
 
         event(new ActiveLookingChanged(
             activeLooking: $activeLooking,
-            action: $activeLooking->getKey() === null ? ActiveLookingChanged::ACTION_CREATED : ActiveLookingChanged::ACTION_UPDATED
+            action: $activeLooking->wasRecentlyCreated ? ActiveLookingChanged::ACTION_CREATED : ActiveLookingChanged::ACTION_UPDATED
         ));
 
         return $activeLooking;

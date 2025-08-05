@@ -6,6 +6,8 @@ use App\Services\MessageService;
 use Database\Factories\LegacyActiveLookingFactory;
 use Database\Factories\MessageFactory;
 use Database\Factories\LegacyUserFactory;
+use Database\Factories\LegacyUserTypeFactory;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -20,7 +22,7 @@ test('create message successfully', function () {
     $user = LegacyUserFactory::new()->create();
     $description = 'Test description';
 
-    $message = $this->messageService->createMessage(
+    $message = $this->messageService->create(
         LegacyActiveLooking::class,
         $activeLooking->id,
         $user->id,
@@ -41,7 +43,7 @@ test('update message successfully', function () {
     $message = MessageFactory::new()->createdBy($user)->create();
     $newDescription = 'Updated description';
 
-    $updatedMessage = $this->messageService->updateMessage(
+    $updatedMessage = $this->messageService->update(
         $message->id,
         $user->id,
         $newDescription
@@ -54,13 +56,15 @@ test('update message successfully', function () {
 
 test('update message without permission', function () {
     $user1 = LegacyUserFactory::new()->admin()->create();
-    $user2 = LegacyUserFactory::new()->institutional()->create();
+    $user2 = LegacyUserFactory::new()->state(['ref_cod_tipo_usuario' => function () {
+        return LegacyUserTypeFactory::new()->create(['nivel' => 4]); // ESCOLA
+    }])->create();
     $message = MessageFactory::new()->createdBy($user1)->create();
     $newDescription = 'Updated description';
 
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(AuthorizationException::class);
     $this->expectExceptionMessage('Você não tem permissão para editar esta mensagem');
-    $this->messageService->updateMessage($message->id, $user2->id, $newDescription);
+    $this->messageService->update($message->id, $user2->id, $newDescription);
 });
 
 test('update message with invalid message id', function () {
@@ -68,14 +72,14 @@ test('update message with invalid message id', function () {
     $newDescription = 'Updated description';
 
     $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
-    $this->messageService->updateMessage(99999, $user->id, $newDescription);
+    $this->messageService->update(99999, $user->id, $newDescription);
 });
 
 test('delete message successfully', function () {
     $user = LegacyUserFactory::new()->create();
     $message = MessageFactory::new()->createdBy($user)->create();
 
-    $result = $this->messageService->deleteMessage($message->id, $user->id);
+    $result = $this->messageService->delete($message->id, $user->id);
 
     $this->assertTrue($result);
     $this->assertDatabaseHas('messages', [
@@ -86,25 +90,27 @@ test('delete message successfully', function () {
 
 test('delete message without permission', function () {
     $user1 = LegacyUserFactory::new()->admin()->create();
-    $user2 = LegacyUserFactory::new()->institutional()->create();
+    $user2 = LegacyUserFactory::new()->state(['ref_cod_tipo_usuario' => function () {
+        return LegacyUserTypeFactory::new()->create(['nivel' => 4]); // ESCOLA
+    }])->create();
     $message = MessageFactory::new()->createdBy($user1)->create();
 
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(AuthorizationException::class);
     $this->expectExceptionMessage('Você não tem permissão para excluir esta mensagem');
-    $this->messageService->deleteMessage($message->id, $user2->id);
+    $this->messageService->delete($message->id, $user2->id);
 });
 
 test('delete message with invalid message id', function () {
     $user = LegacyUserFactory::new()->create();
 
     $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
-    $this->messageService->deleteMessage(99999, $user->id);
+    $this->messageService->delete(99999, $user->id);
 });
 
 test('find message successfully', function () {
     $message = MessageFactory::new()->create();
 
-    $foundMessage = $this->messageService->findMessage($message->id);
+    $foundMessage = $this->messageService->find($message->id);
 
     $this->assertInstanceOf(Message::class, $foundMessage);
     $this->assertEquals($message->id, $foundMessage->id);
@@ -112,7 +118,7 @@ test('find message successfully', function () {
 });
 
 test('find message with invalid id', function () {
-    $foundMessage = $this->messageService->findMessage(99999);
+    $foundMessage = $this->messageService->find(99999);
 
     $this->assertNull($foundMessage);
 });
@@ -124,7 +130,7 @@ test('get messages by type and id', function () {
         ->forActiveLooking($activeLooking)
         ->create();
 
-    $foundMessages = $this->messageService->getMessages(LegacyActiveLooking::class, $activeLooking->id);
+    $foundMessages = $this->messageService->get(LegacyActiveLooking::class, $activeLooking->id);
 
     $this->assertCount(3, $foundMessages);
     $this->assertInstanceOf(Message::class, $foundMessages->first());
@@ -134,7 +140,7 @@ test('get messages by type and id', function () {
 test('get messages by type and id returns empty collection', function () {
     $activeLooking = LegacyActiveLookingFactory::new()->create();
 
-    $foundMessages = $this->messageService->getMessages(LegacyActiveLooking::class, $activeLooking->id);
+    $foundMessages = $this->messageService->get(LegacyActiveLooking::class, $activeLooking->id);
 
     $this->assertCount(0, $foundMessages);
 });
@@ -145,7 +151,7 @@ test('poli institutional user can edit any message', function () {
     $message = MessageFactory::new()->createdBy($regularUser)->create();
     $newDescription = 'Description edited by poli-institutional';
 
-    $updatedMessage = $this->messageService->updateMessage(
+    $updatedMessage = $this->messageService->update(
         $message->id,
         $poliUser->id,
         $newDescription
@@ -160,7 +166,7 @@ test('poli institutional user can delete any message', function () {
     $regularUser = LegacyUserFactory::new()->create();
     $message = MessageFactory::new()->createdBy($regularUser)->create();
 
-    $result = $this->messageService->deleteMessage($message->id, $poliUser->id);
+    $result = $this->messageService->delete($message->id, $poliUser->id);
 
     $this->assertTrue($result);
     $this->assertDatabaseHas('messages', [
@@ -169,25 +175,34 @@ test('poli institutional user can delete any message', function () {
     ]);
 });
 
-test('institutional user cannot edit any message', function () {
+test('institutional user can edit any message', function () {
     $institutionalUser = LegacyUserFactory::new()->institutional()->create();
     $regularUser = LegacyUserFactory::new()->create();
     $message = MessageFactory::new()->createdBy($regularUser)->create();
     $newDescription = 'Description edited by institutional';
 
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('Você não tem permissão para editar esta mensagem');
-    $this->messageService->updateMessage($message->id, $institutionalUser->id, $newDescription);
+    $updatedMessage = $this->messageService->update(
+        $message->id,
+        $institutionalUser->id,
+        $newDescription
+    );
+
+    $this->assertInstanceOf(Message::class, $updatedMessage);
+    $this->assertEquals($newDescription, $updatedMessage->description);
 });
 
-test('institutional user cannot delete any message', function () {
+test('institutional user can delete any message', function () {
     $institutionalUser = LegacyUserFactory::new()->institutional()->create();
     $regularUser = LegacyUserFactory::new()->create();
     $message = MessageFactory::new()->createdBy($regularUser)->create();
 
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('Você não tem permissão para excluir esta mensagem');
-    $this->messageService->deleteMessage($message->id, $institutionalUser->id);
+    $result = $this->messageService->delete($message->id, $institutionalUser->id);
+
+    $this->assertTrue($result);
+    $this->assertDatabaseHas('messages', [
+        'id' => $message->id,
+        'deleted_at' => $message->fresh()->deleted_at
+    ]);
 });
 
 test('regular user can edit own message', function () {
@@ -195,7 +210,7 @@ test('regular user can edit own message', function () {
     $message = MessageFactory::new()->createdBy($user)->create();
     $newDescription = 'Updated description by owner';
 
-    $updatedMessage = $this->messageService->updateMessage(
+    $updatedMessage = $this->messageService->update(
         $message->id,
         $user->id,
         $newDescription
@@ -206,14 +221,18 @@ test('regular user can edit own message', function () {
 });
 
 test('regular user cannot edit other user message', function () {
-    $user1 = LegacyUserFactory::new()->create();
-    $user2 = LegacyUserFactory::new()->create();
+    $user1 = LegacyUserFactory::new()->state(['ref_cod_tipo_usuario' => function () {
+        return LegacyUserTypeFactory::new()->create(['nivel' => 4]); // ESCOLA
+    }])->create();
+    $user2 = LegacyUserFactory::new()->state(['ref_cod_tipo_usuario' => function () {
+        return LegacyUserTypeFactory::new()->create(['nivel' => 4]); // ESCOLA
+    }])->create();
     $message = MessageFactory::new()->createdBy($user1)->create();
     $newDescription = 'Updated description by other user';
 
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(AuthorizationException::class);
     $this->expectExceptionMessage('Você não tem permissão para editar esta mensagem');
-    $this->messageService->updateMessage($message->id, $user2->id, $newDescription);
+    $this->messageService->update($message->id, $user2->id, $newDescription);
 });
 
 test('poli institutional user can edit message without user', function () {
@@ -221,7 +240,7 @@ test('poli institutional user can edit message without user', function () {
     $message = MessageFactory::new()->withoutUser()->create();
     $newDescription = 'Updated description by poli-institutional';
 
-    $updatedMessage = $this->messageService->updateMessage(
+    $updatedMessage = $this->messageService->update(
         $message->id,
         $poliUser->id,
         $newDescription
@@ -231,24 +250,31 @@ test('poli institutional user can edit message without user', function () {
     $this->assertEquals($newDescription, $updatedMessage->description);
 });
 
-test('regular user cannot edit message without user', function () {
-    $regularUser = LegacyUserFactory::new()->institutional()->create(); // Usuário institucional (não poli)
-    $message = MessageFactory::new()->withoutUser()->create();
-    $newDescription = 'Updated description by regular user';
-
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('Você não tem permissão para editar esta mensagem');
-    $this->messageService->updateMessage($message->id, $regularUser->id, $newDescription);
-});
-
-test('institutional user cannot edit message without user', function () {
+test('institutional user can edit message without user', function () {
     $institutionalUser = LegacyUserFactory::new()->institutional()->create();
     $message = MessageFactory::new()->withoutUser()->create();
     $newDescription = 'Updated description by institutional user';
 
-    $this->expectException(\InvalidArgumentException::class);
+    $updatedMessage = $this->messageService->update(
+        $message->id,
+        $institutionalUser->id,
+        $newDescription
+    );
+
+    $this->assertInstanceOf(Message::class, $updatedMessage);
+    $this->assertEquals($newDescription, $updatedMessage->description);
+});
+
+test('regular user cannot edit message without user', function () {
+    $regularUser = LegacyUserFactory::new()->state(['ref_cod_tipo_usuario' => function () {
+        return LegacyUserTypeFactory::new()->create(['nivel' => 4]); // ESCOLA
+    }])->create();
+    $message = MessageFactory::new()->withoutUser()->create();
+    $newDescription = 'Updated description by regular user';
+
+    $this->expectException(AuthorizationException::class);
     $this->expectExceptionMessage('Você não tem permissão para editar esta mensagem');
-    $this->messageService->updateMessage($message->id, $institutionalUser->id, $newDescription);
+    $this->messageService->update($message->id, $regularUser->id, $newDescription);
 });
 
 test('service is generic and accepts any model type', function () {
@@ -257,7 +283,7 @@ test('service is generic and accepts any model type', function () {
 
     // Teste com LegacyActiveLooking (modelo atual)
     $activeLooking = LegacyActiveLookingFactory::new()->create();
-    $message1 = $this->messageService->createMessage(
+    $message1 = $this->messageService->create(
         LegacyActiveLooking::class,
         $activeLooking->id,
         $user->id,
@@ -269,7 +295,7 @@ test('service is generic and accepts any model type', function () {
     $this->assertEquals($activeLooking->id, $message1->messageable_id);
 
     // Teste com string de classe (simulando outro modelo)
-    $message2 = $this->messageService->createMessage(
+    $message2 = $this->messageService->create(
         'App\\Models\\Student',
         999,
         $user->id,
@@ -281,7 +307,7 @@ test('service is generic and accepts any model type', function () {
     $this->assertEquals(999, $message2->messageable_id);
 
     // Teste com outro modelo fictício
-    $message3 = $this->messageService->createMessage(
+    $message3 = $this->messageService->create(
         'App\\Models\\Registration',
         888,
         $user->id,
@@ -315,9 +341,9 @@ test('get messages works with any model type string', function () {
     ])->createdBy($user)->create();
 
     // Buscar mensagens por tipo
-    $activeLookingMessages = $this->messageService->getMessages(LegacyActiveLooking::class, $activeLooking->id);
-    $studentMessages = $this->messageService->getMessages('App\\Models\\Student', 999);
-    $registrationMessages = $this->messageService->getMessages('App\\Models\\Registration', 888);
+    $activeLookingMessages = $this->messageService->get(LegacyActiveLooking::class, $activeLooking->id);
+    $studentMessages = $this->messageService->get('App\\Models\\Student', 999);
+    $registrationMessages = $this->messageService->get('App\\Models\\Registration', 888);
 
     $this->assertCount(2, $activeLookingMessages);
     $this->assertCount(3, $studentMessages);
