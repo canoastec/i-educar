@@ -50,7 +50,7 @@ class ActiveLookingNotificationListener
 
         $link = '/intranet/educar_busca_ativa_cad.php?id=' . $activeLooking->getKey() . '&ref_cod_matricula=' . $registration->getKey();
 
-        $users = $this->getUsers(Process::ACTIVE_LOOKING, $registration->school->getKey());
+        $users = $this->getUsers(Process::NOTIFY_ACTIVE_LOOKING, $registration->school->getKey());
 
         foreach ($users as $user) {
             $this->service->createByUser($user->cod_usuario, $message, $link, NotificationType::ACTIVE_LOOKING);

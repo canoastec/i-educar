@@ -58,6 +58,8 @@ class Process
 
     public const EDUCACENSO_IMPORT_SITUATION = 2008;
 
+    public const NOTIFY_ACTIVE_LOOKING = 2009;
+
     public const SETTINGS = 3000;
 
     public const RELEASE_PERIOD = 999848;
