@@ -525,6 +525,7 @@ return new class extends clsCadastro
         if ($this->isAdmin === null) {
             $this->isAdmin = Auth::user() ? Auth::user()->isAdmin() : false;
         }
+
         return $this->isAdmin;
     }
 

@@ -6,9 +6,10 @@ use App\Exceptions\AcademicYearServiceException;
 use App\Models\EmployeeAllocation;
 use App\Models\LegacyAcademicYearStage;
 use App\Models\LegacyDisciplineAbsence;
+use App\Models\LegacyDisciplineAcademicYear;
 use App\Models\LegacyDisciplineSchoolClass;
 use App\Models\LegacyDisciplineScore;
-use App\Models\LegacyDisciplineAcademicYear;
+use App\Models\LegacyEvaluationRuleGradeYear;
 use App\Models\LegacyGeneralAbsence;
 use App\Models\LegacySchool;
 use App\Models\LegacySchoolAcademicYear;
@@ -17,15 +18,14 @@ use App\Models\LegacySchoolClassGrade;
 use App\Models\LegacySchoolClassStage;
 use App\Models\LegacySchoolClassTeacher;
 use App\Models\LegacySchoolClassTeacherDiscipline;
+use App\Models\LegacySchoolCourse;
+use App\Models\LegacySchoolGrade;
+use App\Models\LegacySchoolGradeDiscipline;
 use App\Models\LegacyStageType;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Models\LegacySchoolCourse;
-use App\Models\LegacySchoolGrade;
-use App\Models\LegacySchoolGradeDiscipline;
-use App\Models\LegacyEvaluationRuleGradeYear;
 
 class AcademicYearService
 {
@@ -178,40 +178,40 @@ class AcademicYearService
 
         LegacySchoolCourse::query()
             ->where('ref_cod_escola', $schoolId)
-            ->whereRaw("? = ANY(anos_letivos)", [$previousYear])
-            ->whereRaw("NOT (? = ANY(anos_letivos))", [$year])
+            ->whereRaw('? = ANY(anos_letivos)', [$previousYear])
+            ->whereRaw('NOT (? = ANY(anos_letivos))', [$year])
             ->update([
-                'anos_letivos' => DB::raw("array_append(anos_letivos, {$year}::smallint)")
+                'anos_letivos' => DB::raw("array_append(anos_letivos, {$year}::smallint)"),
             ]);
 
         LegacySchoolGrade::query()
             ->where('ref_cod_escola', $schoolId)
-            ->whereRaw("? = ANY(anos_letivos)", [$previousYear])
-            ->whereRaw("NOT (? = ANY(anos_letivos))", [$year])
+            ->whereRaw('? = ANY(anos_letivos)', [$previousYear])
+            ->whereRaw('NOT (? = ANY(anos_letivos))', [$year])
             ->update([
-                'anos_letivos' => DB::raw("array_append(anos_letivos, {$year}::smallint)")
+                'anos_letivos' => DB::raw("array_append(anos_letivos, {$year}::smallint)"),
             ]);
 
         LegacySchoolGradeDiscipline::query()
             ->whereSchool($schoolId)
-            ->whereRaw("? = ANY(anos_letivos)", [$previousYear])
-            ->whereRaw("NOT (? = ANY(anos_letivos))", [$year])
+            ->whereRaw('? = ANY(anos_letivos)', [$previousYear])
+            ->whereRaw('NOT (? = ANY(anos_letivos))', [$year])
             ->update([
-                'anos_letivos' => DB::raw("array_append(anos_letivos, {$year}::smallint)")
+                'anos_letivos' => DB::raw("array_append(anos_letivos, {$year}::smallint)"),
             ]);
 
         LegacyDisciplineAcademicYear::query()
-            ->whereRaw("EXISTS(
+            ->whereRaw('EXISTS(
                 SELECT 1
                 FROM pmieducar.escola_serie_disciplina
                 WHERE ? = ANY(anos_letivos)
                 AND ref_ref_cod_escola = ?
                 AND escola_serie_disciplina.ref_cod_disciplina = componente_curricular_ano_escolar.componente_curricular_id
                 AND escola_serie_disciplina.ref_ref_cod_serie = componente_curricular_ano_escolar.ano_escolar_id
-            )", [$previousYear, $schoolId])
-            ->whereRaw("NOT (? = ANY(anos_letivos))", [$year])
+            )', [$previousYear, $schoolId])
+            ->whereRaw('NOT (? = ANY(anos_letivos))', [$year])
             ->update([
-                'anos_letivos' => DB::raw("array_append(anos_letivos, {$year}::smallint)")
+                'anos_letivos' => DB::raw("array_append(anos_letivos, {$year}::smallint)"),
             ]);
 
         $this->copyEvaluationRulesForNewYear($schoolId, $previousYear, $year);
@@ -372,10 +372,10 @@ class AcademicYearService
 
     private function copySchoolClass(
         array $originSchoolClass,
-        int   $originYear,
-        int   $destinationYear,
-        bool  $copyTeacherData = true,
-        ?int  $userId = null
+        int $originYear,
+        int $destinationYear,
+        bool $copyTeacherData = true,
+        ?int $userId = null
     ): void {
         if ($this->schoolClassExists($originSchoolClass, $destinationYear)) {
             return;
@@ -532,10 +532,10 @@ class AcademicYearService
 
     private function copySchoolClassRelatedData(
         array $originSchoolClass,
-        int   $destinationSchoolClassId,
-        int   $originYear,
-        int   $destinationYear,
-        bool  $copyTeacherData
+        int $destinationSchoolClassId,
+        int $originYear,
+        int $destinationYear,
+        bool $copyTeacherData
     ): void {
         $this->copySchoolClassDisciplines($originSchoolClass['cod_turma'], $destinationSchoolClassId);
         $this->copySchoolClassModules($originSchoolClass['cod_turma'], $destinationSchoolClassId, $originYear, $destinationYear);
@@ -815,7 +815,7 @@ class AcademicYearService
     {
         $gradesToProcess = LegacySchoolGrade::query()
             ->where('ref_cod_escola', $schoolId)
-            ->whereRaw("? = ANY(anos_letivos)", [$previousYear])
+            ->whereRaw('? = ANY(anos_letivos)', [$previousYear])
             ->distinct()
             ->pluck('ref_cod_serie');
 

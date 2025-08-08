@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\AcademicYearServiceException;
-use App\Models\LegacySchoolAcademicYear;
 use App\Process;
 use App\Services\AcademicYearService;
 use Illuminate\Http\JsonResponse;
@@ -143,7 +142,7 @@ class AcademicYearBatchController extends Controller
         $periodos = collect($this->filterValidPeriodos($request->get('periodos', [])));
 
         $isAdmin = Auth::check() ? Auth::user()->isAdmin() : false;
-        
+
         // Processar checkboxes de forma consistente
         $copySchoolClasses = !$isAdmin || $request->boolean('copiar_turmas');
         $copyTeacherData = $request->boolean('copiar_alocacoes_e_vinculos_professores');
