@@ -86,6 +86,8 @@ class Process
 
     public const SCHOOL_GRADE = 9999119;
 
+    public const ACADEMIC_YEAR_IMPORT = 9999120;
+
     public const ENROLLMENT = 683;
 
     public const RELOCATE = 695;

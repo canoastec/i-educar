@@ -158,6 +158,10 @@ Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.
     Route::get('/atualiza-etapa', 'StageController@edit')->middleware('can:modify:' . Process::STAGE)->name('stage.edit');
     Route::post('/atualiza-etapa', 'StageController@update')->middleware('can:modify:' . Process::STAGE)->name('stage.update');
 
+    Route::get('/ano-letivo-em-lote', 'AcademicYearBatchController@edit')->middleware('can:modify:' . Process::ACADEMIC_YEAR_IMPORT)->name('academic-year.edit');
+    Route::post('/ano-letivo-em-lote/processar', 'AcademicYearBatchController@process')->middleware('can:modify:' . Process::ACADEMIC_YEAR_IMPORT)->name('academic-year.process');
+    Route::get('/ano-letivo-em-lote/status', 'AcademicYearBatchController@status')->middleware('can:view:' . Process::ACADEMIC_YEAR_IMPORT)->name('academic-year.status');
+
     Route::get('/atualizacao-em-lote-series-escola', 'SchoolGradeBatchUpdateController@index')->middleware('can:view:' . Process::SCHOOL_GRADE)->name('school-grade.batch-update.index');
     Route::get('/atualizacao-em-lote-series-escola/visualizacao', 'SchoolGradeBatchUpdateController@preview')->middleware('can:modify:' . Process::SCHOOL_GRADE)->name('school-grade.batch-update.preview');
     Route::post('/atualizacao-em-lote-series-escola/processo', 'SchoolGradeBatchUpdateController@process')->middleware('can:modify:' . Process::SCHOOL_GRADE)->name('school-grade.batch-update.process');
