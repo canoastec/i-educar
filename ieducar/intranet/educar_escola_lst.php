@@ -18,7 +18,7 @@ return new class extends clsListagem
 
         $this->nm_escola = request('nm_escola');
         $this->ref_cod_instituicao = request('ref_cod_instituicao');
-        $this->pagina_formulario  = request('pagina_formulario');
+        $this->pagina_formulario = request('pagina_formulario');
 
         $obj_permissoes = new clsPermissoes;
 
