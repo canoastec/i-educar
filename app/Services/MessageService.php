@@ -91,6 +91,7 @@ class MessageService
         }
 
         $user = User::find($userId);
+
         return $user && ($user->isAdmin() || $user->isInstitutional());
     }
 }

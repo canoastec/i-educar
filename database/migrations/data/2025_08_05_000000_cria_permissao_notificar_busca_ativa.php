@@ -21,4 +21,4 @@ return new class extends Migration
             ->where('process', Process::NOTIFY_ACTIVE_LOOKING)
             ->delete();
     }
-}; 
+};

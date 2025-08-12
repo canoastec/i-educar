@@ -4,9 +4,9 @@ use App\Models\LegacyActiveLooking;
 use App\Models\Message;
 use App\Services\MessageService;
 use Database\Factories\LegacyActiveLookingFactory;
-use Database\Factories\MessageFactory;
 use Database\Factories\LegacyUserFactory;
 use Database\Factories\LegacyUserTypeFactory;
+use Database\Factories\MessageFactory;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
@@ -14,7 +14,7 @@ use Tests\TestCase;
 uses(TestCase::class, DatabaseTransactions::class);
 
 beforeEach(function () {
-    $this->messageService = new MessageService();
+    $this->messageService = new MessageService;
 });
 
 test('create message successfully', function () {
@@ -84,7 +84,7 @@ test('delete message successfully', function () {
     $this->assertTrue($result);
     $this->assertDatabaseHas('messages', [
         'id' => $message->id,
-        'deleted_at' => $message->fresh()->deleted_at
+        'deleted_at' => $message->fresh()->deleted_at,
     ]);
 });
 
@@ -171,7 +171,7 @@ test('poli institutional user can delete any message', function () {
     $this->assertTrue($result);
     $this->assertDatabaseHas('messages', [
         'id' => $message->id,
-        'deleted_at' => $message->fresh()->deleted_at
+        'deleted_at' => $message->fresh()->deleted_at,
     ]);
 });
 
@@ -201,7 +201,7 @@ test('institutional user can delete any message', function () {
     $this->assertTrue($result);
     $this->assertDatabaseHas('messages', [
         'id' => $message->id,
-        'deleted_at' => $message->fresh()->deleted_at
+        'deleted_at' => $message->fresh()->deleted_at,
     ]);
 });
 

@@ -2,14 +2,15 @@
 
 namespace App\Providers;
 
+use App\Events\ActiveLookingChanged;
 use App\Events\RegistrationCopyEvent;
 use App\Events\RegistrationEvent;
 use App\Events\ReportIssued;
 use App\Events\TransferEvent;
 use App\Events\UserDeleted;
 use App\Events\UserUpdated;
-use App\Events\ActiveLookingChanged;
 use App\Listeners\AcceptTransferRequestListener;
+use App\Listeners\ActiveLookingNotificationListener;
 use App\Listeners\AuthenticatedUser;
 use App\Listeners\ConfigureAuthenticatedUserForAudit;
 use App\Listeners\CopyTransferDataListener;
@@ -20,7 +21,6 @@ use App\Listeners\NotificationWhenResetPassword;
 use App\Listeners\RegistrationCopyListener;
 use App\Listeners\ReportIssuedListener;
 use App\Listeners\TransferNotificationListener;
-use App\Listeners\ActiveLookingNotificationListener;
 use App\Models\LegacyRegistrationDisciplinaryOccurrenceType;
 use App\Models\SchoolManager;
 use App\Observers\LegacyRegistrationDisciplinaryOccurrenceTypeObserver;

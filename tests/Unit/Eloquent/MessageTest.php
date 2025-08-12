@@ -3,11 +3,11 @@
 namespace Tests\Unit\Eloquent;
 
 use App\Models\LegacyActiveLooking;
-use App\Models\Message;
 use App\Models\LegacyUser;
+use App\Models\Message;
 use Database\Factories\LegacyActiveLookingFactory;
-use Database\Factories\MessageFactory;
 use Database\Factories\LegacyUserFactory;
+use Database\Factories\MessageFactory;
 use Tests\EloquentTestCase;
 
 class MessageTest extends EloquentTestCase
@@ -59,7 +59,7 @@ class MessageTest extends EloquentTestCase
 
         $this->assertDatabaseHas('messages', [
             'id' => $messageId,
-            'deleted_at' => $message->fresh()->deleted_at
+            'deleted_at' => $message->fresh()->deleted_at,
         ]);
     }
 
@@ -98,4 +98,4 @@ class MessageTest extends EloquentTestCase
         $this->assertInstanceOf(Message::class, $message);
         $this->assertGreaterThan(200, strlen($message->description));
     }
-} 
+}

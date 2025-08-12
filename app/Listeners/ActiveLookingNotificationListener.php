@@ -25,7 +25,6 @@ class ActiveLookingNotificationListener
     /**
      * Handle the event.
      *
-     * @param ActiveLookingChanged $event
      * @return void
      */
     public function handle(ActiveLookingChanged $event)

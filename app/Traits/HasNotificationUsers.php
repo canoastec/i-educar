@@ -10,8 +10,6 @@ trait HasNotificationUsers
     /**
      * Busca usuários que devem receber notificações baseado no processo e escola
      *
-     * @param int $process
-     * @param int $school
      * @return array
      */
     public function getUsers(int $process, int $school)
@@ -41,5 +39,4 @@ trait HasNotificationUsers
             ->get()
             ->toArray();
     }
-
 }

@@ -2,9 +2,9 @@
 
 use App\Models\LegacyActiveLooking;
 use Database\Factories\LegacyActiveLookingFactory;
-use Database\Factories\MessageFactory;
 use Database\Factories\LegacyUserFactory;
 use Database\Factories\LegacyUserTypeFactory;
+use Database\Factories\MessageFactory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -28,12 +28,12 @@ test('index messages successfully', function () {
                     'updated_at',
                     'user' => [
                         'id',
-                        'name'
+                        'name',
                     ],
                     'can_edit',
-                    'can_delete'
-                ]
-            ]
+                    'can_delete',
+                ],
+            ],
         ]);
 
     $this->assertCount(2, $response->json('data'));
@@ -49,8 +49,8 @@ test('index messages with invalid data', function () {
             'message',
             'errors' => [
                 'messageable_type',
-                'messageable_id'
-            ]
+                'messageable_id',
+            ],
         ]);
 });
 
@@ -62,7 +62,7 @@ test('store message successfully', function () {
     $response = $this->actingAs($user)->postJson('/api/messages', [
         'messageable_type' => LegacyActiveLooking::class,
         'messageable_id' => $activeLooking->id,
-        'description' => $messageText
+        'description' => $messageText,
     ]);
 
     $response->assertStatus(201)
@@ -74,19 +74,19 @@ test('store message successfully', function () {
                 'updated_at',
                 'user' => [
                     'id',
-                    'name'
+                    'name',
                 ],
                 'can_edit',
-                'can_delete'
+                'can_delete',
             ],
-            'message'
+            'message',
         ]);
 
     $this->assertDatabaseHas('messages', [
         'messageable_type' => LegacyActiveLooking::class,
         'messageable_id' => $activeLooking->id,
         'description' => $messageText,
-        'user_id' => $user->id
+        'user_id' => $user->id,
     ]);
 });
 
@@ -96,15 +96,15 @@ test('store message with invalid data', function () {
     $response = $this->actingAs($user)->postJson('/api/messages', [
         'messageable_type' => LegacyActiveLooking::class,
         'messageable_id' => 1,
-        'description' => ''
+        'description' => '',
     ]);
 
     $response->assertStatus(422)
         ->assertJsonStructure([
             'message',
             'errors' => [
-                'description'
-            ]
+                'description',
+            ],
         ]);
 });
 
@@ -115,15 +115,15 @@ test('store message with observation too long', function () {
     $response = $this->actingAs($user)->postJson('/api/messages', [
         'messageable_type' => LegacyActiveLooking::class,
         'messageable_id' => 1,
-        'description' => $observation
+        'description' => $observation,
     ]);
 
     $response->assertStatus(422)
         ->assertJsonStructure([
             'message',
             'errors' => [
-                'description'
-            ]
+                'description',
+            ],
         ]);
 });
 
@@ -137,8 +137,8 @@ test('show message successfully', function () {
         ->assertJson([
             'data' => [
                 'id' => $message->id,
-                'description' => $message->description
-            ]
+                'description' => $message->description,
+            ],
         ]);
 });
 
@@ -149,7 +149,7 @@ test('show message not found', function () {
 
     $response->assertStatus(404)
         ->assertJson([
-            'message' => 'Mensagem não encontrada'
+            'message' => 'Mensagem não encontrada',
         ]);
 });
 
@@ -159,19 +159,19 @@ test('update message successfully', function () {
     $newMessageText = 'Updated message via API';
 
     $response = $this->actingAs($user)->putJson("/api/messages/{$message->id}", [
-        'description' => $newMessageText
+        'description' => $newMessageText,
     ]);
 
     $response->assertStatus(200)
         ->assertJson([
             'data' => [
-                'description' => $newMessageText
-            ]
+                'description' => $newMessageText,
+            ],
         ]);
 
     $this->assertDatabaseHas('messages', [
         'id' => $message->id,
-        'description' => $newMessageText
+        'description' => $newMessageText,
     ]);
 });
 
@@ -184,12 +184,12 @@ test('update message without permission', function () {
     $newObservation = 'Updated observation';
 
     $response = $this->actingAs($user2)->putJson("/api/messages/{$message->id}", [
-        'description' => $newObservation
+        'description' => $newObservation,
     ]);
 
     $response->assertStatus(403)
         ->assertJson([
-            'message' => 'Você não tem permissão para editar esta mensagem'
+            'message' => 'Você não tem permissão para editar esta mensagem',
         ]);
 });
 
@@ -197,13 +197,13 @@ test('update message with invalid message id', function () {
     $user = LegacyUserFactory::new()->admin()->create();
     $newObservation = 'Updated observation';
 
-    $response = $this->actingAs($user)->putJson("/api/messages/99999", [
-        'description' => $newObservation
+    $response = $this->actingAs($user)->putJson('/api/messages/99999', [
+        'description' => $newObservation,
     ]);
 
     $response->assertStatus(404)
         ->assertJson([
-            'message' => 'No query results for model [App\\Models\\Message] 99999'
+            'message' => 'No query results for model [App\\Models\\Message] 99999',
         ]);
 });
 
@@ -212,15 +212,15 @@ test('update message with invalid data', function () {
     $message = MessageFactory::new()->createdBy($user)->create();
 
     $response = $this->actingAs($user)->putJson("/api/messages/{$message->id}", [
-        'description' => ''
+        'description' => '',
     ]);
 
     $response->assertStatus(422)
         ->assertJsonStructure([
             'message',
             'errors' => [
-                'description'
-            ]
+                'description',
+            ],
         ]);
 });
 
@@ -233,7 +233,7 @@ test('delete message successfully', function () {
     $response->assertStatus(200);
 
     $this->assertSoftDeleted('messages', [
-        'id' => $message->id
+        'id' => $message->id,
     ]);
 });
 
@@ -248,7 +248,7 @@ test('delete message without permission', function () {
 
     $response->assertStatus(403)
         ->assertJson([
-            'message' => 'Você não tem permissão para excluir esta mensagem'
+            'message' => 'Você não tem permissão para excluir esta mensagem',
         ]);
 });
 
@@ -259,6 +259,6 @@ test('delete message with invalid message id', function () {
 
     $response->assertStatus(404)
         ->assertJson([
-            'message' => 'No query results for model [App\\Models\\Message] 99999'
+            'message' => 'No query results for model [App\\Models\\Message] 99999',
         ]);
 });

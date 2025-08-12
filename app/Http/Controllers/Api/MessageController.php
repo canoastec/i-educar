@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class MessageController extends Controller
 {
     private MessageService $messageService;
+
     protected string $messageLabel = 'mensagem';
 
     public function __construct(MessageService $messageService)
@@ -41,7 +42,7 @@ class MessageController extends Controller
         );
 
         return (new MessageResource($message))->additional([
-            'message' => ucfirst($this->messageLabel) . ' adicionada com sucesso'
+            'message' => ucfirst($this->messageLabel) . ' adicionada com sucesso',
         ]);
     }
 
@@ -65,7 +66,7 @@ class MessageController extends Controller
         );
 
         return (new MessageResource($message))->additional([
-            'message' => ucfirst($this->messageLabel) . ' atualizada com sucesso'
+            'message' => ucfirst($this->messageLabel) . ' atualizada com sucesso',
         ]);
     }
 

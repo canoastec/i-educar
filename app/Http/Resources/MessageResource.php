@@ -35,4 +35,4 @@ class MessageResource extends JsonResource
             }),
         ];
     }
-} 
+}

@@ -1,11 +1,9 @@
 <?php
 
 use App\Models\LegacyActiveLooking;
-use App\Models\Message;
-use App\Models\LegacyUser;
 use Database\Factories\LegacyActiveLookingFactory;
-use Database\Factories\MessageFactory;
 use Database\Factories\LegacyUserFactory;
+use Database\Factories\MessageFactory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -19,12 +17,12 @@ test('store message returns personalized success message', function () {
     $response = $this->actingAs($user)->postJson('/api/active-looking-messages', [
         'messageable_type' => LegacyActiveLooking::class,
         'messageable_id' => $activeLooking->id,
-        'description' => $observation
+        'description' => $observation,
     ]);
 
     $response->assertStatus(201)
         ->assertJson([
-            'message' => 'Observação adicionada com sucesso'
+            'message' => 'Observação adicionada com sucesso',
         ]);
 });
 
@@ -34,12 +32,12 @@ test('update message returns personalized success message', function () {
     $newObservation = 'Updated observation via API';
 
     $response = $this->actingAs($user)->putJson("/api/active-looking-messages/{$message->id}", [
-        'description' => $newObservation
+        'description' => $newObservation,
     ]);
 
     $response->assertStatus(200)
         ->assertJson([
-            'message' => 'Observação atualizada com sucesso'
+            'message' => 'Observação atualizada com sucesso',
         ]);
 });
 
@@ -51,7 +49,7 @@ test('delete message returns personalized success message', function () {
 
     $response->assertStatus(200)
         ->assertJson([
-            'message' => 'Observação excluída com sucesso'
+            'message' => 'Observação excluída com sucesso',
         ]);
 });
 
@@ -62,6 +60,6 @@ test('show message not found returns personalized error message', function () {
 
     $response->assertStatus(404)
         ->assertJson([
-            'message' => 'Observação não encontrada'
+            'message' => 'Observação não encontrada',
         ]);
-}); 
+});

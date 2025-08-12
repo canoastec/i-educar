@@ -26,4 +26,4 @@ return new class extends Migration
     {
         DB::table('public.notification_type')->where('id', NotificationType::ACTIVE_LOOKING)->delete();
     }
-}; 
+};

@@ -25,6 +25,7 @@ class LegacyActiveLooking extends LegacyModel
 {
     /** @use HasBuilder<LegacyActiveLookingBuilder> */
     use HasBuilder;
+
     use HasFiles;
     use HasMessages;
     use SoftDeletes;

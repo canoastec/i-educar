@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\LegacyActiveLooking;
-use App\Models\Message;
 use App\Models\LegacyUser;
+use App\Models\Message;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MessageFactory extends Factory

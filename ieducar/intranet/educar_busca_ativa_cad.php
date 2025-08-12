@@ -154,20 +154,20 @@ return new class extends clsCadastro
         $htmlContent = view('uploads.upload', ['files' => $files])->render();
 
         if (!empty($this->id)) {
-            $activeLooking = LegacyActiveLooking::with(['messages' => function($query) {
+            $activeLooking = LegacyActiveLooking::with(['messages' => function ($query) {
                 $query->orderBy('created_at', 'desc');
             }])->find($this->id);
 
             if ($activeLooking) {
                 $htmlContent .= view('active-looking.messages', [
                     'messages' => $activeLooking->messages,
-                    'activeLookingId' => $this->id
+                    'activeLookingId' => $this->id,
                 ])->render();
             }
         } else {
             $htmlContent .= view('active-looking.messages', [
                 'messages' => collect([]),
-                'activeLookingId' => null
+                'activeLookingId' => null,
             ])->render();
         }
 
@@ -200,7 +200,7 @@ return new class extends clsCadastro
             if (!empty($this->observacoes)) {
                 $activeLooking->messages()->create([
                     'description' => $this->observacoes,
-                    'user_id' => $this->pessoa_logada
+                    'user_id' => $this->pessoa_logada,
                 ]);
             }
 

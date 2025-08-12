@@ -14,6 +14,7 @@ class ActiveLookingChanged
     use SerializesModels;
 
     public const ACTION_CREATED = 'created';
+
     public const ACTION_UPDATED = 'updated';
 
     /**
@@ -31,4 +32,4 @@ class ActiveLookingChanged
         $this->activeLooking = $activeLooking;
         $this->action = $action;
     }
-} 
+}
