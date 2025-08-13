@@ -136,9 +136,7 @@ class AcademicYearService
     ): LegacySchoolAcademicYear {
         $this->initializeCopyCounters($schoolId);
 
-        if ($copySchoolClasses) {
-            $this->performDataCopy($schoolId, $year, $copyTeacherData, $copyEmployeeData, $userId);
-        }
+        $this->performDataCopy($schoolId, $year, $copySchoolClasses, $copyTeacherData, $copyEmployeeData, $userId);
 
         $academicYear = $this->createSchoolAcademicYear($schoolId, $year, $copyTeacherData, $copyEmployeeData, $userId);
         $this->createAcademicYearStages($academicYear, $startDates, $endDates, $schoolDays, $moduleId, $schoolId, $year);
@@ -169,7 +167,6 @@ class AcademicYearService
         $previousYear = LegacySchoolAcademicYear::query()
             ->whereSchool($schoolId)
             ->where('ano', '<', $year)
-            ->active()
             ->max('ano');
 
         if (!$previousYear) {
@@ -849,9 +846,11 @@ class AcademicYearService
         }
     }
 
-    private function performDataCopy(int $schoolId, int $year, bool $copyTeacherData, bool $copyEmployeeData, ?int $userId): void
+    private function performDataCopy(int $schoolId, int $year, bool $copySchoolClasses, bool $copyTeacherData, bool $copyEmployeeData, ?int $userId): void
     {
-        $this->copySchoolClassesFromPreviousYear($schoolId, $year, $copyTeacherData, $userId);
+        if ($copySchoolClasses) {
+            $this->copySchoolClassesFromPreviousYear($schoolId, $year, $copyTeacherData, $userId);
+        }
 
         if ($copyEmployeeData) {
             $this->copyEmployeeAllocations($schoolId, $year, false);
