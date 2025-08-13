@@ -16,18 +16,11 @@ class Portabilis_View_Helper_DynamicInput_Prova extends Portabilis_View_Helper_D
         $serieId = $this->getSerieId($options['serieId'] ?? null);
         $cursoId = $this->getCursoId($options['cursoId'] ?? null);
 
-        if (empty($resources)) {
-            $query = Exam::query();
-
-            if ($serieId) {
-                $query->where('grade_id', $serieId);
-            }
-
-            if ($cursoId) {
-                $query->where('discipline_id', $cursoId);
-            }
-
-            $resources = $query->pluck('description', 'id');
+        if ($serieId && $cursoId) {
+            $resources = Exam::query()
+                ->where('grade_id', $serieId)
+                ->where('discipline_id', $cursoId)
+                ->pluck('description', 'id');
         }
 
         return $this->insertOption(null, 'Selecione uma prova', $resources);
