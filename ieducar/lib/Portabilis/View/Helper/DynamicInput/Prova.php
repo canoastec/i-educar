@@ -13,13 +13,11 @@ class Portabilis_View_Helper_DynamicInput_Prova extends Portabilis_View_Helper_D
     {
         $resources = $options['resources'];
 
-        $serieId = $this->getSerieId($options['serieId'] ?? null);
-        $cursoId = $this->getCursoId($options['cursoId'] ?? null);
+        $turmaId = $this->getSerieId($options['turmaId'] ?? null);
 
-        if ($serieId && $cursoId) {
-            $resources = Exam::query()
-                ->where('grade_id', $serieId)
-                ->where('discipline_id', $cursoId)
+        if ($turmaId) {
+            $resources = \Canoastec\Canoastec\Models\AppliedExam::query()
+                ->where('school_class_id', $turmaId)
                 ->pluck('description', 'id');
         }
 

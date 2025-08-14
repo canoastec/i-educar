@@ -4,17 +4,15 @@ class ProvaController extends ApiCoreController
 {
     protected function canGetProvas()
     {
-        return $this->validatesId('curso') &&
-            $this->validatesId('serie');
+        return $this->validatesId('turma');
     }
 
     protected function getProvas()
     {
         if ($this->canGetProvas()) {
-            $cursoId = $this->getRequest()->curso_id;
-            $serieId = $this->getRequest()->serie_id;
+            $turmaId = $this->getRequest()->turma_id;
 
-            $resources = $this->getProvasFromDatabase($cursoId, $serieId);
+            $resources = $this->getProvasFromDatabase($turmaId);
 
             $options = [];
             foreach ($resources as $provaId => $prova) {
@@ -28,11 +26,10 @@ class ProvaController extends ApiCoreController
     /**
      * Busca provas do banco de dados
      */
-    protected function getProvasFromDatabase($cursoId, $serieId)
+    protected function getProvasFromDatabase($turmaId)
     {
-        return \Canoastec\Canoastec\Models\Exam::query()
-            ->where('grade_id', $serieId)
-            ->where('discipline_id', $cursoId)
+        return \Canoastec\Canoastec\Models\AppliedExam::query()
+            ->where('school_class_id', $turmaId)
             ->pluck('description', 'id')->toArray();
     }
 
