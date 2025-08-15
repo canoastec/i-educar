@@ -44,15 +44,17 @@ class ExportController extends Controller
      */
     public function form(Request $request, Export $export)
     {
+        $limit = config('export.limit');
+
         $count = Export::query()
             ->where('user_id', $request->user()->getKey())
             ->whereNull('url')
             ->where('created_at', '>', now()->subMinutes(30))
             ->count();
 
-        if ($count > 2) {
+        if ($count >= $limit) {
             return redirect()->route('export.index')
-                ->withErrors(['Error' => ['Você já possui 3 exportações pendentes. Por favor, aguarde a conclusão de uma delas antes de iniciar uma nova.']]);
+                ->withErrors(['Error' => 'Você já possui ' . $limit . ' exportação(ões) pendente(s) e não é possível iniciar uma nova exportação. Por favor, aguarde a conclusão de uma delas antes de iniciar uma nova.']);
         }
 
         $this->breadcrumb('Nova Exportação', [
