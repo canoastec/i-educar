@@ -70,3 +70,6 @@ $j(document).ready(function(){
   }
   getEscolas();
 });
+
+document.getElementById('_senha').setAttribute('autocomplete', 'off');
+document.getElementById('email').setAttribute('autocomplete', 'off');
