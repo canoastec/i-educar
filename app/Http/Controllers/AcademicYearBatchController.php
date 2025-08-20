@@ -26,22 +26,13 @@ class AcademicYearBatchController extends Controller
             $this->cleanRequestData($request);
             $this->validateRequest($request);
 
-            $processedData = $this->processAcademicYearData($request);
+            $acao = $request->get('acao');
 
-            $params = [
-                'year' => $request->get('ano'),
-                'schools' => $processedData['allSchools']->toArray(),
-                'periodos' => $processedData['periodos'],
-                'moduleId' => $request->get('ref_cod_modulo'),
-                'user' => $request->user(),
-                'copySchoolClasses' => $processedData['copySchoolClasses'],
-                'copyTeacherData' => $processedData['copyTeacherData'],
-                'copyEmployeeData' => $processedData['copyEmployeeData'],
-            ];
-
-            $result = $this->academicYearService->processAcademicYearBatch($params);
-
-            return $this->handleServiceResult($result);
+            return match ($acao) {
+                AcademicYearService::ACTION_CREATE => $this->processCreateAcademicYear($request),
+                AcademicYearService::ACTION_OPEN => $this->processOpenAcademicYear($request),
+                AcademicYearService::ACTION_CLOSE => $this->processCloseAcademicYear($request),
+            };
 
         } catch (ValidationException $e) {
             $errors = [];
@@ -80,20 +71,42 @@ class AcademicYearBatchController extends Controller
 
     private function validateRequest(Request $request): void
     {
+        $acao = $request->get('acao');
+
+        $rules = [
+            'acao' => ['required', 'in:' . AcademicYearService::ACTION_CREATE . ',' . AcademicYearService::ACTION_OPEN . ',' . AcademicYearService::ACTION_CLOSE],
+        ];
+
+        switch($acao) {
+            case AcademicYearService::ACTION_CREATE:
+                $rules = array_merge($rules, [
+                    'ano' => ['required', 'integer', 'digits:4', 'min:1900'],
+                    'ref_cod_instituicao' => ['required', 'integer'],
+                    'escola' => ['required', 'array', 'min:1'],
+                    'escola.*' => ['integer', 'exists:escola,cod_escola'],
+                    'ref_cod_modulo' => ['required', 'integer', 'exists:modulo,cod_modulo'],
+                    'periodos' => ['required', 'array', 'min:1'],
+                    'periodos.*.data_inicio' => ['nullable', 'date_format:d/m/Y'],
+                    'periodos.*.data_fim' => ['nullable', 'date_format:d/m/Y'],
+                    'periodos.*.dias_letivos' => ['nullable', 'integer', 'min:1', 'max:366'],
+                ]);
+                break;
+            case AcademicYearService::ACTION_CLOSE:
+            case AcademicYearService::ACTION_OPEN:
+                $rules = array_merge($rules, [
+                    'ano' => ['required', 'integer', 'digits:4', 'min:1900'],
+                    'ref_cod_instituicao' => ['required', 'integer'],
+                    'escola' => ['required', 'array', 'min:1'],
+                    'escola.*' => ['integer', 'exists:escola,cod_escola'],
+                ]);
+                break;
+        }
+
         $validator = Validator::make(
             data: $request->all(),
-            rules: [
-                'ano' => ['required', 'integer', 'digits:4', 'min:1900'],
-                'ref_cod_instituicao' => ['required', 'integer'],
-                'escola' => ['required', 'array', 'min:1'],
-                'escola.*' => ['integer', 'exists:escola,cod_escola'],
-                'ref_cod_modulo' => ['required', 'integer', 'exists:modulo,cod_modulo'],
-                'periodos' => ['required', 'array', 'min:1'],
-                'periodos.*.data_inicio' => ['nullable', 'date_format:d/m/Y'],
-                'periodos.*.data_fim' => ['nullable', 'date_format:d/m/Y'],
-                'periodos.*.dias_letivos' => ['nullable', 'integer', 'min:1', 'max:366'],
-            ],
+            rules: $rules,
             attributes: [
+                'acao' => 'ação',
                 'ano' => 'ano',
                 'ref_cod_instituicao' => 'instituição',
                 'escola' => 'escola',
@@ -108,7 +121,9 @@ class AcademicYearBatchController extends Controller
 
         $validator->validate();
 
-        $this->validatePeriodosConsistency($request->get('periodos', []));
+        if ($acao === AcademicYearService::ACTION_CREATE) {
+            $this->validatePeriodosConsistency($request->get('periodos', []));
+        }
     }
 
     private function validatePeriodosConsistency(array $periodos): void
@@ -205,8 +220,12 @@ class AcademicYearBatchController extends Controller
         return view('academic-year.status', ['result' => $result]);
     }
 
-    public function edit()
+    public function edit(Request $request)
     {
+        if (!$request->user()->isAdmin()) {
+            return back()->withErrors(['Error' => ['Você não tem permissão para acessar este recurso']]);
+        }
+
         $this->menu(Process::ACADEMIC_YEAR_IMPORT);
         $this->breadcrumb('Ano Letivo em Lote', [
             url('intranet/educar_configuracoes_index.php') => 'Configurações',
@@ -214,5 +233,51 @@ class AcademicYearBatchController extends Controller
         ]);
 
         return view('academic-year.edit', ['user' => request()->user()]);
+    }
+
+    private function processCreateAcademicYear(Request $request): JsonResponse
+    {
+        $processedData = $this->processAcademicYearData($request);
+
+        $params = [
+            'year' => $request->get('ano'),
+            'schools' => $processedData['allSchools']->toArray(),
+            'periodos' => $processedData['periodos'],
+            'moduleId' => $request->get('ref_cod_modulo'),
+            'user' => $request->user(),
+            'copySchoolClasses' => $processedData['copySchoolClasses'],
+            'copyTeacherData' => $processedData['copyTeacherData'],
+            'copyEmployeeData' => $processedData['copyEmployeeData'],
+        ];
+
+        $result = $this->academicYearService->processAcademicYearBatch($params);
+
+        return $this->handleServiceResult($result);
+    }
+
+    private function processOpenAcademicYear(Request $request): JsonResponse
+    {
+        $params = [
+            'year' => $request->get('ano'),
+            'schools' => $request->get('escola'),
+            'user' => $request->user(),
+        ];
+
+        $result = $this->academicYearService->openAcademicYearBatch($params);
+
+        return $this->handleServiceResult($result);
+    }
+
+    private function processCloseAcademicYear(Request $request): JsonResponse
+    {
+        $params = [
+            'year' => $request->get('ano'),
+            'schools' => $request->get('escola'),
+            'user' => $request->user(),
+        ];
+
+        $result = $this->academicYearService->closeAcademicYearBatch($params);
+
+        return $this->handleServiceResult($result);
     }
 }

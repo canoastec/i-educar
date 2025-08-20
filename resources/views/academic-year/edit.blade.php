@@ -50,6 +50,21 @@
             <tr>
                 <td class="formdktd" colspan="2" height="24"><b>Ano Letivo em Lote</b></td>
             </tr>
+
+            <tr>
+                <td class="formlttd" valign="top">
+                    <label for="acao" class="form">Ação <span class="campo_obrigatorio">*</span></label>
+                </td>
+                <td class="formmdtd" valign="top">
+                    <select name="acao" id="acao" class="geral obrigatorio" style="width: 308px;" required>
+                        <option value="">Selecione uma ação</option>
+                        <option value="create">Criar Ano Letivo</option>
+                        <option value="open">Iniciar Ano Letivo</option>
+                        <option value="close">Finalizar Ano Letivo</option>
+                    </select>
+                </td>
+            </tr>
+
             <tr id="tr_nm_ano">
                 <td class="formmdtd" valign="top">
                     <label for="year" class="form">Ano <span class="campo_obrigatorio">*</span></label>
@@ -66,20 +81,23 @@
                     @include('form.select-institution', ['obrigatorio' => true])
                 </td>
             </tr>
-            <tr>
+            <tr id="tr_nm_escola">
                 <td class="formmdtd" valign="top">
                     <label for="schools" class="form">Escola <span class="campo_obrigatorio">*</span></label>
                 </td>
                 <td class="formmdtd" valign="top">
                     @include('form.select-school-multiple', ['obrigatorio' => true])
+                    <a href="javascript:void(0)" id="link-select-all-schools" style="margin-left: 10px; color: #47728f; text-decoration: none;">
+                        Selecionar todas as escolas
+                    </a>
                 </td>
             </tr>
-            <tr>
+            <tr id="tr_nm_modulo">
                 <td class="formlttd" valign="top">
                     <label for="cursos" class="form">Tipo de Etapa <span class="campo_obrigatorio">*</span></label>
                 </td>
                 <td class="formlttd" valign="top">
-                    <select class="geral obrigatorio" name="ref_cod_modulo" id="ref_cod_eref_cod_moduloscola" style="width: 308px;">
+                    <select class="geral obrigatorio" name="ref_cod_modulo" id="ref_cod_modulo" style="width: 308px;">
                         <option value="">Selecione as opções</option>
                         @foreach($stageTypes as $stageType)
                             <option value="{{$stageType->cod_modulo}}" @if(old('ref_cod_modulo', Request::get('ref_cod_modulo')) == $stageType->cod_modulo) selected @endif>{{ Str::upper($stageType->nm_tipo) }} - {{ $stageType->num_etapas }} etapa(s)</option>
@@ -87,8 +105,8 @@
                     </select>
                 </td>
             </tr>
-            <tr><td colspan="2"><hr></td></tr>
-            <tr id="tr_modulos_ano_letivo" class="formlttd">
+            <tr id="tr_nm_periodos"><td colspan="2"><hr></td></tr>
+            <tr id="tr_modulos_ano_letivo" class="formlttd" style="display: none;">
                 <td style="vertical-align: top; text-align: center" colspan="2">
                     <table cellspacing="0" id="modulos_ano_letivo" class="tabela-adicao" cellpadding="2" style="margin:10px 0px 10px 0px;">
                         <tbody>
@@ -148,7 +166,7 @@
                     </table>
                 </td>
             </tr>
-            <tr><td colspan="2"><hr></td></tr>
+            <tr id="tr_nm_periodos"><td colspan="2"><hr></td></tr>
             <tr id="tr_titulo-alocacoes-vinculos">
                 <td class="formmdtd" valign="top">
                     <span class="form">
@@ -226,12 +244,104 @@
     <script src="{{ Asset::get('/vendor/legacy/DynamicInput/Assets/Javascripts/DynamicInput.js') }}"></script>
     <script src="{{ Asset::get('/vendor/legacy/Portabilis/Assets/Javascripts/Validator.js') }}"></script>
     <script>
-        (function($) {
-            $(document).ready(function() {
+        (function ($) {
+            $(document).ready(function () {
                 const stageTypesData = @json($stageTypesData);
 
+                const acaoSelect = document.getElementById('acao');
+                const trAno = document.getElementById('tr_nm_ano');
+                const trInstituicao = document.getElementById('tr_nm_instituicao');
+                const trEscola = document.getElementById('tr_nm_escola');
+                const trModulo = document.getElementById('tr_nm_modulo');
+                const trPeriodos = document.getElementById('tr_nm_periodos');
+
+                function toggleFields() {
+                    const acao = acaoSelect.value;
+
+                    trAno.style.display = 'table-row';
+                    trInstituicao.style.display = 'table-row';
+                    trEscola.style.display = 'table-row';
+
+                    trModulo.style.display = 'none';
+                    trPeriodos.style.display = 'none';
+
+                    document.getElementById('tr_modulos_ano_letivo').style.display = 'none';
+                    document.getElementById('tr_titulo-alocacoes-vinculos').style.display = 'none';
+                    document.getElementById('tr_informativo1-alocacoes-vinculos').style.display = 'none';
+                    if (document.getElementById('tr_copiar_turmas_')) {
+                        document.getElementById('tr_copiar_turmas_').style.display = 'none';
+                    }
+                    if (document.getElementById('tr_copiar_alocacoes_e_vinculos_professores_')) {
+                        document.getElementById('tr_copiar_alocacoes_e_vinculos_professores_').style.display = 'none';
+                    }
+                    if (document.getElementById('tr_copiar_alocacoes_demais_servidores_')) {
+                        document.getElementById('tr_copiar_alocacoes_demais_servidores_').style.display = 'none';
+                    }
+
+                    toggleRequiredClasses(acao);
+
+                    switch (acao) {
+                        case 'create':
+                            trModulo.style.display = 'table-row';
+                            trPeriodos.style.display = 'table-row';
+
+                            document.getElementById('tr_modulos_ano_letivo').style.display = 'table-row';
+                            document.getElementById('tr_titulo-alocacoes-vinculos').style.display = 'table-row';
+                            document.getElementById('tr_informativo1-alocacoes-vinculos').style.display = 'table-row';
+                            if (document.getElementById('tr_copiar_turmas_')) {
+                                document.getElementById('tr_copiar_turmas_').style.display = 'table-row';
+                            }
+                            if (document.getElementById('tr_copiar_alocacoes_e_vinculos_professores_')) {
+                                document.getElementById('tr_copiar_alocacoes_e_vinculos_professores_').style.display = 'table-row';
+                            }
+                            if (document.getElementById('tr_copiar_alocacoes_demais_servidores_')) {
+                                document.getElementById('tr_copiar_alocacoes_demais_servidores_').style.display = 'table-row';
+                            }
+                            break;
+
+                        case 'open':
+                        case 'close':
+                            break;
+                    }
+                }
+
+                function toggleRequiredClasses(acao) {
+                    const createOnlyFields = [
+                        'ref_cod_modulo',
+                        'data_inicio[1]', 'data_fim[1]',
+                        'data_inicio[2]', 'data_fim[2]',
+                        'data_inicio[3]', 'data_fim[3]',
+                        'data_inicio[4]', 'data_fim[4]'
+                    ];
+
+                    createOnlyFields.forEach(fieldId => {
+                        const element = document.getElementById(fieldId);
+                        if (element) {
+                            if (acao === 'create') {
+                                element.classList.add('obrigatorio');
+                            } else {
+                                element.classList.remove('obrigatorio');
+                            }
+                        }
+                    });
+                }
+
+                acaoSelect.addEventListener('change', toggleFields);
+
+                toggleFields();
+
+                document.getElementById('link-select-all-schools').addEventListener('click', function () {
+                    const escolaSelect = document.getElementById('escola');
+                    if (escolaSelect) {
+                        Array.from(escolaSelect.options).forEach(option => {
+                            option.selected = true;
+                        });
+                        $(escolaSelect).trigger('chosen:updated');
+                    }
+                });
+
                 function updateEtapasRows() {
-                    const selectedValue = $('#ref_cod_eref_cod_moduloscola').val();
+                    const selectedValue = $('#ref_cod_modulo').val();
                     const etapasRows = $('.tr_modulos_ano_letivo');
 
                     if (!selectedValue) {
@@ -253,7 +363,7 @@
                     });
                 }
 
-                $('#ref_cod_eref_cod_moduloscola').change(function() {
+                $('#ref_cod_modulo').change(function () {
                     updateEtapasRows();
                 });
 

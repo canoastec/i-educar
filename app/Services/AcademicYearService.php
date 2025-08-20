@@ -29,6 +29,14 @@ use Illuminate\Support\Facades\DB;
 
 class AcademicYearService
 {
+    public const ACTION_CREATE = 'create';
+    public const ACTION_OPEN = 'open';
+    public const ACTION_CLOSE = 'close';
+
+    public const STATUS_NOT_STARTED = 0;    // Não iniciado
+    public const STATUS_IN_PROGRESS = 1;    // Em andamento
+    public const STATUS_FINISHED = 2;       // Finalizado
+
     /**
      * Valida se as datas das etapas do ano letivo não conflitam com outros anos letivos da escola.
      * Usado tanto na criação quanto na edição de anos letivos.
@@ -326,7 +334,7 @@ class AcademicYearService
             'ano' => $year,
         ])->update([
             'ref_usuario_cad' => $userId,
-            'andamento' => 2,
+            'andamento' => self::STATUS_FINISHED,
             'ativo' => 0,
         ]);
 
@@ -869,7 +877,7 @@ class AcademicYearService
         if ($existingAcademicYear) {
             $existingAcademicYear->update([
                 'ref_usuario_cad' => $userId,
-                'andamento' => 0,
+                'andamento' => self::STATUS_NOT_STARTED,
                 'ativo' => 1,
                 'turmas_por_ano' => 1,
                 'copia_dados_professor' => $copyTeacherData,
@@ -884,7 +892,7 @@ class AcademicYearService
             'ref_cod_escola' => $schoolId,
             'ano' => $year,
             'ref_usuario_cad' => $userId,
-            'andamento' => 0,
+            'andamento' => self::STATUS_NOT_STARTED,
             'ativo' => 1,
             'turmas_por_ano' => 1,
             'copia_dados_professor' => $copyTeacherData,
@@ -1280,5 +1288,205 @@ class AcademicYearService
         }, array_keys($messages), $messages);
 
         return implode(', ', array_filter($copyInfo));
+    }
+
+    public function openAcademicYearBatch(array $params): array
+    {
+        return $this->processBatchAction($params, self::ACTION_OPEN);
+    }
+
+    public function closeAcademicYearBatch(array $params): array
+    {
+        return $this->processBatchAction($params, self::ACTION_CLOSE);
+    }
+
+    private function processBatchAction(array $params, string $action): array
+    {
+        $paramValidation = $this->validateSimpleBatchParams($params);
+        if (!$paramValidation['valid']) {
+            return $this->createBatchFailureResult(0, 0, [['error' => $paramValidation['message']]], $paramValidation['message'], $params['year']);
+        }
+
+        $total = $this->calculateBatchTotal($params);
+        $this->loadBatchCollections($params);
+
+        $schoolValidation = $this->validateAllSchoolsForAction($params, $action);
+
+        if (!empty($schoolValidation['errors'])) {
+            return $this->createBatchFailureResult($total, 0, $schoolValidation['errors'], 'Processamento cancelado devido a erros de validação.', $params['year']);
+        }
+
+        return $this->executeActionForValidatedSchools($schoolValidation['validatedData'], $params, $total, $action);
+    }
+
+
+    private function validateSimpleBatchParams(array $params): array
+    {
+        if (empty($params['schools']) || empty($params['year'])) {
+            return $this->createBatchValidationResult(false, 'Parâmetros de escola e ano letivo são obrigatórios.');
+        }
+
+        if (!is_array($params['schools'])) {
+            return $this->createBatchValidationResult(false, 'Parâmetro de escola deve ser um array.');
+        }
+
+        if (!is_numeric($params['year']) || (int) $params['year'] != $params['year']) {
+            return $this->createBatchValidationResult(false, 'Ano letivo deve ser um número inteiro.');
+        }
+
+        return $this->createBatchValidationResult(true, 'Parâmetros válidos.');
+    }
+
+    private function validateAllSchoolsForAction(array $params, string $action): array
+    {
+        $validatedData = [];
+        $errors = [];
+
+        foreach ($params['schools'] as $schoolId) {
+            $validationResult = $this->validateSchoolForAction($schoolId, $params, $action);
+
+            if ($validationResult['success']) {
+                $validatedData[] = $validationResult['data'];
+            } else {
+                $errors[] = $validationResult['error'];
+            }
+        }
+
+        return [
+            'validatedData' => $validatedData,
+            'errors' => $errors,
+        ];
+    }
+
+
+    private function validateSchoolForAction(int $schoolId, array $params, string $action): array
+    {
+        try {
+            $school = $this->batchSchools->get($schoolId);
+            if (!$school) {
+                return $this->createSchoolValidationError($schoolId, "Escola ID {$schoolId} não encontrada ou inativa.");
+            }
+
+            $academicYear = LegacySchoolAcademicYear::query()
+                ->whereSchool($schoolId)
+                ->whereYearEq($params['year'])
+                ->active()
+                ->first();
+
+            if (!$academicYear) {
+                return $this->createSchoolValidationError($schoolId, "Escola '{$school->nome}': Ano letivo {$params['year']} não encontrado ou inativo.", $school->nome);
+            }
+
+            $errorMessage = $this->getActionValidationError($academicYear, $params['year'], $school->nome, $action);
+            if ($errorMessage) {
+                return $this->createSchoolValidationError($schoolId, $errorMessage, $school->nome);
+            }
+
+            if ($action === self::ACTION_CLOSE && $this->hasActiveEnrollments($schoolId, $params['year'])) {
+                return $this->createSchoolValidationError($schoolId, "Escola '{$school->nome}': Não foi possível finalizar o ano letivo {$params['year']}. Existem matrículas em andamento.", $school->nome);
+            }
+
+            return [
+                'success' => true,
+                'data' => [
+                    'school' => $school,
+                    'school_id' => $schoolId,
+                    'academic_year' => $academicYear,
+                ],
+            ];
+
+        } catch (\Exception $e) {
+            $schoolName = $school->nome ?? "Escola ID {$schoolId}";
+            return $this->createSchoolValidationError($schoolId, "Escola '{$schoolName}': {$e->getMessage()}", $schoolName);
+        }
+    }
+
+    private function createSchoolValidationError(int $schoolId, string $message, ?string $schoolName = null): array
+    {
+        return [
+            'success' => false,
+            'error' => [
+                'school_id' => $schoolId,
+                'school_name' => $schoolName ?? "Escola ID {$schoolId}",
+                'type' => 'error',
+                'error' => $message,
+            ],
+        ];
+    }
+
+    private function getActionValidationError(object $academicYear, int $year, string $schoolName, string $action): ?string
+    {
+        if ($action === self::ACTION_OPEN) {
+            if ($academicYear->andamento == self::STATUS_IN_PROGRESS) {
+                return "Escola '{$schoolName}': Não é possível iniciar o ano letivo {$year} pois já está em andamento.";
+            }
+            if ($academicYear->andamento == self::STATUS_FINISHED) {
+                return "Escola '{$schoolName}': Não é possível iniciar o ano letivo {$year} pois já está finalizado.";
+            }
+        }
+
+        if ($action === self::ACTION_CLOSE) {
+            if ($academicYear->andamento == self::STATUS_FINISHED) {
+                return "Escola '{$schoolName}': Ano letivo {$year} já está finalizado.";
+            }
+            if ($academicYear->andamento == self::STATUS_NOT_STARTED) {
+                return "Escola '{$schoolName}': Ano letivo {$year} não está iniciado. Apenas anos letivos em andamento podem ser finalizados.";
+            }
+        }
+
+        return null;
+    }
+
+    private function executeActionForValidatedSchools(array $validatedData, array $params, int $total, string $action): array
+    {
+        $processed = 0;
+        $errors = [];
+        $details = [];
+
+        DB::beginTransaction();
+        foreach ($validatedData as $data) {
+            $status = $action === self::ACTION_OPEN ? self::STATUS_IN_PROGRESS : self::STATUS_FINISHED;
+            $actionText = $action === self::ACTION_OPEN ? 'inicializado' : 'finalizado';
+            $data['academic_year']->update([
+                'ref_usuario_exc' => $params['user']->id,
+                'andamento' => $status,
+            ]);
+            $processed++;
+            $details[] = [
+                'type' => 'success',
+                'message' => "Escola '{$data['school']->nome}': Ano letivo {$params['year']} {$actionText} com sucesso.",
+                'school_id' => $data['school']->cod_escola,
+                'school_name' => $data['school']->nome,
+            ];
+        }
+        DB::commit();
+
+        return [
+            'status' => 'completed',
+            'total' => $total,
+            'processed' => $processed,
+            'year' => $params['year'],
+            'errors' => $errors,
+            'details' => $details,
+            'message' => "Processamento concluído. {$processed} escola(s) processada(s).",
+        ];
+    }
+
+
+    private function hasActiveEnrollments(int $schoolId, int $year): bool
+    {
+        return DB::table('pmieducar.matricula as m')
+            ->join('pmieducar.curso as c', 'm.ref_cod_curso', '=', 'c.cod_curso')
+            ->join('pmieducar.tipo_ensino as te', 'c.ref_cod_tipo_ensino', '=', 'te.cod_tipo_ensino')
+            ->where('m.ref_ref_cod_escola', $schoolId)
+            ->where('m.ano', $year)
+            ->where('m.ativo', 1)
+            ->where('m.aprovado', 3) // Em andamento
+            ->where('m.ultima_matricula', 1)
+            ->where(function ($query) {
+                $query->whereNull('te.atividade_complementar')
+                      ->orWhere('te.atividade_complementar', '!=', true);
+            })
+            ->exists();
     }
 }
