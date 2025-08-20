@@ -69,7 +69,11 @@ $j(document).ready(function(){
     }
   }
   getEscolas();
-});
 
-document.getElementById('_senha').setAttribute('autocomplete', 'off');
-document.getElementById('email').setAttribute('autocomplete', 'off');
+  if(document.getElementById('tipoacao').value == 'Novo') {
+    document.getElementById('_senha').setAttribute('autocomplete', 'off');
+    document.getElementById('email').setAttribute('autocomplete', 'off');
+    document.getElementById('_senha').value = '';
+    document.getElementById('email').value = '';
+  }
+});
