@@ -106,7 +106,7 @@
                 </td>
             </tr>
             <tr id="tr_nm_periodos"><td colspan="2"><hr></td></tr>
-            <tr id="tr_modulos_ano_letivo" class="formlttd" style="display: none;">
+            <tr id="tr_modulos_ano_letivo" class="formlttd">
                 <td style="vertical-align: top; text-align: center" colspan="2">
                     <table cellspacing="0" id="modulos_ano_letivo" class="tabela-adicao" cellpadding="2" style="margin:10px 0px 10px 0px;">
                         <tbody>
