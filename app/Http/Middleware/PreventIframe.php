@@ -21,7 +21,7 @@ class PreventIframe
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
 
         // Alternativa moderna e mais flexível (usada por navegadores modernos)
-        $response->headers->set('Content-Security-Policy', "frame-ancestors 'none'");
+        $response->headers->set('Content-Security-Policy', "frame-ancestors 'self'");
 
         return $response;
     }
