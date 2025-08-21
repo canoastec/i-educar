@@ -226,7 +226,7 @@ class AcademicYearService
      * Processa a criação de anos letivos em lote para múltiplas escolas.
      * Valida parâmetros, escolas e executa a criação para cada escola válida.
      */
-    public function processAcademicYearBatch(array $params): array
+    public function createAcademicYearBatch(array $params): array
     {
         $validationResult = $this->validateBatchParams($params);
         if (!$validationResult['valid']) {
@@ -244,7 +244,7 @@ class AcademicYearService
             return $this->createBatchFailureResult($total, 0, $allErrors, 'Processamento cancelado devido a erros de validação.', $params['year']);
         }
 
-        return $this->processBatchValidData($validationResult['validatedData'], $validationResult['skippedSchools'], $params, $total);
+        return $this->executeCreateActionForValidatedSchools($validationResult['validatedData'], $validationResult['skippedSchools'], $params, $total);
     }
 
     /**
@@ -1143,7 +1143,7 @@ class AcademicYearService
         }
     }
 
-    private function processBatchValidData(array $validatedData, array $skippedSchools, array $params, int $total): array
+    private function executeCreateActionForValidatedSchools(array $validatedData, array $skippedSchools, array $params, int $total): array
     {
         $processed = 0;
         $errors = [];
@@ -1319,7 +1319,6 @@ class AcademicYearService
         return $this->executeActionForValidatedSchools($schoolValidation['validatedData'], $params, $total, $action);
     }
 
-
     private function validateSimpleBatchParams(array $params): array
     {
         if (empty($params['schools']) || empty($params['year'])) {
@@ -1357,7 +1356,6 @@ class AcademicYearService
             'errors' => $errors,
         ];
     }
-
 
     private function validateSchoolForAction(int $schoolId, array $params, string $action): array
     {
@@ -1469,9 +1467,9 @@ class AcademicYearService
             'errors' => $errors,
             'details' => $details,
             'message' => "Processamento concluído. {$processed} escola(s) processada(s).",
+            'skipped' => 0,
         ];
     }
-
 
     private function hasActiveEnrollments(int $schoolId, int $year): bool
     {

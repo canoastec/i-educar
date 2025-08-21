@@ -26,12 +26,12 @@ class AcademicYearBatchController extends Controller
             $this->cleanRequestData($request);
             $this->validateRequest($request);
 
-            $acao = $request->get('acao');
+            $action = $request->get('acao');
 
-            return match ($acao) {
+            return match ($action) {
                 AcademicYearService::ACTION_CREATE => $this->processCreateAcademicYear($request),
-                AcademicYearService::ACTION_OPEN => $this->processOpenAcademicYear($request),
-                AcademicYearService::ACTION_CLOSE => $this->processCloseAcademicYear($request),
+                AcademicYearService::ACTION_OPEN => $this->processAcademicYearAction($request, AcademicYearService::ACTION_OPEN),
+                AcademicYearService::ACTION_CLOSE => $this->processAcademicYearAction($request, AcademicYearService::ACTION_CLOSE),
             };
 
         } catch (ValidationException $e) {
@@ -51,33 +51,33 @@ class AcademicYearBatchController extends Controller
     private function cleanRequestData(Request $request): void
     {
         $schools = $request->get('escola', []);
-        $periodos = $request->get('periodos', []);
+        $periods = $request->get('periodos', []);
 
         $cleanedSchools = collect($schools)->flatten()->filter()->values()->toArray();
-        $cleanedPeriodos = $this->filterValidPeriodos($periodos);
+        $cleanedPeriods = $this->filterValidPeriods($periods);
 
         $request->merge([
             'escola' => $cleanedSchools,
-            'periodos' => $cleanedPeriodos,
+            'periodos' => $cleanedPeriods,
         ]);
     }
 
-    private function filterValidPeriodos(array $periodos): array
+    private function filterValidPeriods(array $periods): array
     {
-        return collect($periodos)->filter(function ($periodo) {
-            return !empty($periodo['data_inicio']) || !empty($periodo['data_fim']) || !empty($periodo['dias_letivos']);
+        return collect($periods)->filter(function ($period) {
+            return !empty($period['data_inicio']) || !empty($period['data_fim']) || !empty($period['dias_letivos']);
         })->values()->toArray();
     }
 
     private function validateRequest(Request $request): void
     {
-        $acao = $request->get('acao');
+        $action = $request->get('acao');
 
         $rules = [
             'acao' => ['required', 'in:' . AcademicYearService::ACTION_CREATE . ',' . AcademicYearService::ACTION_OPEN . ',' . AcademicYearService::ACTION_CLOSE],
         ];
 
-        switch($acao) {
+        switch($action) {
             case AcademicYearService::ACTION_CREATE:
                 $rules = array_merge($rules, [
                     'ano' => ['required', 'integer', 'digits:4', 'min:1900'],
@@ -121,24 +121,24 @@ class AcademicYearBatchController extends Controller
 
         $validator->validate();
 
-        if ($acao === AcademicYearService::ACTION_CREATE) {
-            $this->validatePeriodosConsistency($request->get('periodos', []));
+        if ($action === AcademicYearService::ACTION_CREATE) {
+            $this->validatePeriodsConsistency($request->get('periodos', []));
         }
     }
 
-    private function validatePeriodosConsistency(array $periodos): void
+    private function validatePeriodsConsistency(array $periods): void
     {
         $errors = [];
 
-        foreach ($periodos as $index => $periodo) {
-            $hasDataInicio = !empty($periodo['data_inicio']);
-            $hasDataFim = !empty($periodo['data_fim']);
+        foreach ($periods as $index => $period) {
+            $hasStartDate = !empty($period['data_inicio']);
+            $hasEndDate = !empty($period['data_fim']);
 
-            if ($hasDataInicio && !$hasDataFim) {
+            if ($hasStartDate && !$hasEndDate) {
                 $errors[] = 'Período ' . ($index + 1) . ': Data final é obrigatória quando data inicial está preenchida';
             }
 
-            if (!$hasDataInicio && $hasDataFim) {
+            if (!$hasStartDate && $hasEndDate) {
                 $errors[] = 'Período ' . ($index + 1) . ': Data inicial é obrigatória quando data final está preenchida';
             }
         }
@@ -154,7 +154,7 @@ class AcademicYearBatchController extends Controller
     private function processAcademicYearData(Request $request): array
     {
         $schools = collect($request->get('escola', []))->filter()->values();
-        $periodos = collect($this->filterValidPeriodos($request->get('periodos', [])));
+        $periods = collect($this->filterValidPeriods($request->get('periodos', [])));
 
         $isAdmin = Auth::check() ? Auth::user()->isAdmin() : false;
 
@@ -165,7 +165,7 @@ class AcademicYearBatchController extends Controller
 
         return [
             'allSchools' => $schools,
-            'periodos' => $periodos->toArray(),
+            'periodos' => $periods->toArray(),
             'copySchoolClasses' => $copySchoolClasses,
             'copyTeacherData' => $copyTeacherData,
             'copyEmployeeData' => $copyEmployeeData,
@@ -250,12 +250,12 @@ class AcademicYearBatchController extends Controller
             'copyEmployeeData' => $processedData['copyEmployeeData'],
         ];
 
-        $result = $this->academicYearService->processAcademicYearBatch($params);
+        $result = $this->academicYearService->createAcademicYearBatch($params);
 
         return $this->handleServiceResult($result);
     }
 
-    private function processOpenAcademicYear(Request $request): JsonResponse
+    private function processAcademicYearAction(Request $request, string $action): JsonResponse
     {
         $params = [
             'year' => $request->get('ano'),
@@ -263,20 +263,10 @@ class AcademicYearBatchController extends Controller
             'user' => $request->user(),
         ];
 
-        $result = $this->academicYearService->openAcademicYearBatch($params);
-
-        return $this->handleServiceResult($result);
-    }
-
-    private function processCloseAcademicYear(Request $request): JsonResponse
-    {
-        $params = [
-            'year' => $request->get('ano'),
-            'schools' => $request->get('escola'),
-            'user' => $request->user(),
-        ];
-
-        $result = $this->academicYearService->closeAcademicYearBatch($params);
+        $result = match ($action) {
+            AcademicYearService::ACTION_OPEN => $this->academicYearService->openAcademicYearBatch($params),
+            AcademicYearService::ACTION_CLOSE => $this->academicYearService->closeAcademicYearBatch($params),
+        };
 
         return $this->handleServiceResult($result);
     }

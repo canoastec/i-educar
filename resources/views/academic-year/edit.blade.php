@@ -105,7 +105,7 @@
                     </select>
                 </td>
             </tr>
-            <tr id="tr_nm_periodos"><td colspan="2"><hr></td></tr>
+            <tr class="tr_nm_periodos"><td colspan="2"><hr></td></tr>
             <tr id="tr_modulos_ano_letivo" class="formlttd">
                 <td style="vertical-align: top; text-align: center" colspan="2">
                     <table cellspacing="0" id="modulos_ano_letivo" class="tabela-adicao" cellpadding="2" style="margin:10px 0px 10px 0px;">
@@ -166,7 +166,7 @@
                     </table>
                 </td>
             </tr>
-            <tr id="tr_nm_periodos"><td colspan="2"><hr></td></tr>
+            <tr class="tr_nm_periodos"><td colspan="2"><hr></td></tr>
             <tr id="tr_titulo-alocacoes-vinculos">
                 <td class="formmdtd" valign="top">
                     <span class="form">
@@ -253,7 +253,7 @@
                 const trInstituicao = document.getElementById('tr_nm_instituicao');
                 const trEscola = document.getElementById('tr_nm_escola');
                 const trModulo = document.getElementById('tr_nm_modulo');
-                const trPeriodos = document.getElementById('tr_nm_periodos');
+                const trPeriodosElements = document.querySelectorAll('.tr_nm_periodos');
 
                 function toggleFields() {
                     const acao = acaoSelect.value;
@@ -263,7 +263,9 @@
                     trEscola.style.display = 'table-row';
 
                     trModulo.style.display = 'none';
-                    trPeriodos.style.display = 'none';
+                    trPeriodosElements.forEach(element => {
+                        element.style.display = 'none';
+                    });
 
                     document.getElementById('tr_modulos_ano_letivo').style.display = 'none';
                     document.getElementById('tr_titulo-alocacoes-vinculos').style.display = 'none';
@@ -283,7 +285,9 @@
                     switch (acao) {
                         case 'create':
                             trModulo.style.display = 'table-row';
-                            trPeriodos.style.display = 'table-row';
+                            trPeriodosElements.forEach(element => {
+                                element.style.display = 'table-row';
+                            });
 
                             document.getElementById('tr_modulos_ano_letivo').style.display = 'table-row';
                             document.getElementById('tr_titulo-alocacoes-vinculos').style.display = 'table-row';
