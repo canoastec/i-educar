@@ -243,9 +243,10 @@
     <script src="{{ Asset::get('/vendor/legacy/DynamicInput/Assets/Javascripts/DynamicInput.js') }}"></script>
     <script src="{{ Asset::get('/vendor/legacy/Portabilis/Assets/Javascripts/Validator.js') }}"></script>
     <script>
+        const stageTypesData = @json($stageTypesData);
+
         (function ($) {
             $(document).ready(function () {
-                const stageTypesData = @json($stageTypesData);
 
                 const acaoSelect = document.getElementById('acao');
                 const trAno = document.getElementById('tr_nm_ano');
@@ -413,10 +414,100 @@
                     form.addEventListener('submit', function(e) {
                         e.preventDefault();
 
-                        if (validationUtils.validatesFields(true)) {
+                        if (validationUtils.validatesFields(true) && validateStageData()) {
                             processForm();
                         }
                     });
+                }
+
+                function validateStageData() {
+                    const ano = parseInt(document.getElementById('ano').value, 10);
+                    const moduloId = document.getElementById('ref_cod_modulo').value;
+
+                    if (moduloId && (!stageTypesData[moduloId] || stageTypesData[moduloId] === 0)) {
+                        alert("Este módulo não possui o número de etapas definido.\nRealize esta alteração no seguinte caminho:\nCadastros > Tipos > Escolas > Tipos de etapas");
+                        return false;
+                    }
+
+                    let valid = true;
+                    const stages = [];
+                    
+                    for (let i = 1; i <= 4; i++) {
+                        const dataInicioField = document.getElementById(`data_inicio[${i}]`);
+                        const dataFimField = document.getElementById(`data_fim[${i}]`);
+                        const row = dataInicioField?.closest('tr');
+
+                        if (row && row.style.display !== 'none' && dataInicioField.value && dataFimField.value) {
+                            stages.push({
+                                dataInicio: dataInicioField.value,
+                                dataFim: dataFimField.value,
+                                dataInicioField: dataInicioField,
+                                dataFimField: dataFimField
+                            });
+                        }
+                    }
+
+                    stages.forEach((stage, idx) => {
+                        const dateParts = getDateParts(stage.dataInicio);
+                        const endDateParts = getDateParts(stage.dataFim);
+                        const startTs = makeTimestamp(dateParts);
+                        const endTs = makeTimestamp(endDateParts);
+
+                        if (endTs <= startTs) {
+                            messageUtils.error('A data final precisa ser maior que a data inicial desta etapa.', stage.dataFimField);
+                            valid = false;
+                            return;
+                        }
+
+                        if (idx === 0) {
+                            const validYears = [ano, ano - 1];
+                            if (validYears.indexOf(dateParts.year) === -1) {
+                                messageUtils.error(`O ano "${dateParts.year}" não é válido. Utilize o ano especificado ou anterior.`, stage.dataInicioField);
+                                valid = false;
+                                return;
+                            }
+                        }
+
+                        if (idx === stages.length - 1) {
+                            const validYears = [ano, ano + 1];
+                            if (validYears.indexOf(endDateParts.year) === -1) {
+                                messageUtils.error(`O ano "${endDateParts.year}" não é válido. Utilize o ano especificado ou próximo.`, stage.dataFimField);
+                                valid = false;
+                                return;
+                            }
+                        }
+
+                        if (idx > 0) {
+                            const prevStage = stages[idx - 1];
+                            const prevEndTs = makeTimestamp(getDateParts(prevStage.dataFim));
+
+                            if (startTs <= prevEndTs) {
+                                messageUtils.error('A data inicial precisa ser maior que a data final da etapa anterior.', stage.dataInicioField);
+                                valid = false;
+                                return;
+                            }
+                        }
+                    });
+
+                    if (!valid) {
+                        alert('Ocorreram erros na validação dos campos. Verifique as mensagens e tente novamente.');
+                    }
+
+                    return valid;
+                }
+
+                function getDateParts(dateStr) {
+                    const parts = dateStr.split('/');
+                    return {
+                        day: parseInt(parts[0], 10),
+                        month: parseInt(parts[1], 10),
+                        year: parseInt(parts[2], 10)
+                    };
+                }
+
+                function makeTimestamp(dateParts) {
+                    const date = new Date(dateParts.year, dateParts.month - 1, dateParts.day);
+                    return Math.floor(+date / 1000);
                 }
 
                 function processForm() {
