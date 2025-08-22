@@ -51,20 +51,6 @@
                 <td class="formdktd" colspan="2" height="24"><b>Ano Letivo em Lote</b></td>
             </tr>
 
-            <tr>
-                <td class="formlttd" valign="top">
-                    <label for="acao" class="form">Ação <span class="campo_obrigatorio">*</span></label>
-                </td>
-                <td class="formmdtd" valign="top">
-                    <select name="acao" id="acao" class="geral obrigatorio" style="width: 308px;" required>
-                        <option value="">Selecione uma ação</option>
-                        <option value="create">Criar Ano Letivo</option>
-                        <option value="open">Iniciar Ano Letivo</option>
-                        <option value="close">Finalizar Ano Letivo</option>
-                    </select>
-                </td>
-            </tr>
-
             <tr id="tr_nm_ano">
                 <td class="formmdtd" valign="top">
                     <label for="year" class="form">Ano <span class="campo_obrigatorio">*</span></label>
@@ -90,6 +76,19 @@
                     <a href="javascript:void(0)" id="link-select-all-schools" style="margin-left: 10px; color: #47728f; text-decoration: none;">
                         Selecionar todas as escolas
                     </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="formlttd" valign="top">
+                    <label for="acao" class="form">Ação <span class="campo_obrigatorio">*</span></label>
+                </td>
+                <td class="formmdtd" valign="top">
+                    <select name="acao" id="acao" class="geral obrigatorio" style="width: 308px;" required>
+                        <option value="">Selecione uma ação</option>
+                        <option value="create">Criar Ano Letivo</option>
+                        <option value="open">Iniciar Ano Letivo</option>
+                        <option value="close">Finalizar Ano Letivo</option>
+                    </select>
                 </td>
             </tr>
             <tr id="tr_nm_modulo">
