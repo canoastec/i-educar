@@ -1398,7 +1398,7 @@ return new class extends clsCadastro
         $fisica->nome_social = $this->nome_social;
         $fisica->pais_residencia = $this->pais_residencia;
         $fisica->observacao = str_replace(search: '+', replace: ' ', subject: $this->observacao);
-        $fisica->povo_indigena_educacenso_id = $this->povo_indigena_educacenso_id;
+        $fisica->povo_indigena_educacenso_id = empty($this->povo_indigena_educacenso_id) ? null : $this->povo_indigena_educacenso_id;
 
         $sql = 'select 1 from cadastro.fisica WHERE idpes = $1 limit 1';
 

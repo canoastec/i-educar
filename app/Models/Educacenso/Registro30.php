@@ -2,7 +2,6 @@
 
 namespace App\Models\Educacenso;
 
-use iEducar\Modules\Educacenso\Model\Deficiencias;
 use iEducar\Modules\Educacenso\Model\Transtornos;
 
 class Registro30 implements RegistroEducacenso
