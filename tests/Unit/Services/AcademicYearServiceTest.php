@@ -1345,7 +1345,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('failed');
         expect($result['message'])->toContain('Parâmetros de escola, períodos e ano letivo são obrigatórios');
@@ -1364,7 +1364,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('failed');
         expect($result['message'])->toContain('Parâmetros de escola, períodos e ano letivo são obrigatórios');
@@ -1385,7 +1385,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('failed');
         expect($result['message'])->toContain('Parâmetros de escola, períodos e ano letivo são obrigatórios');
@@ -1406,7 +1406,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(1);
@@ -1427,7 +1427,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('failed');
         expect($result['message'])->toContain('Parâmetros de escola e períodos devem ser arrays');
@@ -1446,7 +1446,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('failed');
         expect($result['message'])->toContain('Parâmetros de escola e períodos devem ser arrays');
@@ -1467,7 +1467,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('failed');
         expect($result['errors'])->toBeArray();
@@ -1502,7 +1502,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('failed');
         expect($result['errors'])->toBeArray();
@@ -1530,7 +1530,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(0);
@@ -1555,7 +1555,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(1);
@@ -1587,7 +1587,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(1);
@@ -1620,7 +1620,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(1);
@@ -1645,7 +1645,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(1);
@@ -1671,7 +1671,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(1);
@@ -1697,7 +1697,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => true,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(1);
@@ -1726,7 +1726,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => true,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(1);
@@ -1755,7 +1755,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(1);
@@ -1777,7 +1777,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        expect(fn () => $this->service->processAcademicYearBatch($params))->toThrow(QueryException::class);
+        expect(fn () => $this->service->createAcademicYearBatch($params))->toThrow(QueryException::class);
     }
 
     public function test_process_academic_year_batch_validates_stage_count(): void
@@ -1804,7 +1804,7 @@ class AcademicYearServiceTest extends TestCase
             'copyEmployeeData' => false,
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         expect($result['status'])->toBe('completed');
         expect($result['processed'])->toBe(1);
@@ -1951,7 +1951,7 @@ class AcademicYearServiceTest extends TestCase
             'user' => $this->createUser(),
         ];
 
-        $result = $this->service->processAcademicYearBatch($params);
+        $result = $this->service->createAcademicYearBatch($params);
 
         $this->assertEquals('completed', $result['status']);
         $this->assertEquals(1, $result['processed']);
