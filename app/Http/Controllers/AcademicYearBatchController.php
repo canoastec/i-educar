@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\AcademicYearServiceException;
 use App\Process;
 use App\Services\AcademicYearService;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -80,7 +81,7 @@ class AcademicYearBatchController extends Controller
         switch($action) {
             case AcademicYearService::ACTION_CREATE:
                 $rules = array_merge($rules, [
-                    'ano' => ['required', 'integer', 'digits:4', 'min:1900'],
+                    'ano' => ['required', 'integer', 'digits:4', 'min:1900', 'max:' . Carbon::now()->addYears(2)->year],
                     'ref_cod_instituicao' => ['required', 'integer'],
                     'escola' => ['required', 'array', 'min:1'],
                     'escola.*' => ['integer', 'exists:escola,cod_escola'],
@@ -94,7 +95,7 @@ class AcademicYearBatchController extends Controller
             case AcademicYearService::ACTION_CLOSE:
             case AcademicYearService::ACTION_OPEN:
                 $rules = array_merge($rules, [
-                    'ano' => ['required', 'integer', 'digits:4', 'min:1900'],
+                    'ano' => ['required', 'integer', 'digits:4', 'min:1900', 'max:' . Carbon::now()->addYears(2)->year],
                     'ref_cod_instituicao' => ['required', 'integer'],
                     'escola' => ['required', 'array', 'min:1'],
                     'escola.*' => ['integer', 'exists:escola,cod_escola'],
