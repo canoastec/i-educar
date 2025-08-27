@@ -28,6 +28,7 @@ class RegistrationService
         if ($absence && !empty($disciplineWorkload)) {
             $value = 100 - (($absence * $hourAbsence * 100) / $disciplineWorkload);
             $valueStr = number_format($value, 4, '.', '');
+
             return bcdiv($valueStr, 1, 1);
         }
 

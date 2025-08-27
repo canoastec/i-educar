@@ -134,7 +134,7 @@ class ServidorController extends ApiCoreController
             if ($modified) {
                 $params[] = $modified;
                 $whereDeleted = 'AND pt.updated_at >= $3';
-                //o filtro deve acontecer na query principal, fora da query das disciplinas para não limita-los e dar um falso positivo de exclusão.
+                // o filtro deve acontecer na query principal, fora da query das disciplinas para não limita-los e dar um falso positivo de exclusão.
                 $having = 'HAVING MAX(tmp.updated_at) >= $3';
             }
 
