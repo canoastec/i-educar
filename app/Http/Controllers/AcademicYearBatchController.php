@@ -78,7 +78,7 @@ class AcademicYearBatchController extends Controller
             'acao' => ['required', 'in:' . AcademicYearService::ACTION_CREATE . ',' . AcademicYearService::ACTION_OPEN . ',' . AcademicYearService::ACTION_CLOSE],
         ];
 
-        switch($action) {
+        switch ($action) {
             case AcademicYearService::ACTION_CREATE:
                 $rules = array_merge($rules, [
                     'ano' => ['required', 'integer', 'digits:4', 'min:1900', 'max:' . Carbon::now()->addYears(2)->year],

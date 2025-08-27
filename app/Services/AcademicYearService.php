@@ -11,6 +11,7 @@ use App\Models\LegacyDisciplineSchoolClass;
 use App\Models\LegacyDisciplineScore;
 use App\Models\LegacyEvaluationRuleGradeYear;
 use App\Models\LegacyGeneralAbsence;
+use App\Models\LegacyRegistration;
 use App\Models\LegacySchool;
 use App\Models\LegacySchoolAcademicYear;
 use App\Models\LegacySchoolClass;
@@ -19,7 +20,6 @@ use App\Models\LegacySchoolClassStage;
 use App\Models\LegacySchoolClassTeacher;
 use App\Models\LegacySchoolClassTeacherDiscipline;
 use App\Models\LegacySchoolCourse;
-use App\Models\LegacyRegistration;
 use App\Models\LegacySchoolGrade;
 use App\Models\LegacySchoolGradeDiscipline;
 use App\Models\LegacyStageType;
@@ -31,11 +31,15 @@ use Illuminate\Support\Facades\DB;
 class AcademicYearService
 {
     public const ACTION_CREATE = 'create';
+
     public const ACTION_OPEN = 'open';
+
     public const ACTION_CLOSE = 'close';
 
     public const STATUS_NOT_STARTED = 0;    // Não iniciado
+
     public const STATUS_IN_PROGRESS = 1;    // Em andamento
+
     public const STATUS_FINISHED = 2;       // Finalizado
 
     /**
@@ -1396,6 +1400,7 @@ class AcademicYearService
 
         } catch (\Exception $e) {
             $schoolName = $school->nome ?? "Escola ID {$schoolId}";
+
             return $this->createSchoolValidationError($schoolId, "Escola '{$schoolName}': {$e->getMessage()}", $schoolName);
         }
     }
@@ -1484,7 +1489,7 @@ class AcademicYearService
             ->where('matricula.ultima_matricula', 1)
             ->where(function ($query) {
                 $query->whereNull('te.atividade_complementar')
-                      ->orWhere('te.atividade_complementar', '!=', true);
+                    ->orWhere('te.atividade_complementar', '!=', true);
             })
             ->exists();
     }
