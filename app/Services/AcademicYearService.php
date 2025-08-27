@@ -19,6 +19,7 @@ use App\Models\LegacySchoolClassStage;
 use App\Models\LegacySchoolClassTeacher;
 use App\Models\LegacySchoolClassTeacherDiscipline;
 use App\Models\LegacySchoolCourse;
+use App\Models\LegacyRegistration;
 use App\Models\LegacySchoolGrade;
 use App\Models\LegacySchoolGradeDiscipline;
 use App\Models\LegacyStageType;
@@ -1473,14 +1474,14 @@ class AcademicYearService
 
     private function hasActiveEnrollments(int $schoolId, int $year): bool
     {
-        return DB::table('pmieducar.matricula as m')
-            ->join('pmieducar.curso as c', 'm.ref_cod_curso', '=', 'c.cod_curso')
-            ->join('pmieducar.tipo_ensino as te', 'c.ref_cod_tipo_ensino', '=', 'te.cod_tipo_ensino')
-            ->where('m.ref_ref_cod_escola', $schoolId)
-            ->where('m.ano', $year)
-            ->where('m.ativo', 1)
-            ->where('m.aprovado', 3) // Em andamento
-            ->where('m.ultima_matricula', 1)
+        return LegacyRegistration::query()
+            ->join('pmieducar.curso as c', 'matricula.ref_cod_curso', 'c.cod_curso')
+            ->join('pmieducar.tipo_ensino as te', 'c.ref_cod_tipo_ensino', 'te.cod_tipo_ensino')
+            ->where('matricula.ref_ref_cod_escola', $schoolId)
+            ->where('matricula.ano', $year)
+            ->where('matricula.ativo', 1)
+            ->where('matricula.aprovado', 3) // Em andamento
+            ->where('matricula.ultima_matricula', 1)
             ->where(function ($query) {
                 $query->whereNull('te.atividade_complementar')
                       ->orWhere('te.atividade_complementar', '!=', true);
