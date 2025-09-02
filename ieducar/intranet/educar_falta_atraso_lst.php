@@ -76,7 +76,7 @@ return new class extends clsListagem
 
         $query = LegacyAbsenceDelay::query()
             ->with(['employeeRole'])
-            ->orderBy('tipo', 'ASC');
+            ->orderByDesc('data_cadastro');
 
         if ($this->ref_cod_instituicao) {
             $query->where('ref_ref_cod_instituicao', $this->ref_cod_instituicao);
