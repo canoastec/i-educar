@@ -372,7 +372,7 @@ class CoreExt_EntityTest extends UnitBaseTest
         $mapper->expects($this->once())
             ->method('find')
             ->with(1)
-            ->will($this->returnValue($entity));
+            ->willReturn(($entity));
 
         $this->assertFalse($mapper->find(1)->isNew());
     }
@@ -467,7 +467,7 @@ class CoreExt_EntityTest extends UnitBaseTest
         $filhoMapper->expects($this->once())
             ->method('find')
             ->with(1)
-            ->will($this->returnValue($expected));
+            ->willReturn(($expected));
 
         $parent = new CoreExt_ParentEntityStub($data);
         $parent->setReference('filho', ['value' => 1, 'class' => $filhoMapper]);
