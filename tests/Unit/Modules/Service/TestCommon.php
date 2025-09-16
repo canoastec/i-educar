@@ -958,7 +958,7 @@ abstract class Avaliacao_Service_TestCommon extends UnitBaseTest
             $mock = $this->getCleanMock('ComponenteCurricular_Model_ComponenteDataMapper');
             $mock
                 ->method('findComponenteCurricularAnoEscolar')
-                ->will(call_user_func_array([$this, 'onConsecutiveCalls'], $componentes));
+                ->willReturnOnConsecutiveCalls(...$componentes);
 
             $this->_setComponenteDataMapperMock($mock);
         }
@@ -982,7 +982,7 @@ abstract class Avaliacao_Service_TestCommon extends UnitBaseTest
             $mock = $this->getCleanMock('ComponenteCurricular_Model_TurmaDataMapper');
             $mock
                 ->method('findAll')
-                ->will(call_user_func_array([$this, 'onConsecutiveCalls'], $componentes));
+                ->willReturnOnConsecutiveCalls(...$componentes);
 
             $this->_setComponenteTurmaDataMapperMock($mock);
         }
