@@ -77,27 +77,27 @@ class Avaliacao_Service_FaltaGeralTest extends Avaliacao_Service_FaltaCommon
         $mock->expects($this->at(0))
             ->method('findAll')
             ->with([], ['faltaAluno' => $faltaAluno->id], ['etapa' => 'ASC'])
-            ->willReturn(([]));
+            ->willReturn([]);
 
         $mock->expects($this->at(1))
             ->method('save')
             ->with($faltas[0])
-            ->willReturn((true));
+            ->willReturn(true);
 
         $mock->expects($this->at(2))
             ->method('save')
             ->with($faltas[1])
-            ->willReturn((true));
+            ->willReturn(true);
 
         $mock->expects($this->at(3))
             ->method('save')
             ->with($faltas[2])
-            ->willReturn((true));
+            ->willReturn(true);
 
         $mock->expects($this->at(4))
             ->method('save')
             ->with($faltas[3])
-            ->willReturn((true));
+            ->willReturn(true);
 
         $this->_setFaltaAbstractDataMapperMock($mock);
 
@@ -148,17 +148,17 @@ class Avaliacao_Service_FaltaGeralTest extends Avaliacao_Service_FaltaCommon
         $mock->expects($this->at(0))
             ->method('findAll')
             ->with([], ['faltaAluno' => $faltaAluno->id], ['etapa' => 'ASC'])
-            ->willReturn(($faltasPersistidas));
+            ->willReturn($faltasPersistidas);
 
         $mock->expects($this->at(1))
             ->method('save')
             ->with($faltas[0])
-            ->willReturn((true));
+            ->willReturn(true);
 
         $mock->expects($this->at(2))
             ->method('save')
             ->with($faltas[1])
-            ->willReturn((true));
+            ->willReturn(true);
 
         $this->_setFaltaAbstractDataMapperMock($mock);
 
@@ -205,17 +205,17 @@ class Avaliacao_Service_FaltaGeralTest extends Avaliacao_Service_FaltaCommon
         $mock->expects($this->at(0))
             ->method('findAll')
             ->with([], ['faltaAluno' => $faltaAluno->id], ['etapa' => 'ASC'])
-            ->willReturn(($faltasPersistidas));
+            ->willReturn($faltasPersistidas);
 
         $mock->expects($this->at(1))
             ->method('save')
             ->with($faltas[0])
-            ->willReturn((true));
+            ->willReturn(true);
 
         $mock->expects($this->at(2))
             ->method('save')
             ->with($faltas[1])
-            ->willReturn((true));
+            ->willReturn(true);
 
         $this->_setFaltaAbstractDataMapperMock($mock);
 

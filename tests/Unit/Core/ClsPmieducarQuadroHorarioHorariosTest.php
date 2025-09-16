@@ -13,7 +13,7 @@ class ClsPmieducarQuadroHorarioHorariosTest extends TestCase
 
         $stub->expects($this->any())
             ->method('substituir_servidor')
-            ->willReturn((true));
+            ->willReturn(true);
 
         $this->assertTrue($stub->substituir_servidor(1));
     }
