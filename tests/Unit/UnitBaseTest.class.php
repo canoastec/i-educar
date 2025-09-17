@@ -119,7 +119,6 @@ abstract class UnitBaseTest extends TestCase
             $mockBuilder->disableOriginalClone();
         }
 
-
         if (!empty($mockMethods)) {
             $mockBuilder->onlyMethods($mockMethods);
         }
