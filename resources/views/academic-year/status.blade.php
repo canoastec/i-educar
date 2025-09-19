@@ -135,7 +135,7 @@
             </tr>
             </tbody>
         </table>
-        <div style="text-align: center; margin-top: 20px" >
+        <div style="text-align: center; margin-top: 20px; margin-bottom: 30px">
             <a href="{{ route('academic-year.edit') }}" class="btn-green" style="text-decoration: none">
                 Novo Ano Letivo em Lote
             </a>

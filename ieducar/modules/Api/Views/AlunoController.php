@@ -372,6 +372,22 @@ class AlunoController extends ApiCoreController
         return $this->toUtf8($nome, ['transform' => true]);
     }
 
+    protected function loadNomeSocialAluno($alunoId)
+    {
+        $sql = 'select nome_social from cadastro.fisica, pmieducar.aluno where idpes = ref_idpes and cod_aluno = $1';
+        $nome = $this->fetchPreparedQuery($sql, $alunoId, false, 'first-field');
+
+        return $this->toUtf8($nome, ['transform' => true]);
+    }
+
+    protected function loadDataNascimentoAluno($alunoId)
+    {
+        $sql = 'select COALESCE(data_nasc, CURRENT_DATE) from cadastro.fisica, pmieducar.aluno where idpes = ref_idpes and cod_aluno = $1';
+        $nome = $this->fetchPreparedQuery($sql, $alunoId, false, 'first-field');
+
+        return $this->toUtf8($nome, ['transform' => true]);
+    }
+
     protected function validaTurnoProjeto($alunoId, $turnoId)
     {
         if (config('legacy.app.projetos.ignorar_turno_igual_matricula') == 1) {
@@ -1189,6 +1205,8 @@ class AlunoController extends ApiCoreController
             $aluno = Portabilis_Array_Utils::filter($alunoDetalhe, $attrs);
 
             $aluno['nome'] = $this->loadNomeAluno($id);
+            $aluno['nome_social'] = $this->loadNomeSocialAluno($id);
+            $aluno['data_nascimento'] = $this->loadDataNascimentoAluno($id);
             $aluno['tipo_transporte'] = $this->loadTransporte($aluno['tipo_transporte']);
             $aluno['tipo_responsavel'] = $this->tipoResponsavel($aluno);
             $aluno['aluno_inep_id'] = $this->loadAlunoInepId($id);
