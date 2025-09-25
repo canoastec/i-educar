@@ -10,6 +10,7 @@
     showAllElm: $j('.flashMessages__controls a[data-action="showAll"]'),
     visibleCount: 2,
     overflowDisabled: false,
+    autoDismissMs: 5000,
 
     init: () => {
       flashMessages.closeAllElm.hide()
@@ -107,6 +108,20 @@
       }
     },
 
+    autoDismiss: ($msgElm) => {
+      setTimeout(() => {
+        if (!$msgElm || $msgElm.length === 0 || !$msgElm.closest('body').length) {
+          return
+        }
+
+        $msgElm.fadeOut(250, () => {
+          $msgElm.remove()
+          flashMessages.hideOverflow()
+          flashMessages.showCloseAll()
+        })
+      }, flashMessages.autoDismissMs)
+    },
+
     add: (type = 'error', msg = '') => {
       const date = new Date()
       const hourString = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
@@ -119,6 +134,7 @@
 
       flashMessages.hideOverflow()
       flashMessages.showCloseAll()
+      flashMessages.autoDismiss(msgElm)
     },
 
     error: (msg) => {
