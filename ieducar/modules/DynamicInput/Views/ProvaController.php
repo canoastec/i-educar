@@ -10,20 +10,28 @@ class ProvaController extends ApiCoreController
     protected function getProvas()
     {
         if ($this->canGetProvas()) {
-            $ano = (int) $this->getRequest()->ano;
+            $ano = $this->getRequest()->ano;
 
             try {
                 $now = \Carbon\Carbon::now();
                 $resources = [];
 
-                if (class_exists('Canoastec\\Provas\\Models\\Exam')) {
-                    $query = Canoastec\Provas\Models\Exam::query()
-                        ->whereYear('end_date', '=', $ano)
-                        ->where('end_date', '<', $now)
-                        ->orderBy('description');
+                if (class_exists('Canoastec\\Provas\\Models\\Exam') && class_exists('Canoastec\\Provas\\Models\\StudentExam')) {
+                    $examIdsWithStudent = Canoastec\Provas\Models\StudentExam::query()
+                        ->distinct()
+                        ->pluck('exam_id')
+                        ->all();
 
-                    foreach ($query->get(['id', 'description']) as $exam) {
-                        $resources['__' . $exam->id] = $this->toUtf8($exam->description);
+                    if (! empty($examIdsWithStudent)) {
+                        $query = Canoastec\Provas\Models\Exam::query()
+                            ->whereIn('id', $examIdsWithStudent)
+                            ->whereYear('end_date', '=', $ano)
+                            ->where('end_date', '<', $now)
+                            ->orderBy('description');
+
+                        foreach ($query->get(['id', 'description']) as $exam) {
+                            $resources['__' . $exam->id] = $this->toUtf8($exam->description);
+                        }
                     }
                 }
 
