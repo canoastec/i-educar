@@ -20,6 +20,7 @@
       flashMessages.showAllEvent()
       flashMessages.showCloseAll()
       flashMessages.hideOverflow()
+      flashMessages.autoDismiss()
     },
 
     closeEvent: () => {
@@ -109,11 +110,15 @@
     },
 
     autoDismiss: ($msgElm) => {
-      setTimeout(() => {
-        if (!$msgElm || $msgElm.length === 0 || !$msgElm.closest('body').length) {
-          return
-        }
+      if (!$msgElm) {
+        let $msgs = $j(flashMessages.messagesElmSelector)
+        $($msgs.get()).each((elm, i) => {
+          flashMessages.autoDismiss($j(elm))
+        })
+        return
+      }
 
+      setTimeout(() => {
         $msgElm.fadeOut(250, () => {
           $msgElm.remove()
           flashMessages.hideOverflow()
