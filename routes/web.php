@@ -31,7 +31,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('alterar-senha', 'PasswordController@change')->name('post-change-password');
 });
 
-Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.xssbypass', 'ieducar.suspended', 'auth', 'ieducar.checkresetpassword']], function () {
+Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.xssbypass', 'ieducar.suspended', 'auth', 'ieducar.checkresetpassword', 'redirect.student.exams']], function () {
     Route::get('/config', [WebController::class, 'config']);
     Route::get('/user', [WebController::class, 'user']);
     Route::get('/institution', [WebController::class, 'institution']);
