@@ -201,3 +201,6 @@ Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.
 
 Route::get('/auth/redirect', SocialiteRedirectController::class)->name('socialite.redirect');
 Route::get('/auth/callback', SocialiteCallbackController::class)->name('socialite.callback');
+
+Route::get('/auth/google/redirect', \App\Http\Controllers\GoogleRedirectController::class)->name('google.redirect');
+Route::get('/auth/google/callback', \App\Http\Controllers\GoogleCallbackController::class)->name('google.callback');
