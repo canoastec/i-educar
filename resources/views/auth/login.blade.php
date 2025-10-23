@@ -32,6 +32,19 @@
         </div>
         @endif
 
+        <div id="portabilis-id" style="display: block;">
+            <div style="border-top: 1px solid #DDDDDD; margin-top: 1.5rem; padding: 1.5rem 0 0; position: relative">
+                <div style="text-align: center;">
+                    <a href="{{ route('google.redirect') }}">
+                        <img src="{{ asset('img/web_neutral_sq_na@2x.png') }}" alt="Entrar com Google" title="Entrar com Google">
+                    </a>
+                </div>
+                <small style="display: block; text-align: center; color: #666; margin-top: 0.5rem; font-size: 0.8rem;">
+                    <i class="fa fa-info-circle"></i> Disponível apenas para alunos
+                </small>
+            </div>
+        </div>
+
     </form>
 
     <script>
