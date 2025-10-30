@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\DisciplineController;
 use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\EmployeeWithdrawalController;
 use App\Http\Controllers\Api\GradeController;
+use App\Http\Controllers\Api\IdiarioAppController;
 use App\Http\Controllers\Api\InstitutionController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\People\LegacyDeficiencyController;
@@ -47,6 +48,8 @@ Route::group(
 );
 
 Route::get('version', 'Api\\VersionController@version');
+
+Route::get('idiario-app', [IdiarioAppController::class, 'index']);
 
 Route::get('/postal-code/{postalCode}', 'Api\PostalCodeController@search');
 
