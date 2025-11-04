@@ -32,7 +32,8 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'root' => base_path('/../dados/ieducar_files'),
+            'url' => env('APP_URL') . '/dados/ieducar_files',
             'serve' => true,
             'throw' => false,
             'report' => false,
@@ -72,7 +73,6 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
         public_path('intranet/fonts') => base_path('ieducar/intranet/fonts'),
         public_path('intranet/imagens') => base_path('ieducar/intranet/imagens'),
         public_path('intranet/scripts') => base_path('ieducar/intranet/scripts'),
