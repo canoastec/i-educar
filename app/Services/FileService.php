@@ -112,6 +112,7 @@ class FileService
         $tenant = config('legacy.app.database.dbname');
         Storage::put($tenant, $uploadFile);
 
-        return Storage::url($uploadFile->hashName($tenant));
+        $fileName = $uploadFile->hashName($tenant);
+        return '/dados/ieducar_files/' . $fileName;
     }
 }

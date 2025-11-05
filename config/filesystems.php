@@ -33,7 +33,6 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => base_path('/../dados/ieducar_files'),
-            'url' => env('APP_URL') . '/dados/ieducar_files',
             'serve' => true,
             'throw' => false,
             'report' => false,
