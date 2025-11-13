@@ -10,6 +10,7 @@ x-php: &php
   working_dir: /var/www/ieducar
   volumes:
     - ./:/var/www/ieducar
+    - ../dados:/var/www/dados
   links:
     - postgres
     - redis
@@ -52,6 +53,7 @@ services:
     working_dir: /var/www/ieducar
     volumes:
       - ./:/var/www/ieducar
+      - ../dados:/var/www/dados
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
       - ./docker/nginx/snippets:/etc/nginx/snippets/
     ports:

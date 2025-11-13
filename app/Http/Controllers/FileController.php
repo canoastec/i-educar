@@ -46,6 +46,27 @@ class FileController extends Controller
             ->header('Cache-Control', 'private, max-age=3600');
     }
 
+    public function serveProvasFiles(string $path)
+    {
+        $filePath = $this->filesystem->disk('local')->path("provas/{$path}");
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'Arquivo não encontrado: ' . $path);
+        }
+        
+        $mimeType = mime_content_type($filePath);
+        if (!$mimeType) {
+            $mimeType = 'application/octet-stream';
+        }
+        
+        $fileContent = file_get_contents($filePath);
+        
+        return response($fileContent, 200)
+            ->header('Content-Type', $mimeType)
+            ->header('Content-Length', filesize($filePath))
+            ->header('Cache-Control', 'public, max-age=3600');
+    }
+
     public function upload(FileRequest $request, FileService $fileService)
     {
         $file = $request->file('file');
