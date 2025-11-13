@@ -38,6 +38,9 @@ Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.
     Route::get('/institution', [WebController::class, 'institution']);
     Route::get('/menus', [WebController::class, 'menus']);
 
+    Route::get('/dados/ieducar_files/provas/{path}', [FileController::class, 'serveProvasFiles'])
+    ->where('path', '.*');
+
     Route::get('/dados/ieducar_files/{path}', [FileController::class, 'serveIeducarFiles'])
         ->middleware('file.access')
         ->where('path', '.*');
