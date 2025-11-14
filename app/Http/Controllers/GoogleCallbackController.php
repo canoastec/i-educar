@@ -29,8 +29,19 @@ class GoogleCallbackController
             return redirect('/login')->withErrors(['login' => $user->employee->motivo ?: __('auth.inactive')]);
         }
 
-        if ($user?->role !== 'Aluno') {
+        if ($user->role !== 'Aluno') {
             return redirect('/login')->withErrors(['login' => 'Acesso permitido apenas para alunos.']);
+        }
+
+        $hasActiveEnrollment = $user->person
+            ?->student
+            ?->registrations()
+            ->where('ativo', 1)
+            ->whereHas('activeEnrollments')
+            ->exists();
+
+        if (!$hasActiveEnrollment) {
+            return redirect('/login')->withErrors(['login' => 'Acesso permitido apenas para alunos matriculados.']);
         }
 
         Auth::login($user);

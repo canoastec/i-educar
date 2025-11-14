@@ -107,7 +107,7 @@
     "scripts": {
         "format": "vendor/bin/pint",
         "openapi": "vendor/uderline/openapi-php-attributes/opag tests public/openapi.json",
-        "set-permissions": "find bootstrap/cache -type d -exec chmod 777 {} + && find storage -type d -exec chmod 777 {} +",
+        "set-permissions": "find bootstrap/cache -type d -exec chmod 777 {} + && find storage -type d -exec chmod 777 {} + && mkdir -p /var/www/dados/ieducar_files && chmod -R 777 /var/www/dados/ieducar_files",
         "new-install": [
             "@composer install",
             "@composer plug-and-play",

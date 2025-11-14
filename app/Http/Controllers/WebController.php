@@ -37,6 +37,12 @@ class WebController extends Controller
     public function fallback($uri)
     {
         if (str_starts_with($uri, 'web')) {
+            $user = auth()->user();
+
+            if ($user && $user->ref_cod_tipo_usuario == 14) {
+                return redirect()->route('student-exams.index');
+            }
+
             return redirect('intranet/educar_index.php');
         }
 

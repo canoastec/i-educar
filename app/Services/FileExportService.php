@@ -367,8 +367,9 @@ class FileExportService
 
     private function updateExporter(): void
     {
+        $url = $this->getUrlForFile($this->destinyZipFilePath);
         $this->fileExport->update([
-            'url' => $this->getDestinyStorage()->url($this->destinyZipFilePath),
+            'url' => $url,
             'status_id' => FileExportStatus::SUCCESS,
             'size' => $this->getDestinyStorage()->size($this->destinyZipFilePath),
         ]);
@@ -376,12 +377,23 @@ class FileExportService
 
     private function notifyUser(): void
     {
+        $url = $this->getUrlForFile($this->destinyZipFilePath);
         (new NotificationService)->createByUser(
             userId: $this->fileExport->user_id,
             text: $this->getMessage(),
-            link: $this->getDestinyStorage()->url($this->destinyZipFilePath),
+            link: $url,
             type: NotificationType::OTHER
         );
+    }
+
+    private function getUrlForFile(string $filePath): string
+    {
+        // Gera URL relativa quando for disco 'local', caso contrário usa Storage::url()
+        if ($this->disk === 'local') {
+            return '/dados/ieducar_files/' . $filePath;
+        }
+        
+        return $this->getDestinyStorage()->url($filePath);
     }
 
     private function getMessage(): string

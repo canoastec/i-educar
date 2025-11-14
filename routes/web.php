@@ -3,6 +3,7 @@
 use App\Http\Controllers\EnrollmentInepController;
 use App\Http\Controllers\EnrollmentsPromotionController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SocialiteCallbackController;
 use App\Http\Controllers\SocialiteRedirectController;
@@ -36,6 +37,13 @@ Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.
     Route::get('/user', [WebController::class, 'user']);
     Route::get('/institution', [WebController::class, 'institution']);
     Route::get('/menus', [WebController::class, 'menus']);
+
+    Route::get('/dados/ieducar_files/provas/{path}', [FileController::class, 'serveProvasFiles'])
+    ->where('path', '.*');
+
+    Route::get('/dados/ieducar_files/{path}', [FileController::class, 'serveIeducarFiles'])
+        ->middleware('file.access')
+        ->where('path', '.*');
 
     Route::get('/intranet/educar_matricula_turma_lst.php', 'LegacyController@intranet')
         ->defaults('uri', 'educar_matricula_turma_lst.php')
