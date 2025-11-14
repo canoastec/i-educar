@@ -38,7 +38,12 @@ class StudentRotatePictureController extends Controller
 
         // Salva a imagem no storage e então atualiza a URL do arquivo
         if (Storage::put($filename, $image)) {
-            $url = Storage::url($filename);
+            // Gera URL relativa quando for disco 'local', caso contrário usa Storage::url()
+            if (config('filesystems.default') === 'local') {
+                $url = '/dados/ieducar_files/' . $filename;
+            } else {
+                $url = Storage::url($filename);
+            }
 
             $picture->url = $url;
             $picture->saveOrFail();

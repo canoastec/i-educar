@@ -42,7 +42,8 @@ class FileControllerPdf
         $file = new File($tmp);
 
         if (Storage::put($tenant, $file)) {
-            return Storage::url($file->hashName($tenant));
+            $fileName = $file->hashName($tenant);
+            return '/dados/ieducar_files/' . $fileName;
         } else {
             $this->errorMessage = 'Ocorreu um erro no servidor ao enviar foto. Tente novamente.';
 

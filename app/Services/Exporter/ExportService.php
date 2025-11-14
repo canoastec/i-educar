@@ -59,6 +59,14 @@ class ExportService
 
     private function getUrl(): string
     {
-        return Storage::disk($this->disk)->url($this->getFilename());
+        $disk = $this->disk ?? config('filesystems.default');
+        $filename = $this->getFilename();
+        
+        // Gera URL relativa quando for disco 'local', caso contrário usa Storage::url()
+        if ($disk === 'local') {
+            return '/dados/ieducar_files/' . $filename;
+        }
+        
+        return Storage::disk($disk)->url($filename);
     }
 }

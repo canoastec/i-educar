@@ -3,6 +3,7 @@
 use App\Http\Controllers\EnrollmentInepController;
 use App\Http\Controllers\EnrollmentsPromotionController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SocialiteCallbackController;
 use App\Http\Controllers\SocialiteRedirectController;
@@ -31,11 +32,18 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('alterar-senha', 'PasswordController@change')->name('post-change-password');
 });
 
-Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.xssbypass', 'ieducar.suspended', 'auth', 'ieducar.checkresetpassword']], function () {
+Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.xssbypass', 'ieducar.suspended', 'auth', 'ieducar.checkresetpassword', 'redirect.student.exams']], function () {
     Route::get('/config', [WebController::class, 'config']);
     Route::get('/user', [WebController::class, 'user']);
     Route::get('/institution', [WebController::class, 'institution']);
     Route::get('/menus', [WebController::class, 'menus']);
+
+    Route::get('/dados/ieducar_files/provas/{path}', [FileController::class, 'serveProvasFiles'])
+    ->where('path', '.*');
+
+    Route::get('/dados/ieducar_files/{path}', [FileController::class, 'serveIeducarFiles'])
+        ->middleware('file.access')
+        ->where('path', '.*');
 
     Route::get('/intranet/educar_matricula_turma_lst.php', 'LegacyController@intranet')
         ->defaults('uri', 'educar_matricula_turma_lst.php')
@@ -201,3 +209,6 @@ Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.
 
 Route::get('/auth/redirect', SocialiteRedirectController::class)->name('socialite.redirect');
 Route::get('/auth/callback', SocialiteCallbackController::class)->name('socialite.callback');
+
+Route::get('/auth/google/redirect', \App\Http\Controllers\GoogleRedirectController::class)->name('google.redirect');
+Route::get('/auth/google/callback', \App\Http\Controllers\GoogleCallbackController::class)->name('google.callback');
