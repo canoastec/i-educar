@@ -23,13 +23,26 @@ class FileAccess
 
         $userTypeName = $user->type->name ?? '';
 
-        $allowedTypes = ['Administrador Portabilis', 'Âncora(s)'];
+        $allowedTypes = $this->getAllowedTypes();
 
         if (!in_array($userTypeName, $allowedTypes)) {
             abort(403, 'Acesso negado');
         }
 
         return $next($request);
+    }
+
+    /**
+     * Get allowed user types from settings table or fallback to default.
+     *
+     * @return array
+     */
+    private function getAllowedTypes(): array
+    {
+        $value = config('file_access.allowed_types') ?: '';
+        
+        $types = array_map('trim', explode(',', $value));
+        return array_filter($types);
     }
 }
 
