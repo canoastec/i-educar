@@ -7,6 +7,8 @@ use Ankurk91\Eloquent\Relations\BelongsToOne;
 use App\Events\StudentCreated;
 use App\Models\Builders\LegacyStudentBuilder;
 use App\Traits\HasLegacyDates;
+use Canoastec\Provas\Models\Answer;
+use Canoastec\Provas\Models\StudentExam;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\HasBuilder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -303,5 +305,15 @@ class LegacyStudent extends LegacyModel
     public function historicalHeightWeight(): HasMany
     {
         return $this->hasMany(LegacyStudentHistoricalHeightWeight::class, 'ref_cod_aluno');
+    }
+
+    public function answers()
+    {
+        return $this->hasMany(Answer::class, 'student_id', 'cod_aluno');
+    }
+
+    public function studentExam()
+    {
+        return $this->hasOne(StudentExam::class, 'student_id', 'cod_aluno');
     }
 }
