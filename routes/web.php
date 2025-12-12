@@ -18,6 +18,8 @@ Route::redirect('/', '/web');
 
 Route::view('/docs-api', 'docs/api/index');
 
+Route::view('/politica-privacidade', 'politica-privacidade')->name('politica-privacidade');
+
 Route::redirect('intranet/index.php', '/web')
     ->name('home');
 
