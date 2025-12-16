@@ -11,56 +11,115 @@
         }
     </style>
     <div style="max-width: 1200px; margin: 0 auto; padding: 30px; text-align: left; background: white; border-radius: 8px;">
-        <h1 style="color: #333; margin-bottom: 30px; font-size: 28px; border-bottom: 2px solid #e0e0e0; padding-bottom: 15px;">Política de Privacidade e Proteção de Dados</h1>
+        <h1 style="color: #333; margin-bottom: 30px; font-size: 28px; border-bottom: 2px solid #e0e0e0; padding-bottom: 15px;">POLÍTICA DE PRIVACIDADE – I-DIÁRIO</h1>
 
         <div style="line-height: 1.8; color: #555; font-size: 15px;">
             <p style="margin-bottom: 20px;">
-                A presente política de privacidade e proteção de dados rege o tratamento que damos à informação recebida no acesso e uso dos serviços do site, que a Prefeitura Municipal de Canoas oferece gratuitamente aos usuários do i-Diário App. Em conformidade com a legislação sobre proteção de dados pessoais, a Prefeitura Municipal de Canoas como proprietária do i-Diário App deve atender a certos requisitos que garantem que qualquer informação fornecida pelos usuários é tratada com diligência e confidencialidade. Em caso de dúvidas relacionadas a nossa política de privacidade entre em contato através do e-mail: <a href="mailto:projetosesistemas@canoastec.rs.gov.br" style="color: #0066cc; text-decoration: none;">projetosesistemas@canoastec.rs.gov.br</a>
+                Esta Política de Privacidade descreve como o aplicativo i-Diário coleta, utiliza, armazena, compartilha e protege os dados pessoais de seus usuários, em conformidade com a Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018 – LGPD) e com as diretrizes da Google Play Store.
+            </p>
+            <p style="margin-bottom: 20px;">
+                Ao utilizar o i-Diário, o usuário declara estar ciente e de acordo com as práticas descritas nesta Política.
             </p>
 
             <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px; font-size: 20px;">1. Coleta de Dados</h2>
             <p style="margin-bottom: 20px;">
-                O i-Diário App coleta dados pessoais dos usuários com o objetivo de agilizar o contato entre empregadores e candidatos oferecendo ferramentas e serviços que apoiam os processos de busca de emprego, incluindo envio de e-mails, notificações e etc. O candidato ao registrar-se no site ou aplicativo móvel fornecerá seus dados pessoais através do preenchimento de formulário, sendo que estes dados são estritamente necessários para que o site e/ou aplicativo funcionem adequadamente. Dentre os dados coletados temos CPF, nome, data de nascimento, contatos, formação e empregos. A empresa ao se cadastrar deverá informar os dados básicos e pessoais para que seja possível acessar o sistema e realizar o recrutamento e seleção de profissionais.
+                O i-Diário poderá coletar os seguintes dados, de acordo com a finalidade do aplicativo:
             </p>
+
+            <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px; font-size: 18px;">1.1 Dados fornecidos pelo usuário</h3>
+            <ul style="margin-bottom: 20px; padding-left: 30px;">
+                <li style="margin-bottom: 8px;">Nome completo;</li>
+                <li style="margin-bottom: 8px;">E-mail institucional;</li>
+                <li style="margin-bottom: 8px;">Identificação funcional ou acadêmica (ex.: matrícula);</li>
+                <li style="margin-bottom: 8px;">Dados de autenticação (login e senha);</li>
+                <li style="margin-bottom: 8px;">Informações pedagógicas e administrativas inseridas no uso do sistema.</li>
+            </ul>
+
+            <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px; font-size: 18px;">1.2 Dados coletados automaticamente</h3>
+            <ul style="margin-bottom: 20px; padding-left: 30px;">
+                <li style="margin-bottom: 8px;">Informações técnicas do dispositivo (modelo, sistema operacional, versão do app);</li>
+                <li style="margin-bottom: 8px;">Endereço IP e registros de acesso;</li>
+                <li style="margin-bottom: 8px;">Logs de uso e desempenho do aplicativo.</li>
+            </ul>
             <p style="margin-bottom: 20px;">
-                Tendo em vista que os dados são públicos para visualização e divulgação, o candidato a vaga está ciente de que o seu currículo e demais informações cadastradas no i-Diário App poderão ser visualizadas por terceiros, inclusive por seu atual empregador.
+                A coleta limita-se ao mínimo necessário para o funcionamento adequado do i-Diário, respeitando os princípios da necessidade, finalidade e adequação.
             </p>
 
             <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px; font-size: 20px;">2. Armazenamento e Transferência de Dados</h2>
             <p style="margin-bottom: 20px;">
-                O uso do site e o registro ou apresentação de dados pessoais para o i-Diário App implica o consentimento do candidato para o tratamento automatizado dos dados pessoais fornecidos, bem como o envio de comunicações por via eletrônica com informações relacionadas com i-Diário App. Durante o processo de registro, o candidato consente que os dados são transferidos às empresas cadastradas. Para estes fins significa terceiro "aqueles usuários ou entidades que desejem entrar em contato com o candidato" em relação aos processos de recrutamento. O usuário que se registra expressa seu conhecimento e, por conseguinte, concorda expressamente, que seus dados e o conteúdo que fornecer será pública e visível no site, para os motores de busca da Internet.
+                Os dados coletados são:
+            </p>
+            <ul style="margin-bottom: 20px; padding-left: 30px;">
+                <li style="margin-bottom: 8px;">Armazenados em servidores seguros, próprios ou de terceiros contratados;</li>
+                <li style="margin-bottom: 8px;">Tratados exclusivamente para finalidades institucionais, pedagógicas e administrativas;</li>
+                <li style="margin-bottom: 8px;">Protegidos por mecanismos de controle de acesso e autenticação.</li>
+            </ul>
+            <p style="margin-bottom: 20px;">
+                A transferência de dados poderá ocorrer:
+            </p>
+            <ul style="margin-bottom: 20px; padding-left: 30px;">
+                <li style="margin-bottom: 8px;">Entre sistemas institucionais integrados ao i-Diário;</li>
+                <li style="margin-bottom: 8px;">Para provedores de serviços de infraestrutura tecnológica, quando estritamente necessário;</li>
+                <li style="margin-bottom: 8px;">Mediante obrigação legal, regulatória ou ordem judicial.</li>
+            </ul>
+            <p style="margin-bottom: 20px;">
+                Não há comercialização ou compartilhamento indevido de dados pessoais com terceiros.
             </p>
 
             <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px; font-size: 20px;">3. Segurança</h2>
             <p style="margin-bottom: 20px;">
-                O usuário reconhece que sua senha de acesso ao site é de uso pessoal e intransferível, não podendo fornecê-la a terceiros em nenhuma hipótese, devendo tomar todas as providências cabíveis para garantir sua confidencialidade. O nível de segurança da senha, conforme combinação de letras, números e caracteres é de exclusiva responsabilidade do candidato. A recuperação de senhas perdidas ou esquecidas dar-se-á através do próprio sistema i-Diário App. O candidato reconhece que deve providenciar segurança adequada no uso de seus equipamentos de informática, devendo utilizar, sempre que possível sistema de antivírus atualizados, firewalls e outros sistemas de segurança atualizados. O candidato compromete-se a responder integralmente por quaisquer consequências jurídicas decorrentes diretamente da perda ou extravio de sua senha, devido a um comportamento seu considerado doloso ou culposo - imprudência, negligência imperícia.
+                O i-Diário adota medidas técnicas e administrativas adequadas para proteger os dados pessoais, incluindo:
+            </p>
+            <ul style="margin-bottom: 20px; padding-left: 30px;">
+                <li style="margin-bottom: 8px;">Criptografia de dados em trânsito e, quando aplicável, em repouso;</li>
+                <li style="margin-bottom: 8px;">Controle de acesso baseado em perfis de usuário;</li>
+                <li style="margin-bottom: 8px;">Monitoramento de acessos e registros de auditoria;</li>
+                <li style="margin-bottom: 8px;">Atualizações periódicas de segurança.</li>
+            </ul>
+            <p style="margin-bottom: 20px;">
+                Apesar das medidas adotadas, nenhum sistema é totalmente imune a riscos. Em caso de incidente de segurança que possa acarretar risco ou dano relevante aos titulares, serão adotadas as providências legais cabíveis.
             </p>
 
-            <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px; font-size: 20px;">4. Configurações de Cookies</h2>
+            <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px; font-size: 20px;">4. Configuração de Cookies e Tecnologias Semelhantes</h2>
             <p style="margin-bottom: 20px;">
-                O i-Diário App utiliza cookies com o objetivo de melhorar a experiência do usuário, permitindo que seja fornecido um melhor conteúdo, por exemplo, indicações mais precisas de ofertas de emprego.
+                O i-Diário pode utilizar cookies ou tecnologias similares para:
             </p>
+            <ul style="margin-bottom: 20px; padding-left: 30px;">
+                <li style="margin-bottom: 8px;">Manter sessões autenticadas;</li>
+                <li style="margin-bottom: 8px;">Melhorar a experiência do usuário;</li>
+                <li style="margin-bottom: 8px;">Garantir o funcionamento correto das funcionalidades.</li>
+            </ul>
             <p style="margin-bottom: 20px;">
-                Um cookie, no âmbito do protocolo de comunicação HTTP usado na Internet, é um pequeno arquivo de computador ou pacote de dados enviados por um site de Internet para o navegador do usuário, quando o usuário visita o site. Cada vez que o usuário visita o site novamente, o navegador envia o cookie de volta para o servidor para notificar atividades prévias do usuário. Os cookies foram concebidos para serem um mecanismo confiável para que sites se lembrem de informações da atividade do usuário, como senhas gravadas, itens adicionados no carrinho de compras em uma loja online, hiperligações que foram clicadas anteriormente, entre outros. Assim, melhoram a navegação, aumentando a eficiência da resposta.
-            </p>
-            <p style="margin-bottom: 20px;">
-                A maioria dos navegadores aceitam cookies automaticamente mas você pode alterar suas configurações da internet para não aceitar cookies ou sujeitá-los a sua autorização.
-            </p>
-
-            <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px; font-size: 20px;">5. Direitos</h2>
-            <p style="margin-bottom: 20px;">
-                O usuário tem o direito de ter acesso aos seus dados, a qualquer momento, para corrigi-los se os detalhes estiverem incorretos, alterar suas configurações de privacidade, se opor ao tratamento dos seus dados e cancelar a inscrição no i-Diário App, mediante solicitação pelo e-mail: <a href="mailto:projetosesistemas@canoastec.rs.gov.br" style="color: #0066cc; text-decoration: none;">projetosesistemas@canoastec.rs.gov.br</a>
-            </p>
-            <p style="margin-bottom: 20px;">
-                O candidato reconhece que o cadastro de seu currículo implica a revelação de todas as informações apostas no currículo pelo próprio candidato para a empresa que cadastrou a vaga.
-            </p>
-            <p style="margin-bottom: 20px;">
-                O candidato está ciente de que as informações disponibilizadas no i-Diário App poderão ser compartilhadas com as empresas detentoras das vagas, sem necessidade de concordância ou manifestação expressa.
+                Esses mecanismos não são utilizados para fins publicitários ou de rastreamento comercial. O usuário pode, quando aplicável, gerenciar permissões diretamente nas configurações do dispositivo.
             </p>
 
-            <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px; font-size: 20px;">6. Modificação da política de privacidade e proteção de dados</h2>
+            <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px; font-size: 20px;">5. Direitos dos Titulares de Dados</h2>
             <p style="margin-bottom: 20px;">
-                Reserva-se ao direito de modificar a presente política para adaptá-la para futuros desenvolvimentos legislativos ou jurisprudenciais. Qualquer mudança que não derivam de adaptação às alterações legislativas ou jurisprudenciais será anunciada no site ou, se significativas, comunicada por e-mail para os usuários.
+                Nos termos da LGPD, o usuário possui os seguintes direitos:
+            </p>
+            <ul style="margin-bottom: 20px; padding-left: 30px;">
+                <li style="margin-bottom: 8px;">Confirmação da existência de tratamento de dados;</li>
+                <li style="margin-bottom: 8px;">Acesso aos dados pessoais;</li>
+                <li style="margin-bottom: 8px;">Correção de dados incompletos, inexatos ou desatualizados;</li>
+                <li style="margin-bottom: 8px;">Anonimização, bloqueio ou eliminação de dados desnecessários;</li>
+                <li style="margin-bottom: 8px;">Portabilidade dos dados, quando aplicável;</li>
+                <li style="margin-bottom: 8px;">Eliminação dos dados tratados com consentimento;</li>
+                <li style="margin-bottom: 8px;">Informação sobre compartilhamento de dados;</li>
+                <li style="margin-bottom: 8px;">Revogação do consentimento, quando este for a base legal.</li>
+            </ul>
+            <p style="margin-bottom: 20px;">
+                As solicitações poderão ser realizadas por meio dos canais institucionais responsáveis pela gestão do i-Diário.
+            </p>
+
+            <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px; font-size: 20px;">6. Modificação da Política de Privacidade e Proteção de Dados</h2>
+            <p style="margin-bottom: 20px;">
+                Esta Política de Privacidade poderá ser atualizada a qualquer tempo, visando adequação legal, técnica ou operacional.
+            </p>
+            <p style="margin-bottom: 20px;">
+                As alterações relevantes serão comunicadas aos usuários por meio do próprio aplicativo ou por canais institucionais oficiais. A continuidade do uso do i-Diário após as atualizações implica ciência e concordância com os novos termos.
+            </p>
+            <p style="margin-bottom: 20px; margin-top: 30px; font-weight: bold;">
+                Última atualização: 16/12/2025
             </p>
         </div>
     </div>
