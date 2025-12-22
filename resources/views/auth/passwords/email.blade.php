@@ -4,7 +4,7 @@
     <h2>Redefinição senha</h2>
 
     <form action="{{ route('password.email') }}" method="post">
-        <label for="login">Matrícula:</label>
+        <label for="login">Login:</label>
         <input type="text" name="login" id="login">
 
         <button type="submit" class="submit">Redefinir</button>
