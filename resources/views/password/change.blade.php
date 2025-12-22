@@ -7,7 +7,7 @@
 
         {{csrf_field()}}
 
-        <label for="login">Matrícula:</label>
+        <label for="login">Login:</label>
         <input type="text" name="login" id="login">
 
         <label for="password">Senha:</label>

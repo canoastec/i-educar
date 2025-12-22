@@ -7,7 +7,7 @@
 
         <input type="hidden" name="token" value="{{ $token }}">
 
-        <label for="login">Matrícula:</label>
+        <label for="login">Login:</label>
         <input type="text" name="login" id="login">
 
         <label for="password">Senha:</label>
