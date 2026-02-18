@@ -87,6 +87,8 @@ class LoginLegacySession
      */
     public function handle($event)
     {
+        $event->user->load('type');
+        
         $loggedUser = $this->getLoggedUserInfo($event->user);
         Session::put([
             'itj_controle' => 'logado',
