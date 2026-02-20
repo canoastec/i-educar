@@ -7,6 +7,7 @@ use App\Events\RegistrationCopyEvent;
 use App\Events\RegistrationEvent;
 use App\Events\ReportIssued;
 use App\Events\TransferEvent;
+use App\Events\UserCreated;
 use App\Events\UserDeleted;
 use App\Events\UserUpdated;
 use App\Listeners\AcceptTransferRequestListener;
@@ -66,6 +67,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         MessageSending::class => [
             MessageSendingListener::class,
+        ],
+        UserCreated::class => [
+            ForgetCachedUserListener::class,
         ],
         UserUpdated::class => [
             ForgetCachedUserListener::class,

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\UserCreated;
 use App\Events\UserDeleted;
 use App\Events\UserUpdated;
 use App\Models\LegacyAccess;
@@ -59,6 +60,7 @@ class User extends Authenticatable
     public $timestamps = false;
 
     protected $dispatchesEvents = [
+        'created' => UserCreated::class,
         'updated' => UserUpdated::class,
         'deleted' => UserDeleted::class,
     ];
