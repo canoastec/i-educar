@@ -320,6 +320,16 @@ class Portabilis_View_Helper_Inputs
         $this->multipleSearchResourceInput('multipleSearchSerie', $attrName, $inputOptions, $helperOptions);
     }
 
+    public function multipleSearchSerieMultiselect($attrName, $inputOptions = [], $helperOptions = [])
+    {
+        $this->multipleSearchResourceInput('multipleSearchSerieMultiselect', $attrName, $inputOptions, $helperOptions);
+    }
+
+    public function multipleSearchTurmaMultiselect($attrName, $inputOptions = [], $helperOptions = [])
+    {
+        $this->multipleSearchResourceInput('multipleSearchTurmaMultiselect', $attrName, $inputOptions, $helperOptions);
+    }
+
     public function multipleSearchCustom($attrName, $inputOptions = [], $helperOptions = [])
     {
         $this->multipleSearchResourceInput('multipleSearchCustom', $attrName, $inputOptions, $helperOptions);
