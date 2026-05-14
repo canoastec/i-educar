@@ -80,14 +80,19 @@ Route::group(['middleware' => ['ieducar.navigation', 'ieducar.footer', 'ieducar.
         ->defaults('uri', 'educar_tipo_usuario_lst.php')
         ->name('usertype.index');
     Route::get('/usuarios/tipos/novo', 'AccessLevelController@new')
+        ->middleware('can:modify:' . Process::USER_TYPE)
         ->name('usertype.new');
     Route::get('/usuarios/tipos/{userType}', 'AccessLevelController@show')
+        ->middleware('can:view:' . Process::USER_TYPE)
         ->name('usertype.show');
     Route::post('/usuarios/tipos', 'AccessLevelController@create')
+        ->middleware('can:modify:' . Process::USER_TYPE)
         ->name('usertype.create');
     Route::put('/usuarios/tipos/{userType}', 'AccessLevelController@update')
+        ->middleware('can:modify:' . Process::USER_TYPE)
         ->name('usertype.update');
     Route::delete('/usuarios/tipos/{userType}', 'AccessLevelController@delete')
+        ->middleware('can:remove:' . Process::USER_TYPE)
         ->name('usertype.delete');
 
     Route::get('/cancelar-enturmacao-em-lote/{schoolClass}', 'BatchEnrollmentController@indexCancelEnrollments')
