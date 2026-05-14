@@ -10,6 +10,7 @@ use App\Models\LegacyStudent;
 use App\Services\UrlPresigner;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Throwable;
@@ -87,8 +88,10 @@ class LoginLegacySession
      */
     public function handle($event)
     {
+        Cache::forget('user_' . $event->user->getKey());
+
         $event->user->load('type');
-        
+
         $loggedUser = $this->getLoggedUserInfo($event->user);
         Session::put([
             'itj_controle' => 'logado',
