@@ -8,6 +8,11 @@ trait Connections
     {
         $connections = config('database.connections');
 
-        return array_diff(array_keys($connections), ['sqlite', 'mysql', 'pgsql', 'sqlsrv', 'bussolastaging', 'mariadb', 'audit']);
+        $filtered = array_values(array_diff(
+            array_keys($connections),
+            ['sqlite', 'mysql', 'pgsql', 'sqlsrv', 'bussolastaging', 'mariadb', 'audit']
+        ));
+
+        return $filtered ?: [config('database.default')];
     }
 }
