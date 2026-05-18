@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\UserCreated;
 use App\Events\UserDeleted;
 use App\Events\UserUpdated;
 use App\Models\LegacyEmployee;
@@ -273,6 +274,8 @@ return new class extends clsCadastro
             $this->insereUsuarioEscolas(codUsuario: $this->ref_pessoa, escolas: $this->escola);
 
             if ($cadastrou) {
+                UserCreated::dispatch(User::findOrFail($this->ref_pessoa));
+
                 $this->mensagem .= 'Cadastro efetuado com sucesso.<br>';
                 $this->simpleRedirect('educar_usuario_lst.php');
             }

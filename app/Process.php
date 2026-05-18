@@ -24,6 +24,8 @@ class Process
 
     public const MENU_EMPLOYEES = 71;
 
+    public const USER_TYPE = 554;
+
     public const REGISTRATIONS = 578;
 
     public const ENROLLMENT_HISTORY = 1001;
