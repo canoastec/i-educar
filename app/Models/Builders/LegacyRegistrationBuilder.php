@@ -138,6 +138,11 @@ class LegacyRegistrationBuilder extends LegacyBuilder
         return $this->whereHas('situations', fn ($q) => $q->situation($situation));
     }
 
+    public function whereSituationApproved(): self
+    {
+        return $this->whereHas('situations', fn ($q) => $q->approved());
+    }
+
     /**
      * Filtra por Turma
      */
