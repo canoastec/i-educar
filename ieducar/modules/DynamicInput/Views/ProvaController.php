@@ -51,7 +51,6 @@ class ProvaController extends ApiCoreController
         }
     }
 
-    // Séries disponíveis por ano (a partir das provas existentes no ano)
     protected function canGetSeries()
     {
         return $this->validatesPresenceOf('ano');
@@ -92,7 +91,6 @@ class ProvaController extends ApiCoreController
         }
     }
 
-    // Disciplinas disponíveis por ano + série (a partir das provas existentes)
     protected function canGetDisciplinas()
     {
         return $this->validatesPresenceOf(['ano', 'serie_prova']);
@@ -135,7 +133,6 @@ class ProvaController extends ApiCoreController
         }
     }
 
-    // Escolas da prova (filtra por ano e prova)
     protected function canGetEscolas()
     {
         return $this->validatesPresenceOf(['ano', 'prova']);
@@ -150,7 +147,7 @@ class ProvaController extends ApiCoreController
             try {
                 $resources = [];
 
-                if (class_exists('Canoastec\\Provas\\Models\\StudentExam') && class_exists('App\\Models\\LegacyRegistration') && class_exists('App\\Models\\LegacyEnrollment')) {
+                if (class_exists('Canoastec\\Provas\\Models\\StudentExam') && class_exists('App\\Models\\LegacyEnrollment')) {
                     $studentExams = Canoastec\Provas\Models\StudentExam::query()
                         ->where('exam_id', $prova)
                         ->get();
@@ -161,16 +158,16 @@ class ProvaController extends ApiCoreController
                         $student = $se->student ?? null;
                         if (! $student) continue;
 
-                        $registration = App\Models\LegacyRegistration::where('ref_cod_aluno', $student->cod_aluno)
-                            ->where('ativo', 1)
-                            ->where('ano', $ano)
-                            ->first();
-                        if (! $registration) continue;
+                        $referenceDate = $se->start_exam ?? $se->created_at;
 
-                        $enrollment = App\Models\LegacyEnrollment::where('ref_cod_matricula', $registration->cod_matricula)
-                            ->where('ativo', 1)
+                        $enrollment = App\Models\LegacyEnrollment::query()
+                            ->whereHas('registration', fn ($q) => $q->where('ref_cod_aluno', $student->cod_aluno)->where('ano', $ano))
+                            ->where('data_enturmacao', '<=', $referenceDate)
+                            ->where(fn ($q) => $q->whereNull('data_exclusao')->orWhere('data_exclusao', '>=', $referenceDate))
                             ->with(['schoolClass.school'])
-                            ->orderByDesc('sequencial')
+                            ->orderByDesc('data_enturmacao')
+                            ->orderByRaw('data_exclusao IS NULL DESC')
+                            ->orderByDesc('id')
                             ->first();
                         if (! $enrollment) continue;
 
@@ -195,7 +192,6 @@ class ProvaController extends ApiCoreController
     }
 
 
-    // Turmas da prova (filtra por ano, prova e escola)
     protected function canGetTurmas()
     {
         return $this->validatesPresenceOf(['ano', 'prova', 'escola_prova']);
@@ -211,7 +207,7 @@ class ProvaController extends ApiCoreController
             try {
                 $resources = [];
 
-                if (class_exists('Canoastec\\Provas\\Models\\StudentExam') && class_exists('App\\Models\\LegacyRegistration') && class_exists('App\\Models\\LegacyEnrollment')) {
+                if (class_exists('Canoastec\\Provas\\Models\\StudentExam') && class_exists('App\\Models\\LegacyEnrollment')) {
                     $studentExams = Canoastec\Provas\Models\StudentExam::query()
                         ->where('exam_id', $prova)
                         ->get();
@@ -222,21 +218,20 @@ class ProvaController extends ApiCoreController
                         $student = $se->student ?? null;
                         if (! $student) continue;
 
-                        $registration = App\Models\LegacyRegistration::where('ref_cod_aluno', $student->cod_aluno)
-                            ->where('ativo', 1)
-                            ->where('ano', $ano)
-                            ->first();
-                        if (! $registration) continue;
+                        $referenceDate = $se->start_exam ?? $se->created_at;
 
-                        $enrollment = App\Models\LegacyEnrollment::where('ref_cod_matricula', $registration->cod_matricula)
-                            ->where('ativo', 1)
+                        $enrollment = App\Models\LegacyEnrollment::query()
+                            ->whereHas('registration', fn ($q) => $q->where('ref_cod_aluno', $student->cod_aluno)->where('ano', $ano))
+                            ->where('data_enturmacao', '<=', $referenceDate)
+                            ->where(fn ($q) => $q->whereNull('data_exclusao')->orWhere('data_exclusao', '>=', $referenceDate))
                             ->with(['schoolClass'])
-                            ->orderByDesc('sequencial')
+                            ->orderByDesc('data_enturmacao')
+                            ->orderByRaw('data_exclusao IS NULL DESC')
+                            ->orderByDesc('id')
                             ->first();
                         if (! $enrollment) continue;
 
                         $class = optional($enrollment->schoolClass);
-                        // Filtra pela escola selecionada
                         if ($escola) {
                             $classSchoolId = $class->ref_ref_cod_escola ?? $class->ref_cod_escola ?? null;
                             if (! $classSchoolId || (string)$classSchoolId !== (string)$escola) {
