@@ -89,6 +89,40 @@ class HabilidadeController extends ApiCoreController
         }
     }
 
+    protected function getDisciplinas()
+    {
+        try {
+            $resources = [];
+
+            if (! class_exists('Canoastec\\Provas\\Models\\Exam') || ! class_exists('App\\Models\\LegacyDiscipline')) {
+                return ['options' => $resources];
+            }
+
+            $disciplineIds = Canoastec\Provas\Models\Exam::query()
+                ->whereNotNull('discipline_id')
+                ->distinct()
+                ->pluck('discipline_id')
+                ->all();
+
+            if (empty($disciplineIds)) {
+                return ['options' => $resources];
+            }
+
+            $disciplines = App\Models\LegacyDiscipline::query()
+                ->whereIn('id', $disciplineIds)
+                ->orderBy('nome')
+                ->get(['id', 'nome']);
+
+            foreach ($disciplines as $discipline) {
+                $resources['__' . $discipline->id] = $this->toUtf8($discipline->nome);
+            }
+
+            return ['options' => $resources];
+        } catch (\Throwable $e) {
+            return ['options' => []];
+        }
+    }
+
     public function Gerar()
     {
         if ($this->isRequestFor('get', 'escolas')) {
@@ -99,6 +133,8 @@ class HabilidadeController extends ApiCoreController
             $this->appendResponse($this->getCodigos());
         } elseif ($this->isRequestFor('get', 'habilidades')) {
             $this->appendResponse($this->getHabilidades());
+        } elseif ($this->isRequestFor('get', 'disciplinas')) {
+            $this->appendResponse($this->getDisciplinas());
         } else {
             $this->notImplementedOperationError();
         }
