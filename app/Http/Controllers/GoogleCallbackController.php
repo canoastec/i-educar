@@ -22,8 +22,7 @@ class GoogleCallbackController
             ->first();
 
         if (empty($user)) {
-            session(['google_email' => $email]);
-            return redirect()->route('auth.google.link.view');
+            return redirect('/login')->withErrors(['login' => 'Usuário não encontrado.']);
         }
 
         if ($user->isInactive()) {
