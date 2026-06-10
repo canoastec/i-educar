@@ -24,9 +24,6 @@ Route::view('/politica-privacidade', 'politica-privacidade')->name('politica-pri
 Route::redirect('intranet/index.php', '/web')
     ->name('home');
 
-Route::get('auth/google/link', 'Auth\LinkAccountController@showLinkFormat')->name('auth.google.link.view');
-Route::post('auth/google/link', 'Auth\LinkAccountController@link')->name('auth.google.link');
-
 Route::any('module/Api/{uri}', 'LegacyController@api')->where('uri', '.*');
 
 Route::any('intranet/suspenso.php', 'LegacyController@intranet')

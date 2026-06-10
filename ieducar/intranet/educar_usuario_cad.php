@@ -138,7 +138,7 @@ return new class extends clsCadastro
             $this->campoOculto(nome: 'ref_pessoa', valor: $this->ref_pessoa);
         }
 
-        $this->campoTexto(nome: 'matricula', campo: 'Matrícula', valor: $this->matricula, tamanhovisivel: 12, tamanhomaximo: 12, obrigatorio: true);
+        $this->campoTexto(nome: 'matricula', campo: 'Matrícula', valor: $this->matricula, tamanhovisivel: 50, tamanhomaximo: 255, obrigatorio: true);
         $this->campoSenha(nome: '_senha', campo: 'Senha', valor: null, obrigatorio: $cadastrando, descricao: empty($cadastrando) ? 'Preencha apenas se desejar alterar a senha' : '');
 
         if (empty($this->_senha)) {
