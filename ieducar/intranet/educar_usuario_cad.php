@@ -138,14 +138,14 @@ return new class extends clsCadastro
             $this->campoOculto(nome: 'ref_pessoa', valor: $this->ref_pessoa);
         }
 
-        $this->campoTexto(nome: 'matricula', campo: 'Matrícula', valor: $this->matricula, tamanhovisivel: 12, tamanhomaximo: 12, obrigatorio: true);
+        $this->campoTexto(nome: 'matricula', campo: 'Matrícula', valor: $this->matricula, tamanhovisivel: 50, tamanhomaximo: 255, obrigatorio: true);
         $this->campoSenha(nome: '_senha', campo: 'Senha', valor: null, obrigatorio: $cadastrando, descricao: empty($cadastrando) ? 'Preencha apenas se desejar alterar a senha' : '');
 
         if (empty($this->_senha)) {
             $this->inputsHelper()->checkbox(attrName: 'force_reset_password', inputOptions: ['label' => 'Forçar alteração de senha no primeiro acesso', $this->force_reset_password]);
         }
 
-        $this->campoEmail(nome: 'email', campo: 'E-mail usuário', valor: $this->email, tamanhovisivel: 50, tamanhomaximo: 50, descricao: 'Utilizado para redefinir a senha, caso o usúario esqueça<br />Este campo pode ser gravado em branco, neste caso será solicitado um e-mail ao usuário, após entrar no sistema.');
+        $this->campoEmail(nome: 'email', campo: 'E-mail usuário', valor: $this->email, tamanhovisivel: 50, tamanhomaximo: 255, descricao: 'Utilizado para redefinir a senha, caso o usúario esqueça<br />Este campo pode ser gravado em branco, neste caso será solicitado um e-mail ao usuário, após entrar no sistema.');
         $this->campoTexto(nome: 'matricula_interna', campo: 'Matrícula interna', valor: $this->matricula_interna, tamanhovisivel: 30, tamanhomaximo: 30, descricao: 'Utilizado somente para registro, caso a instituição deseje que a matrícula interna deste funcionário seja registrada no sistema.');
         $this->campoData(nome: 'data_inicial', campo: 'Data inicial', valor: $this->data_inicial);
         $this->campoData(nome: 'data_expiracao', campo: 'Data de expiração', valor: $this->data_expiracao);
