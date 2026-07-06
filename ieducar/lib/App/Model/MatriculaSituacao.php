@@ -30,6 +30,8 @@ class App_Model_MatriculaSituacao extends CoreExt_Enum
 
     const FALECIDO = 15;
 
+    const FICAI = 16;
+
     protected $_data = [
         self::APROVADO => 'Aprovado',
         self::REPROVADO => 'Retido',
@@ -44,6 +46,7 @@ class App_Model_MatriculaSituacao extends CoreExt_Enum
         self::APROVADO_PELO_CONSELHO => 'Aprovado pelo conselho',
         self::REPROVADO_POR_FALTAS => 'Reprovado por faltas',
         self::FALECIDO => 'Falecido',
+        self::FICAI => 'FICAI',
     ];
 
     public static function getInstance()

@@ -188,6 +188,7 @@ if (is_numeric($_GET['alu']) && is_numeric($_GET['ins']) &&
       AND eal.ativo = 1
       AND m.ref_cod_curso = c.cod_curso
       AND m.aprovado != 6
+      AND m.aprovado != 16
       AND c.ref_cod_instituicao = %d
     ORDER BY
       m.cod_matricula ASC',

@@ -115,6 +115,7 @@ class RegistrationService
                 break;
 
             case App_Model_MatriculaSituacao::ABANDONO:
+            case App_Model_MatriculaSituacao::FICAI:
                 $this->markEnrollmentsAsAbandoned($registration);
                 $this->processDisciplineScoreSituation($registration, $newStatus);
                 break;
