@@ -308,6 +308,7 @@ class LegacyRegistration extends LegacyModel
     {
         return Attribute::make(
             get: fn () => $this->aprovado == App_Model_MatriculaSituacao::ABANDONO
+                || $this->aprovado == App_Model_MatriculaSituacao::FICAI
         );
     }
 
