@@ -34,6 +34,8 @@ class RegistrationStatus implements Enum
 
     public const DECEASED = 15;
 
+    public const FICAI = 16;
+
     /**
      * Situações das enturmações
      *
@@ -56,6 +58,7 @@ class RegistrationStatus implements Enum
             self::APPROVED_BY_BOARD => 'Aprovado pelo conselho',
             self::REPROVED_BY_ABSENCE => 'Reprovado por faltas',
             self::DECEASED => 'Falecido',
+            self::FICAI => 'FICAI',
         ];
     }
 
@@ -66,6 +69,7 @@ class RegistrationStatus implements Enum
     {
         return [
             self::ABANDONED,
+            self::FICAI,
             self::TRANSFERRED,
             self::DECEASED,
         ];
@@ -99,6 +103,7 @@ class RegistrationStatus implements Enum
             self::TRANSFERRED => 'Transferido',
             self::RECLASSIFIED => 'Reclassificado',
             self::ABANDONED => 'Deixou de Frequentar',
+            self::FICAI => 'FICAI',
             self::APPROVED_WITH_DEPENDENCY => 'Aprovado com dependência',
             self::APPROVED_BY_BOARD => 'Aprovado pelo conselho',
             self::REPROVED_BY_ABSENCE => 'Reprovado por faltas',

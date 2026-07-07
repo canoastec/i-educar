@@ -66,10 +66,10 @@ class MatriculaController extends ApiCoreController
                 (case when instituicao.permissao_filtro_abandono_transferencia then
                   matricula.aprovado in (1, 2, 3, 7, 8, 9, 12, 13, 14)
                  else
-                  matricula.aprovado in (1, 2, 3, 4, 6, 7, 8, 9, 12, 13, 14)
+                  matricula.aprovado in (1, 2, 3, 4, 6, 16, 7, 8, 9, 12, 13, 14)
                  end)
                else
-                matricula.aprovado in (1, 2, 3, 4, 6, 7, 8, 9, 12, 13, 14)
+                matricula.aprovado in (1, 2, 3, 4, 6, 16, 7, 8, 9, 12, 13, 14)
                end)
              end)
         and (case when aprovado = 4 then not exists (select * from pmieducar.matricula m where m.ativo = 1 and m.ano = matricula.ano and m.ref_cod_aluno = aluno.cod_aluno and m.ref_ref_cod_escola = matricula.ref_ref_cod_escola and m.aprovado <> 4 ) else true end)
@@ -98,10 +98,10 @@ class MatriculaController extends ApiCoreController
                 (case when instituicao.permissao_filtro_abandono_transferencia then
                   matricula.aprovado in (1, 2, 3, 7, 8, 9, 12, 13, 14)
                  else
-                  matricula.aprovado in (1, 2, 3, 4, 6, 7, 8, 9, 12, 13, 14)
+                  matricula.aprovado in (1, 2, 3, 4, 6, 16, 7, 8, 9, 12, 13, 14)
                  end)
                else
-                matricula.aprovado in (1, 2, 3, 4, 6, 7, 8, 9, 12, 13, 14)
+                matricula.aprovado in (1, 2, 3, 4, 6, 16, 7, 8, 9, 12, 13, 14)
                end)
              end)
         and (case when aprovado = 4 then not exists (select * from pmieducar.matricula m where m.ativo = 1 and m.ano = matricula.ano and m.ref_cod_aluno = aluno.cod_aluno and m.ref_ref_cod_escola = matricula.ref_ref_cod_escola and m.aprovado <> 4 ) else true end)
@@ -676,6 +676,7 @@ class MatriculaController extends ApiCoreController
             if (
                 $situacaoNova == App_Model_MatriculaSituacao::TRANSFERIDO ||
                 $situacaoNova == App_Model_MatriculaSituacao::ABANDONO ||
+                $situacaoNova == App_Model_MatriculaSituacao::FICAI ||
                 $situacaoNova == App_Model_MatriculaSituacao::FALECIDO
             ) {
                 if ($enturmacoes) {
@@ -699,6 +700,8 @@ class MatriculaController extends ApiCoreController
                         if ($situacaoNova == App_Model_MatriculaSituacao::TRANSFERIDO) {
                             $enturmacao->marcaAlunoTransferido();
                         } elseif ($situacaoNova == App_Model_MatriculaSituacao::ABANDONO) {
+                            $enturmacao->marcaAlunoAbandono();
+                        } elseif ($situacaoNova == App_Model_MatriculaSituacao::FICAI) {
                             $enturmacao->marcaAlunoAbandono();
                         } elseif ($situacaoNova == App_Model_MatriculaSituacao::FALECIDO) {
                             $enturmacao->marcaAlunoFalecido();
