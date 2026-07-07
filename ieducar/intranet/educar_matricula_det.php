@@ -244,7 +244,7 @@ return new class extends clsDetalhe
             $this->addDetalhe(detalhe: ['Observação', $registro['observacao']]);
         }
 
-        if ($registro['aprovado'] == App_Model_MatriculaSituacao::ABANDONO) {
+        if ($registro['aprovado'] == App_Model_MatriculaSituacao::ABANDONO || $registro['aprovado'] == App_Model_MatriculaSituacao::FICAI) {
 
             $tipoAbandono = LegacyAbandonmentType::find(id: $registro['ref_cod_abandono_tipo'])?->getAttributes();
 
@@ -264,7 +264,7 @@ return new class extends clsDetalhe
 
         if ($obj_permissoes->permissao_cadastra(int_processo_ap: 578, int_idpes_usuario: $this->pessoa_logada, int_soma_nivel_acesso: 7)) {
             // verifica se existe transferencia
-            if ($registro['aprovado'] != 4 && $registro['aprovado'] != 6) {
+            if ($registro['aprovado'] != 4 && $registro['aprovado'] != 6 && $registro['aprovado'] != 16) {
                 $obj_transferencia = new clsPmieducarTransferenciaSolicitacao;
 
                 $lst_transferencia = $obj_transferencia->lista(
@@ -360,7 +360,7 @@ return new class extends clsDetalhe
                 $this->array_botao_url_script[] = "go(\"educar_matricula_turma_turno_cad.php?ref_cod_matricula={$registro['cod_matricula']}&ref_cod_aluno={$registro['ref_cod_aluno']}\")";
             }
 
-            if ($registro['aprovado'] != 4 && $registro['aprovado'] != 6) {
+            if ($registro['aprovado'] != 4 && $registro['aprovado'] != 6 && $registro['aprovado'] != 16) {
                 if ($this->permissaoSolicitarTransferencia()) {
                     if (is_array(value: $lst_transferencia) && isset($data_transferencia)) {
                         $this->array_botao[] = 'Cancelar solicitação transferência';
@@ -402,7 +402,7 @@ return new class extends clsDetalhe
                 }
             }
 
-            if ($this->permissaoAbandono() && $registro['aprovado'] == App_Model_MatriculaSituacao::ABANDONO && $this->permissaoAbandono()) {
+            if ($this->permissaoAbandono() && ($registro['aprovado'] == App_Model_MatriculaSituacao::ABANDONO || $registro['aprovado'] == App_Model_MatriculaSituacao::FICAI) && $this->permissaoAbandono()) {
                 $this->array_botao[] = 'Turno';
                 $this->array_botao_url_script[] = 'showAlertTurnoDeixouFrequentar()';
 
