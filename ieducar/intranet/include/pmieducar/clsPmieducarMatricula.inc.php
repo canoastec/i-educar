@@ -1251,6 +1251,31 @@ class clsPmieducarMatricula extends Model
         return false;
     }
 
+    public function cadastraObsFicai($obs, $tipoAbandono, $deixouDeFrequentarIdadeObrigatoria)
+    {
+        if (is_numeric($this->cod_matricula)) {
+            if (trim($obs) == '') {
+                $obs = 'Não informado';
+            } elseif (is_string($obs)) {
+                $obs = pg_escape_string($obs);
+            }
+
+            $db = new clsBanco;
+            $consulta = "UPDATE {$this->_tabela}
+                            SET aprovado = " . App_Model_MatriculaSituacao::FICAI . ",
+                                observacao = '$obs',
+                                ref_cod_abandono_tipo = '$tipoAbandono',
+                                deixou_de_frequentar_idade_obrigatoria = '$deixouDeFrequentarIdadeObrigatoria'
+                          WHERE cod_matricula = $this->cod_matricula";
+
+            $db->Consulta($consulta);
+
+            return true;
+        }
+
+        return false;
+    }
+
     public function cadastraObservacaoFalecido($observacao = null)
     {
         if (is_numeric($this->cod_matricula)) {
