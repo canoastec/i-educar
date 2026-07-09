@@ -334,6 +334,11 @@ return new class extends clsDetalhe
                     $this->array_botao_url_script[] = "go(\"educar_abandono_cad.php?ref_cod_matricula={$registro['cod_matricula']}&ref_cod_aluno={$registro['ref_cod_aluno']}\");";
                 }
 
+                if ($this->permissaoAbandono()) {
+                    $this->array_botao[] = 'FICAI';
+                    $this->array_botao_url_script[] = "go(\"educar_ficai_cad.php?ref_cod_matricula={$registro['cod_matricula']}&ref_cod_aluno={$registro['ref_cod_aluno']}\");";
+                }
+
                 if ($this->permissaoFalecido()) {
                     $this->array_botao[] = 'Falecido';
                     $this->array_botao_url_script[] = "go(\"educar_falecido_cad.php?ref_cod_matricula={$registro['cod_matricula']}&ref_cod_aluno={$registro['ref_cod_aluno']}\");";
