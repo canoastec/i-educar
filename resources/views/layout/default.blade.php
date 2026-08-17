@@ -137,15 +137,19 @@
         <td colspan="3">
             <table class='tabelanum2' style="border: 0; padding: 0; border-collapse: collapse;" role="presentation">
                 <tr>
-                    <td id="menu_lateral" class="r3c1" style="width: 170px">
-                        @include('layout.menu')
-                    </td>
+                    @if($loggedUser->role !== 'Aluno')
+                        <td id="menu_lateral" class="r3c1" style="width: 170px">
+                            @include('layout.menu')
+                        </td>
+                    @endif
 
                     <td style="vertical-align: top">
                         <table class='tabelanum2' style="border: 0; padding: 0; border-collapse: collapse; margin: 0" role="presentation">
                             <tr>
                                 <td>
-                                    @include('layout.topmenu')
+                                    @if($loggedUser->role !== 'Aluno')
+                                        @include('layout.topmenu')
+                                    @endif
                                 </td>
                             </tr>
 
@@ -154,7 +158,9 @@
                                     <table class='tablelistagem' style="border: 0; width: 100%" role="presentation">
                                         <tr style="height: 10px">
                                             <td class='fundoLocalizacao' colspan='2'>
-                                                @include('layout.breadcrumb')
+                                                @if($loggedUser->role !== 'Aluno')
+                                                    @include('layout.breadcrumb')
+                                                @endif
                                             </td>
                                         </tr>
                                     </table>
