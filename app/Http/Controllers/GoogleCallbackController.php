@@ -14,7 +14,7 @@ class GoogleCallbackController
         $email = $googleUser->getEmail();
 
         if (empty($email)) {
-            return redirect('/login')->withErrors(['login' => 'E-mail não informado pelo Google.']);
+            return redirect()->route('aluno.login')->withErrors(['login' => 'E-mail não informado pelo Google.']);
         }
 
         $user = User::query()
@@ -22,15 +22,15 @@ class GoogleCallbackController
             ->first();
 
         if (empty($user)) {
-            return redirect('/login')->withErrors(['login' => 'Usuário não encontrado.']);
+            return redirect()->route('aluno.login')->withErrors(['login' => 'Usuário não encontrado.']);
         }
 
         if ($user->isInactive()) {
-            return redirect('/login')->withErrors(['login' => $user->employee->motivo ?: __('auth.inactive')]);
+            return redirect()->route('aluno.login')->withErrors(['login' => $user->employee->motivo ?: __('auth.inactive')]);
         }
 
         if ($user->role !== 'Aluno') {
-            return redirect('/login')->withErrors(['login' => 'Acesso permitido apenas para alunos.']);
+            return redirect()->route('aluno.login')->withErrors(['login' => 'Acesso permitido apenas para alunos.']);
         }
 
         $hasActiveEnrollment = $user->person
@@ -41,7 +41,7 @@ class GoogleCallbackController
             ->exists();
 
         if (!$hasActiveEnrollment) {
-            return redirect('/login')->withErrors(['login' => 'Acesso permitido apenas para alunos matriculados.']);
+            return redirect()->route('aluno.login')->withErrors(['login' => 'Acesso permitido apenas para alunos matriculados.']);
         }
 
         Auth::login($user);
