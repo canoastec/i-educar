@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\StudentLoginController;
 use App\Http\Controllers\EnrollmentInepController;
 use App\Http\Controllers\EnrollmentsPromotionController;
 use App\Http\Controllers\ExportController;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Auth::routes(['register' => false]);
+
+Route::get('/aluno/login', [StudentLoginController::class, 'showLoginForm'])->name('aluno.login');
 
 Route::redirect('/', '/web');
 

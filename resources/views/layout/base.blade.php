@@ -38,13 +38,19 @@
         </div>
     </header>
     <div class="ieducar-content">
-        <div class="ieducar-sidebar">
-            @include('layout.menu')
-        </div>
+        @if($loggedUser->role !== 'Aluno')
+            <div class="ieducar-sidebar">
+                @include('layout.menu')
+            </div>
+        @endif
         <div class="ieducar-main">
-            @include('layout.topmenu')
+            @if($loggedUser->role !== 'Aluno')
+                @include('layout.topmenu')
+            @endif
             <div class="ieducar-main-content">
-                @include('layout.breadcrumb')
+                @if($loggedUser->role !== 'Aluno')
+                    @include('layout.breadcrumb')
+                @endif
                 @yield('content')
             </div>
         </div>
