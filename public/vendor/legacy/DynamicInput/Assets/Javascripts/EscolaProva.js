@@ -5,16 +5,27 @@
     var $provaField = getElementFor('prova');
     var $escolaField = getElementFor('escola_prova');
 
+    $escolaField.chosen({
+      no_results_text: "Sem resultados para ",
+      placeholder_text_single: "Digite o nome da escola",
+      search_contains: true,
+      allow_single_deselect: true,
+      width: "100%"
+    });
+
     var handleGetEscolas = function(resources) {
       var selectOptions = jsonResourcesToSelectOptions(resources['options']);
       updateSelect($escolaField, selectOptions, "Selecione uma escola");
+      $escolaField.trigger('chosen:updated');
     };
 
     var updateEscolas = function(){
       resetSelect($escolaField);
+      $escolaField.trigger('chosen:updated');
 
       if ($anoField.val() && $provaField.val()) {
         $escolaField.children().first().html('Aguarde carregando...');
+        $escolaField.trigger('chosen:updated');
 
         var url = getResourceUrlBuilder.buildUrl('/module/DynamicInput/prova', 'escolas', {
           ano: $anoField.val(),
@@ -42,7 +53,3 @@
 
   });
 })(jQuery);
-
-
-
-

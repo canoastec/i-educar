@@ -153,6 +153,7 @@ class ProvaController extends ApiCoreController
                         ->get();
 
                     $schools = collect();
+                    $emef = App\Models\Enums\SchoolCharacteristic::ELEMENTARY->value;
 
                     foreach ($studentExams as $se) {
                         $student = $se->student ?? null;
@@ -172,11 +173,18 @@ class ProvaController extends ApiCoreController
                         if (! $enrollment) continue;
 
                         $school = optional(optional($enrollment->schoolClass)->school);
-                        if ($school && ($school->cod_escola || $school->id)) {
-                            $id = $school->cod_escola ?? $school->id;
-                            $name = $school->name ?? $school->nome ?? ('Escola #' . $id);
-                            $schools->put($id, $this->toUtf8($name));
+                        if (! $school || ! ($school->cod_escola || $school->id)) {
+                            continue;
                         }
+
+                        // Relatórios do Provas: apenas escolas EMEF (ensino fundamental)
+                        if ((int) ($school->caracteristica_escolar ?? 0) !== $emef) {
+                            continue;
+                        }
+
+                        $id = $school->cod_escola ?? $school->id;
+                        $name = $school->name ?? $school->nome ?? ('Escola #' . $id);
+                        $schools->put($id, $this->toUtf8($name));
                     }
 
                     foreach ($schools->sort() as $id => $name) {
