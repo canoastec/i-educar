@@ -7,7 +7,16 @@ class HabilidadeController extends ApiCoreController
         try {
             $resources = [];
 
-            $escolas = App_Model_IedFinder::getEscolas();
+            $escolas = App\Models\LegacySchool::query()
+                ->where('ativo', 1)
+                ->where('caracteristica_escolar', App\Models\Enums\SchoolCharacteristic::ELEMENTARY->value)
+                ->with(['person', 'organization'])
+                ->orderBy('cod_escola')
+                ->get()
+                ->sortBy(fn ($escola) => mb_strtoupper($escola->name ?? ''))
+                ->mapWithKeys(fn ($escola) => [
+                    $escola->cod_escola => mb_strtoupper($escola->name ?? ('Escola #' . $escola->cod_escola)),
+                ]);
 
             foreach ($escolas as $id => $name) {
                 $resources['__' . $id] = $this->toUtf8($name);
