@@ -22,7 +22,8 @@ class HabilidadeController extends ApiCoreController
                 $resources['__' . $id] = $this->toUtf8($name);
             }
 
-            return ['options' => $resources];
+            return ['options' => app(\Canoastec\Provas\Services\ReportSchoolScopeService::class)
+                ->filterSchoolOptions($resources)];
         } catch (\Throwable $e) {
             return ['options' => []];
         }
@@ -41,6 +42,11 @@ class HabilidadeController extends ApiCoreController
 
         try {
             $escola = $this->getRequest()->escola_habilidade;
+
+            if (! app(\Canoastec\Provas\Services\ReportSchoolScopeService::class)->allowsSchool($escola)) {
+                return ['options' => []];
+            }
+
             $turmas = App_Model_IedFinder::getTurmas($escola);
 
             $resources = [];
@@ -61,11 +67,7 @@ class HabilidadeController extends ApiCoreController
             $resources = [];
 
             if (class_exists('Canoastec\\Provas\\Models\\Skill')) {
-                $skills = Canoastec\Provas\Models\Skill::query()
-                    ->orderBy('acronym')
-                    ->get(['id', 'acronym', 'name']);
-
-                foreach ($skills as $skill) {
+                foreach ($this->getSkillsFilteredByEixo() as $skill) {
                     $resources['__' . $skill->id] = $this->toUtf8($skill->acronym);
                 }
             }
@@ -82,11 +84,7 @@ class HabilidadeController extends ApiCoreController
             $resources = [];
 
             if (class_exists('Canoastec\\Provas\\Models\\Skill')) {
-                $skills = Canoastec\Provas\Models\Skill::query()
-                    ->orderBy('acronym')
-                    ->get(['id', 'acronym', 'name']);
-
-                foreach ($skills as $skill) {
+                foreach ($this->getSkillsFilteredByEixo() as $skill) {
                     $label = trim($skill->acronym . ' - ' . $skill->name);
                     $resources['__' . $skill->id] = $this->toUtf8($label);
                 }
@@ -96,6 +94,19 @@ class HabilidadeController extends ApiCoreController
         } catch (\Throwable $e) {
             return ['options' => []];
         }
+    }
+
+    protected function getSkillsFilteredByEixo()
+    {
+        $eixo = $this->getRequest()->eixo_conhecimento ?? null;
+
+        $query = Canoastec\Provas\Models\Skill::query()->orderBy('acronym');
+
+        if ($eixo !== null && $eixo !== '') {
+            $query->where('knowledge_axis_id', (int) $eixo);
+        }
+
+        return $query->get(['id', 'acronym', 'name', 'knowledge_axis_id']);
     }
 
     protected function getDisciplinas()
