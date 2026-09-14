@@ -42,8 +42,9 @@ class HabilidadeController extends ApiCoreController
 
         try {
             $escola = $this->getRequest()->escola_habilidade;
+            $scopeService = app(\Canoastec\Provas\Services\ReportSchoolScopeService::class);
 
-            if (! app(\Canoastec\Provas\Services\ReportSchoolScopeService::class)->allowsSchool($escola)) {
+            if (! $scopeService->allowsSchool($escola)) {
                 return ['options' => []];
             }
 
@@ -55,7 +56,7 @@ class HabilidadeController extends ApiCoreController
                 $resources['__' . $id] = $this->toUtf8($name);
             }
 
-            return ['options' => $resources];
+            return ['options' => $scopeService->filterSchoolClassOptions($resources)];
         } catch (\Throwable $e) {
             return ['options' => []];
         }
@@ -137,7 +138,8 @@ class HabilidadeController extends ApiCoreController
                 $resources['__' . $discipline->id] = $this->toUtf8($discipline->nome);
             }
 
-            return ['options' => $resources];
+            return ['options' => app(\Canoastec\Provas\Services\ReportSchoolScopeService::class)
+                ->filterDisciplineOptions($resources)];
         } catch (\Throwable $e) {
             return ['options' => []];
         }

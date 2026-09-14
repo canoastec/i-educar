@@ -13,6 +13,12 @@ class ProvaController extends ApiCoreController
             $ano = $this->getRequest()->ano;
             $serie = $this->getRequest()->serie_prova ?? null;
             $disciplina = $this->getRequest()->disciplina_prova ?? null;
+            $scopeService = app(\Canoastec\Provas\Services\ReportSchoolScopeService::class);
+            $year = $ano ? (int) $ano : null;
+
+            if (! $scopeService->allowsDiscipline($disciplina, $year)) {
+                return ['options' => []];
+            }
 
             try {
                 $now = \Carbon\Carbon::now();
@@ -84,7 +90,8 @@ class ProvaController extends ApiCoreController
                     }
                 }
 
-                return ['options' => $resources];
+                return ['options' => app(\Canoastec\Provas\Services\ReportSchoolScopeService::class)
+                    ->filterGradeOptions($resources, $ano ? (int) $ano : null)];
             } catch (\Throwable $e) {
                 return ['options' => []];
             }
@@ -126,7 +133,8 @@ class ProvaController extends ApiCoreController
                     }
                 }
 
-                return ['options' => $resources];
+                return ['options' => app(\Canoastec\Provas\Services\ReportSchoolScopeService::class)
+                    ->filterDisciplineOptions($resources, $ano ? (int) $ano : null)];
             } catch (\Throwable $e) {
                 return ['options' => []];
             }
@@ -213,7 +221,10 @@ class ProvaController extends ApiCoreController
             $prova = $this->getRequest()->prova;
             $escola = $this->getRequest()->escola_prova;
 
-            if (! app(\Canoastec\Provas\Services\ReportSchoolScopeService::class)->allowsSchool($escola, $ano ? (int) $ano : null)) {
+            $scopeService = app(\Canoastec\Provas\Services\ReportSchoolScopeService::class);
+            $year = $ano ? (int) $ano : null;
+
+            if (! $scopeService->allowsSchool($escola, $year)) {
                 return ['options' => []];
             }
 
@@ -263,7 +274,7 @@ class ProvaController extends ApiCoreController
                     }
                 }
 
-                return ['options' => $resources];
+                return ['options' => $scopeService->filterSchoolClassOptions($resources, $year)];
             } catch (\Throwable $e) {
                 return ['options' => []];
             }
