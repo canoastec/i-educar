@@ -13,6 +13,12 @@ class ProvaController extends ApiCoreController
             $ano = $this->getRequest()->ano;
             $serie = $this->getRequest()->serie_prova ?? null;
             $disciplina = $this->getRequest()->disciplina_prova ?? null;
+            $scopeService = app(\Canoastec\Provas\Services\ReportSchoolScopeService::class);
+            $year = $ano ? (int) $ano : null;
+
+            if (! $scopeService->allowsDiscipline($disciplina, $year)) {
+                return ['options' => []];
+            }
 
             try {
                 $now = \Carbon\Carbon::now();
@@ -84,7 +90,8 @@ class ProvaController extends ApiCoreController
                     }
                 }
 
-                return ['options' => $resources];
+                return ['options' => app(\Canoastec\Provas\Services\ReportSchoolScopeService::class)
+                    ->filterGradeOptions($resources, $ano ? (int) $ano : null)];
             } catch (\Throwable $e) {
                 return ['options' => []];
             }
@@ -126,7 +133,8 @@ class ProvaController extends ApiCoreController
                     }
                 }
 
-                return ['options' => $resources];
+                return ['options' => app(\Canoastec\Provas\Services\ReportSchoolScopeService::class)
+                    ->filterDisciplineOptions($resources, $ano ? (int) $ano : null)];
             } catch (\Throwable $e) {
                 return ['options' => []];
             }
@@ -192,7 +200,8 @@ class ProvaController extends ApiCoreController
                     }
                 }
 
-                return ['options' => $resources];
+                return ['options' => app(\Canoastec\Provas\Services\ReportSchoolScopeService::class)
+                    ->filterSchoolOptions($resources, $ano ? (int) $ano : null)];
             } catch (\Throwable $e) {
                 return ['options' => []];
             }
@@ -211,6 +220,13 @@ class ProvaController extends ApiCoreController
             $ano = $this->getRequest()->ano;
             $prova = $this->getRequest()->prova;
             $escola = $this->getRequest()->escola_prova;
+
+            $scopeService = app(\Canoastec\Provas\Services\ReportSchoolScopeService::class);
+            $year = $ano ? (int) $ano : null;
+
+            if (! $scopeService->allowsSchool($escola, $year)) {
+                return ['options' => []];
+            }
 
             try {
                 $resources = [];
@@ -258,10 +274,62 @@ class ProvaController extends ApiCoreController
                     }
                 }
 
-                return ['options' => $resources];
+                return ['options' => $scopeService->filterSchoolClassOptions($resources, $year)];
             } catch (\Throwable $e) {
                 return ['options' => []];
             }
+        }
+    }
+
+    protected function canGetEixos()
+    {
+        return $this->validatesPresenceOf(['serie_prova', 'disciplina_prova']);
+    }
+
+    protected function getEixos()
+    {
+        if (!$this->canGetEixos()) {
+            return ['options' => []];
+        }
+
+        $serie = $this->getRequest()->serie_prova;
+        $disciplina = $this->getRequest()->disciplina_prova;
+        $prova = $this->getRequest()->prova ?? null;
+
+        try {
+            $resources = [];
+
+            if (! class_exists('Canoastec\\Provas\\Models\\KnowledgeAxis')) {
+                return ['options' => $resources];
+            }
+
+            $query = Canoastec\Provas\Models\KnowledgeAxis::query()->orderBy('name');
+
+            if (! empty($prova) && class_exists('Canoastec\\Provas\\Models\\Exam')) {
+                $exam = Canoastec\Provas\Models\Exam::query()->with('questions')->find($prova);
+
+                if ($exam) {
+                    $axisIds = $exam->questions->pluck('knowledge_axis_id')->filter()->unique()->values()->all();
+
+                    if (empty($axisIds)) {
+                        return ['options' => $resources];
+                    }
+
+                    $query->whereIn('id', $axisIds);
+                } else {
+                    $query->where('grade_id', $serie)->where('discipline_id', $disciplina);
+                }
+            } else {
+                $query->where('grade_id', $serie)->where('discipline_id', $disciplina);
+            }
+
+            foreach ($query->get(['id', 'name']) as $axis) {
+                $resources['__' . $axis->id] = $this->toUtf8($axis->name);
+            }
+
+            return ['options' => $resources];
+        } catch (\Throwable $e) {
+            return ['options' => []];
         }
     }
 
@@ -277,6 +345,8 @@ class ProvaController extends ApiCoreController
             $this->appendResponse($this->getEscolas());
         } elseif ($this->isRequestFor('get', 'turmas')) {
             $this->appendResponse($this->getTurmas());
+        } elseif ($this->isRequestFor('get', 'eixos')) {
+            $this->appendResponse($this->getEixos());
         } else {
             $this->notImplementedOperationError();
         }
