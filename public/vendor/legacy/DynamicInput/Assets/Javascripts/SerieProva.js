@@ -5,47 +5,62 @@
     var $disciplinaField = getElementFor('disciplina_prova');
     var $serieField = getElementFor('serie_prova');
 
+    $serieField.attr('data-no-autocomplete', 'true');
+
+    var refreshChosen = function($field) {
+      if (!$field || !$field.length) {
+        return;
+      }
+
+      $field.trigger('chosen:updated');
+    };
+
     var handleGetSeries = function(resources) {
       var selectOptions = jsonResourcesToSelectOptions(resources['options']);
       updateSelect($serieField, selectOptions, "Selecione uma série");
-      $serieField.trigger('chosen:updated');
+      $serieField.val('');
+      refreshChosen($serieField);
+      $serieField.change();
     };
 
     var updateSeries = function(){
       resetSelect($serieField);
       resetSelect($disciplinaField);
       resetSelect(getElementFor('prova'));
-      $serieField.trigger('chosen:updated');
-      $disciplinaField.trigger('chosen:updated');
-      getElementFor('prova').trigger('chosen:updated');
 
-      if ($anoField.val()) {
-        $serieField.children().first().html('Aguarde carregando...');
+      $serieField.val('');
+      $disciplinaField.val('');
+      getElementFor('prova').val('');
 
-        var url = getResourceUrlBuilder.buildUrl('/module/DynamicInput/prova', 'series', {
-          ano: $anoField.val()
-        });
+      $serieField.children().first().html('Selecione uma série');
+      refreshChosen($serieField);
+      refreshChosen($disciplinaField);
+      refreshChosen(getElementFor('prova'));
 
-        var options = {
-          url: url,
-          dataType: 'json',
-          success: handleGetSeries
-        };
-
-        getResources(options);
+      if (!$anoField.val()) {
+        $serieField.change();
+        return;
       }
 
-      $serieField.change();
+      $serieField.children().first().html('Aguarde carregando...');
+      refreshChosen($serieField);
+
+      var url = getResourceUrlBuilder.buildUrl('/module/DynamicInput/prova', 'series', {
+        ano: $anoField.val()
+      });
+
+      getResources({
+        url: url,
+        dataType: 'json',
+        success: handleGetSeries
+      });
     };
 
     $anoField.change(updateSeries);
-    // only depends on year
 
-    if ($anoField.val()) { updateSeries(); }
+    if ($anoField.val()) {
+      updateSeries();
+    }
 
   });
 })(jQuery);
-
-
-
-
