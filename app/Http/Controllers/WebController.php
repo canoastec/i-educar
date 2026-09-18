@@ -39,7 +39,7 @@ class WebController extends Controller
         if (str_starts_with($uri, 'web')) {
             $user = auth()->user();
 
-            if ($user && $user->ref_cod_tipo_usuario == 14) {
+            if ($user && $user->role === 'Aluno') {
                 return redirect()->route('student-exams.index');
             }
 
