@@ -27,6 +27,7 @@ return [
             'ieducar.suspended',
             'auth',
             'ieducar.checkresetpassword',
+            'redirect.student.exams',
         ],
 
         'replaces' => [

@@ -46,7 +46,7 @@ class GoogleCallbackController
 
         Auth::login($user);
 
-        return redirect()->intended();
+        return redirect()->intended(route('student-exams.index'));
     }
 }
 

@@ -14,8 +14,8 @@ class RedirectStudentToExams
             $user = Auth::user();
 
             if ($user?->role === 'Aluno' && !$request->is('minhas-provas*')) {
-                if ($request->is('/') || $request->is('web')) {
-                    return redirect('/minhas-provas');
+                if ($request->is('web') || $request->is('web/*')) {
+                    return redirect()->route('student-exams.index');
                 }
             }
         }
