@@ -81,6 +81,10 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
+        if ($user->role === 'Aluno') {
+            return redirect()->route('student-exams.index');
+        }
+
         $announcement = Announcement::query()
             ->whereHas('userTypes', fn ($q) => $q->whereKey($user->ref_cod_tipo_usuario))
             ->latest()->first();
