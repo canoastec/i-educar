@@ -4,6 +4,7 @@ use App\Events\UserCreated;
 use App\Events\UserDeleted;
 use App\Events\UserUpdated;
 use App\Models\LegacyEmployee;
+use App\Models\LegacyUserType;
 use App\Services\ChangeUserPasswordService;
 use App\Services\ValidateUserPasswordService;
 use App\User;
@@ -189,6 +190,10 @@ return new class extends clsCadastro
 
         if (is_array($lista) && count($lista)) {
             foreach ($lista as $registro) {
+                if ($this->deveOcultarTipoUsuarioNaLista(currentUser: $user, registro: $registro)) {
+                    continue;
+                }
+
                 $opcoes["{$registro['cod_tipo_usuario']}"] = "{$registro['nm_tipo']}";
                 $opcoes_["{$registro['cod_tipo_usuario']}"] = "{$registro['nivel']}";
             }
@@ -221,7 +226,6 @@ return new class extends clsCadastro
         $this->acao_enviar = 'valida()';
         if (!$this->canChange(currentUser: $user, changedUserId: $this->ref_pessoa)) {
             $this->acao_enviar = null;
-            $this->fexcluir = null;
             $scripts[] = '/vendor/legacy/Cadastro/Assets/Javascripts/disableAllFields.js';
         }
 
@@ -233,6 +237,18 @@ return new class extends clsCadastro
     public function Novo()
     {
         if ($this->notValidaDataInicial()) {
+            return false;
+        }
+
+        /** @var User $user */
+        $user = Auth::user();
+        if (!$this->canAssignTipoUsuario(
+            currentUser: $user,
+            tipoUsuarioId: $this->ref_cod_tipo_usuario,
+            changedUserId: null
+        )) {
+            $this->mensagem = 'Não é permitido cadastrar este tipo de usuário.';
+
             return false;
         }
 
@@ -321,6 +337,16 @@ return new class extends clsCadastro
             return false;
         }
 
+        if (!$this->canAssignTipoUsuario(
+            currentUser: $user,
+            tipoUsuarioId: $this->ref_cod_tipo_usuario,
+            changedUserId: $this->ref_pessoa
+        )) {
+            $this->mensagem = 'Não é permitido cadastrar ou editar este tipo de usuário.';
+
+            return false;
+        }
+
         if ($this->email && !filter_var(value: $this->email, filter: FILTER_VALIDATE_EMAIL)) {
             $this->mensagem = 'Formato do e-mail inválido.';
 
@@ -401,7 +427,7 @@ return new class extends clsCadastro
     {
         /** @var User $user */
         $user = Auth::user();
-        if (!$this->canChange(currentUser: $user, changedUserId: $this->ref_pessoa)) {
+        if (!$this->canDelete(currentUser: $user, changedUserId: $this->ref_pessoa)) {
             return false;
         }
 
@@ -451,15 +477,6 @@ return new class extends clsCadastro
         }
     }
 
-    /**
-     * Verifica se o usuário logado pode alterar o usuário em questão
-     *
-     * Caso algum usuário com nível diferente de admin tentar alterar dados do usuário admin,
-     * esse método retornará false
-     *
-     * @param int $changedUserId
-     * @return bool
-     */
     private function canChange(User $currentUser, $changedUserId)
     {
         $allow = Gate::allows('modify', 555);
@@ -476,6 +493,8 @@ return new class extends clsCadastro
             return true;
         }
 
+        $isSelf = (int) $currentUser->getKey() === (int) $changedUserId;
+
         /** @var User $changedUser */
         $changedUser = User::find($changedUserId);
 
@@ -483,8 +502,114 @@ return new class extends clsCadastro
             return true;
         }
 
+        if (
+            $currentUser->isInstitutional()
+            && !$currentUser->type?->isAncora()
+            && !$isSelf
+            && $changedUser->isInstitutional()
+        ) {
+            return false;
+        }
+
+        if ($changedUser->type?->isAncora() && $currentUser->isInstitutional() && !$isSelf) {
+            return false;
+        }
+
         if (!$changedUser->isAdmin()) {
             return true;
+        }
+
+        return false;
+    }
+
+    private function canDelete(User $currentUser, $changedUserId): bool
+    {
+        $allow = Gate::allows('modify', 555) || Gate::allows('remove', 555);
+
+        if (!$allow) {
+            return false;
+        }
+
+        if (!$changedUserId) {
+            return false;
+        }
+
+        if ($currentUser->isAdmin()) {
+            return true;
+        }
+
+        /** @var User $changedUser */
+        $changedUser = User::find($changedUserId);
+
+        if (empty($changedUser)) {
+            return false;
+        }
+
+        if (
+            $currentUser->isInstitutional()
+            && !$currentUser->type?->isAncora()
+            && $changedUser->isInstitutional()
+        ) {
+            return false;
+        }
+
+        if (!$changedUser->isAdmin()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function canAssignTipoUsuario(User $currentUser, $tipoUsuarioId, $changedUserId = null): bool
+    {
+        if (!$currentUser->isInstitutional() || empty($tipoUsuarioId)) {
+            return true;
+        }
+
+        $isSelf = $changedUserId && (int) $currentUser->getKey() === (int) $changedUserId;
+        $tipoUsuario = LegacyUserType::query()->find($tipoUsuarioId);
+
+        if (!$tipoUsuario) {
+            return true;
+        }
+
+        if (!$currentUser->type?->isAncora()) {
+            if ($isSelf) {
+                return (int) $tipoUsuarioId === (int) $currentUser->ref_cod_tipo_usuario;
+            }
+
+            return $tipoUsuario->level > LegacyUserType::LEVEL_INSTITUTIONAL;
+        }
+
+        if ($tipoUsuario->isAncora()) {
+            return $isSelf;
+        }
+
+        return true;
+    }
+
+    private function deveOcultarTipoUsuarioNaLista(User $currentUser, array $registro): bool
+    {
+        if (!$currentUser->isInstitutional()) {
+            return false;
+        }
+
+        $tipoUsuarioId = $registro['cod_tipo_usuario'];
+        $nivel = (int) $registro['nivel'];
+        $isCurrentType = (int) ($this->ref_cod_tipo_usuario ?? 0) === (int) $tipoUsuarioId;
+        $editingSelf = $this->ref_pessoa
+            && (int) $currentUser->getKey() === (int) $this->ref_pessoa;
+
+        if (!$currentUser->type?->isAncora()) {
+            if ($editingSelf && $isCurrentType) {
+                return false;
+            }
+
+            return $nivel <= LegacyUserType::LEVEL_INSTITUTIONAL;
+        }
+
+        if ($registro['nm_tipo'] === LegacyUserType::NAME_ANCORA) {
+            return !($isCurrentType || $editingSelf);
         }
 
         return false;
@@ -523,7 +648,9 @@ return new class extends clsCadastro
             ? "educar_usuario_det.php?ref_pessoa={$this->ref_pessoa}"
             : 'educar_usuario_lst.php';
 
-        $this->fexcluir = $edita;
+        /** @var User $user */
+        $user = Auth::user();
+        $this->fexcluir = $edita && $this->canDelete(currentUser: $user, changedUserId: $this->ref_pessoa);
 
         $this->nome_url_cancelar = 'Cancelar';
     }

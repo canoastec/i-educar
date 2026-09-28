@@ -41,6 +41,13 @@ class LegacyUserType extends LegacyModel
 
     public const CAN_REMOVE = 3;
 
+    public const NAME_ANCORA = 'Âncora(s)';
+
+    public function isAncora(): bool
+    {
+        return $this->nm_tipo === self::NAME_ANCORA;
+    }
+
     /**
      * @var string
      */
