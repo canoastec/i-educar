@@ -490,9 +490,11 @@ class MatriculaController extends ApiCoreController
 
     protected function getFrequencia()
     {
-        $cod_matricula = $this->getRequest()->id;
+        $cod_matricula = (int) $this->getRequest()->id;
         $objBanco = new clsBanco;
-        $frequencia = $objBanco->unicoCampo(" SELECT modules.frequencia_da_matricula({$cod_matricula}); ");
+        $frequencia = $objBanco->unicoCampo(
+            " SELECT modules.frequencia_da_matricula_periodo({$cod_matricula}); "
+        );
 
         return ['frequencia' => $frequencia];
     }
