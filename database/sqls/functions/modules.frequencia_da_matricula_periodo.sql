@@ -7,34 +7,33 @@ CREATE OR REPLACE FUNCTION modules.frequencia_da_matricula_periodo(
 AS $function$
 DECLARE
     v_data_fim date;
-    v_data_matricula date;
+    v_data_inicio date;
     v_regra_falta integer;
     v_falta_aluno_id integer;
     v_turma integer;
-    v_dias_letivos_decorridos numeric;
-    v_dias_letivos_referencia numeric;
+    v_dias_letivos_serie numeric;
+    v_dias_uteis_ano numeric;
+    v_dias_uteis_periodo numeric;
+    v_dias_letivos_periodo numeric;
     v_fracao numeric;
     v_total_faltas integer;
     v_qtd_horas_serie numeric;
-    v_qtd_horas_decorridas numeric;
+    v_qtd_horas_periodo numeric;
     v_total_hora_falta float;
+    v_ano_inicio date;
+    v_ano_fim date;
 BEGIN
     /*
-        Calcula a frequência da matrícula de forma PROPORCIONAL, considerando
-        apenas os dias letivos decorridos entre a data da matrícula e a data de
-        emissão do atestado (p_data_fim), e não o ano letivo completo.
+        Calcula a frequência da matrícula de forma PROPORCIONAL ao período
+        cursado (data da enturmação até a data de emissão do atestado),
+        usando como base os dias letivos da série.
 
-        Como as faltas são armazenadas por etapa (e não por dia), os dias
-        letivos de cada etapa são distribuídos proporcionalmente pelos dias
-        úteis (segunda a sexta) da etapa, de modo que a etapa em andamento
-        conte somente até a data de emissão.
+        A fração do período é a razão entre os dias úteis (segunda a sexta)
+        do intervalo cursado e os dias úteis do calendário escolar (datas das
+        etapas). Essa fração é aplicada sobre os dias letivos da série, sem
+        depender do preenchimento de dias letivos nas etapas.
     */
     v_data_fim := COALESCE(p_data_fim, CURRENT_DATE);
-
-    SELECT COALESCE(m.data_matricula, m.data_cadastro::date)
-    INTO v_data_matricula
-    FROM pmieducar.matricula m
-    WHERE m.cod_matricula = p_matricula_id;
 
     /*
         v_regra_falta:
@@ -57,67 +56,100 @@ BEGIN
     ORDER BY id DESC
     LIMIT 1;
 
-    SELECT mt.ref_cod_turma
-    INTO v_turma
+    SELECT mt.ref_cod_turma,
+           COALESCE(mt.data_enturmacao, m.data_matricula, m.data_cadastro::date)
+    INTO v_turma, v_data_inicio
     FROM pmieducar.matricula_turma mt
+             INNER JOIN pmieducar.matricula m ON m.cod_matricula = mt.ref_cod_matricula
     WHERE mt.ref_cod_matricula = p_matricula_id
       AND mt.ativo = 1
     ORDER BY mt.data_enturmacao DESC, mt.sequencial DESC
     LIMIT 1;
 
-    /*
-        Soma dos dias letivos decorridos (da matrícula até a emissão) e dos dias
-        letivos de referência (da matrícula até o fim de cada etapa), ambos
-        proporcionais por dias úteis de cada etapa.
-    */
-    SELECT
-        COALESCE(SUM(
-            e.dias_letivos * (
-                (SELECT count(*)::numeric
-                 FROM generate_series(GREATEST(e.data_inicio, v_data_matricula),
-                                      LEAST(e.data_fim, v_data_fim),
-                                      interval '1 day') d
-                 WHERE extract(isodow FROM d) < 6)
-                / NULLIF((SELECT count(*)::numeric
-                          FROM generate_series(e.data_inicio, e.data_fim, interval '1 day') d
-                          WHERE extract(isodow FROM d) < 6), 0)
-            )
-        ), 0),
-        COALESCE(SUM(
-            e.dias_letivos * (
-                (SELECT count(*)::numeric
-                 FROM generate_series(GREATEST(e.data_inicio, v_data_matricula),
-                                      e.data_fim,
-                                      interval '1 day') d
-                 WHERE extract(isodow FROM d) < 6)
-                / NULLIF((SELECT count(*)::numeric
-                          FROM generate_series(e.data_inicio, e.data_fim, interval '1 day') d
-                          WHERE extract(isodow FROM d) < 6), 0)
-            )
-        ), 0)
-    INTO v_dias_letivos_decorridos, v_dias_letivos_referencia
-    FROM (
-             SELECT
-                 CASE WHEN c.padrao_ano_escolar = 0 THEN tm.data_inicio ELSE alm.data_inicio END AS data_inicio,
-                 CASE WHEN c.padrao_ano_escolar = 0 THEN tm.data_fim ELSE alm.data_fim END AS data_fim,
-                 CASE WHEN c.padrao_ano_escolar = 0 THEN tm.dias_letivos ELSE alm.dias_letivos END AS dias_letivos
-             FROM pmieducar.turma t
-                      INNER JOIN pmieducar.curso c ON c.cod_curso = t.ref_cod_curso
-                      LEFT JOIN pmieducar.turma_modulo tm
-                                ON tm.ref_cod_turma = t.cod_turma AND c.padrao_ano_escolar = 0
-                      LEFT JOIN pmieducar.ano_letivo_modulo alm
-                                ON alm.ref_ano = t.ano
-                                    AND alm.ref_ref_cod_escola = t.ref_ref_cod_escola
-                                    AND c.padrao_ano_escolar = 1
-             WHERE t.cod_turma = v_turma
-         ) e
-    WHERE e.data_inicio IS NOT NULL
-      AND e.data_fim IS NOT NULL
-      AND e.dias_letivos IS NOT NULL;
+    IF v_turma IS NULL THEN
+        SELECT mt.ref_cod_turma,
+               COALESCE(mt.data_enturmacao, m.data_matricula, m.data_cadastro::date)
+        INTO v_turma, v_data_inicio
+        FROM pmieducar.matricula_turma mt
+                 INNER JOIN pmieducar.matricula m ON m.cod_matricula = mt.ref_cod_matricula
+        WHERE mt.ref_cod_matricula = p_matricula_id
+        ORDER BY mt.data_enturmacao DESC, mt.sequencial DESC
+        LIMIT 1;
+    END IF;
 
-    IF v_dias_letivos_decorridos IS NULL OR v_dias_letivos_decorridos <= 0 THEN
+    IF v_data_inicio IS NULL THEN
+        SELECT COALESCE(m.data_matricula, m.data_cadastro::date)
+        INTO v_data_inicio
+        FROM pmieducar.matricula m
+        WHERE m.cod_matricula = p_matricula_id;
+    END IF;
+
+    SELECT s.dias_letivos,
+           s.carga_horaria
+    INTO v_dias_letivos_serie, v_qtd_horas_serie
+    FROM pmieducar.serie s
+             INNER JOIN pmieducar.matricula m ON m.ref_ref_cod_serie = s.cod_serie
+    WHERE m.cod_matricula = p_matricula_id;
+
+    IF v_dias_letivos_serie IS NULL OR v_dias_letivos_serie <= 0 THEN
         RETURN NULL;
     END IF;
+
+    /*
+        Limites do calendário escolar: apenas as datas das etapas
+        (ano_letivo_modulo / turma_modulo). Os dias letivos das etapas
+        não entram no cálculo.
+    */
+    IF v_turma IS NOT NULL THEN
+        SELECT MIN(e.data_inicio),
+               MAX(e.data_fim)
+        INTO v_ano_inicio, v_ano_fim
+        FROM (
+                 SELECT CASE WHEN c.padrao_ano_escolar = 0 THEN tm.data_inicio ELSE alm.data_inicio END AS data_inicio,
+                        CASE WHEN c.padrao_ano_escolar = 0 THEN tm.data_fim ELSE alm.data_fim END AS data_fim
+                 FROM pmieducar.turma t
+                          INNER JOIN pmieducar.curso c ON c.cod_curso = t.ref_cod_curso
+                          LEFT JOIN pmieducar.turma_modulo tm
+                                    ON tm.ref_cod_turma = t.cod_turma AND c.padrao_ano_escolar = 0
+                          LEFT JOIN pmieducar.ano_letivo_modulo alm
+                                    ON alm.ref_ano = t.ano
+                                        AND alm.ref_ref_cod_escola = t.ref_ref_cod_escola
+                                        AND c.padrao_ano_escolar = 1
+                 WHERE t.cod_turma = v_turma
+             ) e
+        WHERE e.data_inicio IS NOT NULL
+          AND e.data_fim IS NOT NULL;
+    END IF;
+
+    IF v_ano_inicio IS NULL OR v_ano_fim IS NULL THEN
+        SELECT make_date(m.ano, 1, 1),
+               make_date(m.ano, 12, 31)
+        INTO v_ano_inicio, v_ano_fim
+        FROM pmieducar.matricula m
+        WHERE m.cod_matricula = p_matricula_id;
+    END IF;
+
+    SELECT count(*)::numeric
+    INTO v_dias_uteis_ano
+    FROM generate_series(v_ano_inicio, v_ano_fim, interval '1 day') d
+    WHERE extract(isodow FROM d) < 6;
+
+    SELECT count(*)::numeric
+    INTO v_dias_uteis_periodo
+    FROM generate_series(
+                 GREATEST(v_data_inicio, v_ano_inicio),
+                 LEAST(v_data_fim, v_ano_fim),
+                 interval '1 day'
+         ) d
+    WHERE extract(isodow FROM d) < 6;
+
+    IF v_dias_uteis_ano IS NULL OR v_dias_uteis_ano <= 0
+        OR v_dias_uteis_periodo IS NULL OR v_dias_uteis_periodo <= 0 THEN
+        RETURN NULL;
+    END IF;
+
+    v_fracao := v_dias_uteis_periodo / v_dias_uteis_ano;
+    v_dias_letivos_periodo := v_dias_letivos_serie * v_fracao;
 
     IF (v_regra_falta = 1) THEN
         SELECT COALESCE(SUM(fg.quantidade), 0)
@@ -127,9 +159,9 @@ BEGIN
           AND EXISTS (
               SELECT 1
               FROM (
-                       SELECT
-                           CASE WHEN c.padrao_ano_escolar = 0 THEN tm.sequencial ELSE alm.sequencial END AS seq,
-                           CASE WHEN c.padrao_ano_escolar = 0 THEN tm.data_inicio ELSE alm.data_inicio END AS data_inicio
+                       SELECT CASE WHEN c.padrao_ano_escolar = 0 THEN tm.sequencial ELSE alm.sequencial END AS seq,
+                              CASE WHEN c.padrao_ano_escolar = 0 THEN tm.data_inicio ELSE alm.data_inicio END AS data_inicio,
+                              CASE WHEN c.padrao_ano_escolar = 0 THEN tm.data_fim ELSE alm.data_fim END AS data_fim
                        FROM pmieducar.turma t
                                 INNER JOIN pmieducar.curso c ON c.cod_curso = t.ref_cod_curso
                                 LEFT JOIN pmieducar.turma_modulo tm
@@ -141,41 +173,39 @@ BEGIN
                        WHERE t.cod_turma = v_turma
                    ) et
               WHERE et.seq::varchar = fg.etapa
+                AND et.data_inicio IS NOT NULL
                 AND et.data_inicio <= v_data_fim
+                AND (et.data_fim IS NULL OR et.data_fim >= v_data_inicio)
           );
 
         RETURN TRUNC(
-            (((v_dias_letivos_decorridos - v_total_faltas) * 100) / v_dias_letivos_decorridos)::numeric,
+            (((v_dias_letivos_periodo - v_total_faltas) * 100) / v_dias_letivos_periodo)::numeric,
             1
         );
     ELSE
-        SELECT s.carga_horaria
-        INTO v_qtd_horas_serie
-        FROM pmieducar.serie s
-                 INNER JOIN pmieducar.matricula m ON m.ref_ref_cod_serie = s.cod_serie
-        WHERE m.cod_matricula = p_matricula_id;
+        IF v_qtd_horas_serie IS NULL OR v_qtd_horas_serie <= 0 THEN
+            RETURN NULL;
+        END IF;
 
-        v_fracao := v_dias_letivos_decorridos / NULLIF(v_dias_letivos_referencia, 0);
-        v_qtd_horas_decorridas := v_qtd_horas_serie * v_fracao;
+        v_qtd_horas_periodo := v_qtd_horas_serie * v_fracao;
 
-        IF v_qtd_horas_decorridas IS NULL OR v_qtd_horas_decorridas <= 0 THEN
+        IF v_qtd_horas_periodo IS NULL OR v_qtd_horas_periodo <= 0 THEN
             RETURN NULL;
         END IF;
 
         SELECT COALESCE(SUM(sub_totais.totais), 0)
         INTO v_total_hora_falta
         FROM (
-                 SELECT
-                     SUM(fcc.quantidade)
-                         * (modules.hora_falta_por_componente(p_matricula_id, fcc.componente_curricular_id)::float * 100)::float AS totais
+                 SELECT SUM(fcc.quantidade)
+                            * (modules.hora_falta_por_componente(p_matricula_id, fcc.componente_curricular_id)::float * 100)::float AS totais
                  FROM modules.falta_componente_curricular fcc
                  WHERE fcc.falta_aluno_id = v_falta_aluno_id
                    AND EXISTS (
                        SELECT 1
                        FROM (
-                                SELECT
-                                    CASE WHEN c.padrao_ano_escolar = 0 THEN tm.sequencial ELSE alm.sequencial END AS seq,
-                                    CASE WHEN c.padrao_ano_escolar = 0 THEN tm.data_inicio ELSE alm.data_inicio END AS data_inicio
+                                SELECT CASE WHEN c.padrao_ano_escolar = 0 THEN tm.sequencial ELSE alm.sequencial END AS seq,
+                                       CASE WHEN c.padrao_ano_escolar = 0 THEN tm.data_inicio ELSE alm.data_inicio END AS data_inicio,
+                                       CASE WHEN c.padrao_ano_escolar = 0 THEN tm.data_fim ELSE alm.data_fim END AS data_fim
                                 FROM pmieducar.turma t
                                          INNER JOIN pmieducar.curso c ON c.cod_curso = t.ref_cod_curso
                                          LEFT JOIN pmieducar.turma_modulo tm
@@ -187,12 +217,14 @@ BEGIN
                                 WHERE t.cod_turma = v_turma
                             ) et
                        WHERE et.seq::varchar = fcc.etapa
+                         AND et.data_inicio IS NOT NULL
                          AND et.data_inicio <= v_data_fim
+                         AND (et.data_fim IS NULL OR et.data_fim >= v_data_inicio)
                    )
                  GROUP BY fcc.componente_curricular_id
              ) sub_totais;
 
-        RETURN TRUNC((100 - (v_total_hora_falta / v_qtd_horas_decorridas))::numeric, 1);
+        RETURN TRUNC((100 - (v_total_hora_falta / v_qtd_horas_periodo))::numeric, 1);
     END IF;
 END;
 $function$;
