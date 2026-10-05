@@ -21,32 +21,27 @@ class ProvaController extends ApiCoreController
             }
 
             try {
-                $now = \Carbon\Carbon::now();
                 $resources = [];
 
-                if (class_exists('Canoastec\\Provas\\Models\\Exam') && class_exists('Canoastec\\Provas\\Models\\StudentExam')) {
-                    $examIdsWithStudent = Canoastec\Provas\Models\StudentExam::query()
-                        ->distinct()
-                        ->pluck('exam_id')
-                        ->all();
+                if (class_exists('Canoastec\\Provas\\Models\\Exam')) {
+                    $query = Canoastec\Provas\Models\Exam::query()
+                        ->where(function ($q) use ($ano) {
+                            $q->whereYear('start_date', '=', $ano)
+                                ->orWhereYear('end_date', '=', $ano);
+                        })
+                        ->orderBy('description');
 
-                    if (! empty($examIdsWithStudent)) {
-                        $query = Canoastec\Provas\Models\Exam::query()
-                            ->whereIn('id', $examIdsWithStudent)
-                            ->whereYear('end_date', '=', $ano)
-                            ->where('end_date', '<', $now)
-                            ->orderBy('description');
+                    if (! empty($serie)) {
+                        $query->where('grade_id', $serie);
+                    }
+                    if (! empty($disciplina)) {
+                        $query->where('discipline_id', $disciplina);
+                    }
 
-                        if (! empty($serie)) {
-                            $query->where('grade_id', $serie);
-                        }
-                        if (! empty($disciplina)) {
-                            $query->where('discipline_id', $disciplina);
-                        }
+                    $scopeService->applyFinishedExamFilterIfDirector($query);
 
-                        foreach ($query->get(['id', 'description']) as $exam) {
-                            $resources['__' . $exam->id] = $this->toUtf8($exam->description);
-                        }
+                    foreach ($query->get(['id', 'description']) as $exam) {
+                        $resources['__' . $exam->id] = $this->toUtf8($exam->description);
                     }
                 }
 
