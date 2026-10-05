@@ -1498,7 +1498,7 @@ class AlunoController extends ApiCoreController
                 $matriculas[$index]['codigo_situacao'] = $matricula['situacao'];
                 $matriculas[$index]['user_can_access'] = Portabilis_Utils_User::canAccessEscola($matricula['escola_id']);
                 $matriculas[$index]['user_can_change_date'] = $this->loadAcessoDataEntradaSaida();
-                $matriculas[$index]['user_can_change_situacao'] = $this->isUsuarioAdmin();
+                $matriculas[$index]['user_can_change_situacao'] = $this->canChangeSituacao();
                 $matriculas[$index]['transferencia_em_aberto'] = $this->possuiTransferenciaEmAberto($matricula['id']);
             }
 
@@ -1943,13 +1943,15 @@ class AlunoController extends ApiCoreController
         return $acesso->permissao_cadastra(626, $this->pessoa_logada, 7, null, true);
     }
 
-    protected function isUsuarioAdmin()
+    protected function canChangeSituacao(): bool
     {
-        if (Auth::user()) {
-            return Auth::user()->isAdmin();
+        $user = Auth::user();
+
+        if (!$user) {
+            return false;
         }
 
-        return false;
+        return $user->isAdmin() || $user->type?->isAncora();
     }
 
     protected function canGetAlunosMatriculados()
