@@ -17,7 +17,7 @@ return new class extends clsListagem
 
         // Filtros de Busca
         $this->campoTexto(nome: 'nm_pessoa', campo: 'Nome', valor: $this->nm_pessoa, tamanhovisivel: 42, tamanhomaximo: 255);
-        $this->campoTexto(nome: 'matricula', campo: 'Matrícula', valor: $this->matricula, tamanhovisivel: 20, tamanhomaximo: 15);
+        $this->campoTexto(nome: 'matricula', campo: 'Matrícula', valor: $this->matricula, tamanhovisivel: 50, tamanhomaximo: 100);
         $this->campoTexto(nome: 'matricula_interna', campo: 'Matrícula Interna', valor: $this->matricula_interna, tamanhovisivel: 20, tamanhomaximo: 30);
 
         $opcoes = ['' => 'Selecione'];
