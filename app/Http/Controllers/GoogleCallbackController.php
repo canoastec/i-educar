@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\CheckResetPassword;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -45,6 +46,7 @@ class GoogleCallbackController
         }
 
         Auth::login($user);
+        session([CheckResetPassword::AUTH_VIA_GOOGLE_SESSION_KEY => true]);
 
         return redirect()->intended(route('student-exams.index'));
     }
