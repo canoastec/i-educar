@@ -6,6 +6,7 @@ use App\Services\ChangeUserPasswordService;
 use App\User;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 
 class PasswordController extends Controller
@@ -20,7 +21,9 @@ class PasswordController extends Controller
     public function change(Request $request, User $user)
     {
         if ($request->isMethod('get')) {
-            return view('password.change');
+            return view('password.change', [
+                'login' => Auth::user()?->login,
+            ]);
         }
 
         $request->validate($this->rules(), $this->validationErrorMessages());
