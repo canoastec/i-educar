@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CheckResetPassword
 {
-    public const AUTH_VIA_GOOGLE_SESSION_KEY = 'auth_via_google';
-
     public function __construct(ForceUserChangePasswordService $forceUserChangePasswordService)
     {
         $this->forceUserChangePasswordService = $forceUserChangePasswordService;
@@ -31,10 +29,6 @@ class CheckResetPassword
             return $next($request);
         }
 
-        if ($this->shouldSkipForcedPasswordChange($request, $user)) {
-            return $next($request);
-        }
-
         $this->validateUserExpirationPassword($user);
 
         if ($user->employee->force_reset_password) {
@@ -42,12 +36,6 @@ class CheckResetPassword
         }
 
         return $next($request);
-    }
-
-    private function shouldSkipForcedPasswordChange(Request $request, Authenticatable $user): bool
-    {
-        return $user->role === 'Aluno'
-            && $request->session()->get(self::AUTH_VIA_GOOGLE_SESSION_KEY) === true;
     }
 
     public function validateUserExpirationPassword(Authenticatable $user)

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\CheckResetPassword;
 use App\Models\Announcement;
 use App\Rules\ReCaptchaV3;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -82,8 +81,6 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        $request->session()->forget(CheckResetPassword::AUTH_VIA_GOOGLE_SESSION_KEY);
-
         if ($user->role === 'Aluno') {
             return redirect()->route('student-exams.index');
         }
