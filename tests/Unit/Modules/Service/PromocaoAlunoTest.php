@@ -296,7 +296,51 @@ class Avaliacao_Service_PromocaoAlunoTest extends Avaliacao_Service_TestCommon
             ->with($codMatricula, $codUsuario, App_Model_MatriculaSituacao::REPROVADO)
             ->willReturn(true);
 
-        self::assertTrue($service->promover());
+        self::assertTrue($service->promover(App_Model_MatriculaSituacao::REPROVADO));
+    }
+
+    public function test_nao_promove_automaticamente_progressao_manual_sem_situacao_explicita()
+    {
+        $situacao = new stdClass;
+        $situacao->aprovado = true;
+        $situacao->andamento = false;
+        $situacao->recuperacao = false;
+        $situacao->retidoFalta = false;
+        $situacao->aprovadoComDependencia = false;
+
+        $codMatricula = $this->_getConfigOption('matricula', 'cod_matricula');
+        $codUsuario = $this->_getConfigOption('usuario', 'cod_usuario');
+
+        /** @var Avaliacao_Service_Boletim|MockObject $service */
+        $service = $this
+            ->setExcludedMethods(['promover'])
+            ->getCleanMock('Avaliacao_Service_Boletim');
+
+        $service
+            ->method('getSituacaoAluno')
+            ->willReturn($situacao);
+
+        $service
+            ->method('getRegraAvaliacaoTipoProgressao')
+            ->willReturn(RegraAvaliacao_Model_TipoProgressao::NAO_CONTINUADA_MANUAL);
+
+        $service
+            ->method('getOption')
+            ->willReturnMap(
+                [
+                    ['matricula', $codMatricula],
+                    ['usuario', $codUsuario],
+                    ['aprovado', App_Model_MatriculaSituacao::EM_ANDAMENTO],
+                ]
+            );
+
+        $service
+            ->expects($this->never())
+            ->method('_updateMatricula');
+
+        $this->expectException('CoreExt_Service_Exception');
+
+        $service->promover();
     }
 
     public function test_save_boletim()

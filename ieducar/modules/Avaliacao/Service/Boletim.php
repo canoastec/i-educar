@@ -2749,7 +2749,7 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
                         }
                         break;
 
-                    case RegraAvaliacao_Model_TipoProgressao::NAO_CONTINUADA_SOMENTE_MEDIA || RegraAvaliacao_Model_TipoProgressao::NAO_CONTINUADA_MANUAL || RegraAvaliacao_Model_TipoProgressao::NAO_CONTINUADA_MANUAL_CICLO:
+                    case RegraAvaliacao_Model_TipoProgressao::NAO_CONTINUADA_SOMENTE_MEDIA:
                         if ($situacaoBoletim->aprovado && $situacaoBoletim->aprovadoComDependencia && !$situacaoBoletim->retidoFalta) {
                             $novaSituacaoMatricula = App_Model_MatriculaSituacao::APROVADO_COM_DEPENDENCIA;
                         } else {
@@ -2770,13 +2770,29 @@ class Avaliacao_Service_Boletim implements CoreExt_Configurable
 
                         break;
 
-                    case is_null($novaSituacaoMatricula):
-                        $tipoProgressaoInstance = RegraAvaliacao_Model_TipoProgressao::getInstance();
-                        $exceptionMsg = sprintf(
-                            'Para atualizar a matrícula em uma regra %s é '
-                            . 'necessário passar o valor do argumento "$novaSituacaoMatricula".',
-                            $tipoProgressaoInstance->getValue($tipoProgressao)
-                        );
+                    // Progressão manual exige situação explícita. Não usar "case A || B"
+                    // (em PHP vira case true e aprova automaticamente tipos 3/4/5).
+                    case RegraAvaliacao_Model_TipoProgressao::NAO_CONTINUADA_MANUAL:
+                    case RegraAvaliacao_Model_TipoProgressao::NAO_CONTINUADA_MANUAL_CICLO:
+                        if (is_null($novaSituacaoMatricula)) {
+                            $tipoProgressaoInstance = RegraAvaliacao_Model_TipoProgressao::getInstance();
+                            $exceptionMsg = sprintf(
+                                'Para atualizar a matrícula em uma regra %s é '
+                                . 'necessário passar o valor do argumento "$novaSituacaoMatricula".',
+                                $tipoProgressaoInstance->getValue($tipoProgressao)
+                            );
+                        }
+                        break;
+
+                    default:
+                        if (is_null($novaSituacaoMatricula)) {
+                            $tipoProgressaoInstance = RegraAvaliacao_Model_TipoProgressao::getInstance();
+                            $exceptionMsg = sprintf(
+                                'Para atualizar a matrícula em uma regra %s é '
+                                . 'necessário passar o valor do argumento "$novaSituacaoMatricula".',
+                                $tipoProgressaoInstance->getValue($tipoProgressao)
+                            );
+                        }
                         break;
                 }
             }
