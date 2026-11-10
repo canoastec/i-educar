@@ -597,6 +597,53 @@ class EscolaController extends ApiCoreController
     }
 
     /**
+     * Endpoint exclusivo do relatório Mapa quantitativo de matrículas.
+     * Reaproveita a seleção padrão e filtra por caracteristica_escolar quando informado.
+     */
+    protected function getEscolasSelecaoMapaQuantitativo()
+    {
+        $result = $this->getEscolasSelecao();
+        $result['options'] = $this->filterEscolasByCaracteristicas($result['options'] ?? []);
+
+        return $result;
+    }
+
+    protected function filterEscolasByCaracteristicas(array $escolas): array
+    {
+        $caracteristicas = $this->getRequest()->caracteristicas_escolares;
+
+        if ($caracteristicas === null || $caracteristicas === '' || $caracteristicas === '0') {
+            return $escolas;
+        }
+
+        $ids = array_values(array_filter(array_map('intval', explode(',', (string) $caracteristicas))));
+
+        if ($ids === []) {
+            return [];
+        }
+
+        $allowed = LegacySchool::query()
+            ->whereIn('caracteristica_escolar', $ids)
+            ->pluck('cod_escola')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        $filtered = [];
+
+        foreach ($escolas as $key => $nome) {
+            $schoolId = is_string($key) && str_starts_with($key, '__')
+                ? (int) substr($key, 2)
+                : (int) $key;
+
+            if (in_array($schoolId, $allowed, true)) {
+                $filtered[$key] = $nome;
+            }
+        }
+
+        return $filtered;
+    }
+
+    /**
      * Retorna os parâmetros das escolas.
      *
      *  - cod_escola
@@ -734,6 +781,8 @@ class EscolaController extends ApiCoreController
             $this->appendResponse($this->getEscolasSelecao());
         } elseif ($this->isRequestFor('get', 'escolas-para-selecao-sem-filtro-por-usuario')) {
             $this->appendResponse($this->getEscolasSelecaoSemFiltroPorUsuario());
+        } elseif ($this->isRequestFor('get', 'escolas-para-selecao-mapa-quantitativo')) {
+            $this->appendResponse($this->getEscolasSelecaoMapaQuantitativo());
         } elseif ($this->isRequestFor('get', 'parametros-escolas')) {
             $this->appendResponse($this->getParametrosEscolas());
         } elseif ($this->isRequestFor('get', 'endereco-escola')) {
