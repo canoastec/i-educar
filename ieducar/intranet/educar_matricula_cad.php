@@ -217,10 +217,8 @@ return new class extends clsCadastro
         throw new Exception(message: "A matrícula {$matricula} não foi encontrada.");
     }
 
-    private function addMatricula($escola, $curso, $serie, $aluno, $ano)
+    private function addMatricula($escola, $curso, $serie, $aluno, $ano, $dataMatricula)
     {
-        $datahora = date(format: 'Y-m-d H:i:s');
-
         $obj = new clsPmieducarMatricula(
             ref_ref_cod_escola: $escola,
             ref_ref_cod_serie: $serie,
@@ -232,15 +230,14 @@ return new class extends clsCadastro
             ultima_matricula: 1,
             ref_cod_curso: $curso,
             semestre: 1,
-            data_matricula: $datahora
+            data_matricula: $dataMatricula
         );
 
         return $obj->cadastra();
     }
 
-    private function addEnturmacao($matricula, $turma, $sequencial, $ativo)
+    private function addEnturmacao($matricula, $turma, $sequencial, $ativo, $dataEnturmacao)
     {
-        $data = date(format: 'Y-m-d');
         $datahora = date(format: 'Y-m-d H:i:s');
         $usuario = $this->pessoa_logada;
 
@@ -249,7 +246,7 @@ return new class extends clsCadastro
                 ref_cod_matricula, ref_cod_turma, sequencial, ref_usuario_exc, ref_usuario_cad, data_cadastro,
                 ativo, data_enturmacao
             )
-            values ({$matricula}, {$turma}, {$sequencial}, NULL, {$usuario}, '{$datahora}', {$ativo}, '{$data}')
+            values ({$matricula}, {$turma}, {$sequencial}, NULL, {$usuario}, '{$datahora}', {$ativo}, '{$dataEnturmacao}')
         ");
 
         return true;
@@ -257,6 +254,14 @@ return new class extends clsCadastro
 
     public function Enturmar()
     {
+        if (empty($this->data_matricula) || !Portabilis_Date_Utils::validaData(date: $this->data_matricula)) {
+            $this->mensagem = 'A data da matrícula é inválida.';
+
+            return false;
+        }
+
+        $dataMatricula = Portabilis_Date_Utils::brToPgSQL(date: $this->data_matricula);
+
         try {
             $enturmacoesNaTurmaDestino = $this->getEnturmacoesNaTurma(turma: $this->ref_cod_turma);
             $enturmacoesParaCopiar = $this->getEnturmacoesNaTurma(turma: $this->ref_cod_turma_copiar_enturmacoes);
@@ -292,10 +297,17 @@ return new class extends clsCadastro
                 curso: $this->ref_cod_curso,
                 serie: $this->ref_cod_serie,
                 aluno: $dadosDaMatricula['ref_cod_aluno'],
-                ano: $this->ano
+                ano: $this->ano,
+                dataMatricula: $dataMatricula
             );
 
-            $this->addEnturmacao(matricula: $matricula, turma: $this->ref_cod_turma, sequencial: $enturmar['sequencial'], ativo: $enturmar['ativo']);
+            $this->addEnturmacao(
+                matricula: $matricula,
+                turma: $this->ref_cod_turma,
+                sequencial: $enturmar['sequencial'],
+                ativo: $enturmar['ativo'],
+                dataEnturmacao: $dataMatricula
+            );
         }
 
         if (!is_null(value: $mensagemErro)) {
